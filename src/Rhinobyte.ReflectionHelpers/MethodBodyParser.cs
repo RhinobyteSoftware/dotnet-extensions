@@ -36,16 +36,87 @@ namespace Rhinobyte.ReflectionHelpers
 
 				switch (currentOpcode.OperandType)
 				{
-					// TODO: Based on opcode type read operand bytes, advance the _bytePosition,
-					// and construct the instruction instance type
+					case OperandType.InlineBrTarget:
+						instructions.Add(new InlineBranchTargetInstruction(currentOpcode, ReadInt32() + _bytePosition));
+						break;
+
+					case OperandType.InlineField:
+						// Construct field instruction
+						break;
+
+					case OperandType.InlineMethod:
+						// Construct method instruction
+						break;
+
+					case OperandType.InlineTok:
+						// Construct reference token instruction
+						break;
+
+					case OperandType.InlineType:
+						// Construct type instruction
+						break;
+
+					case OperandType.InlineI:
+						// Construct int32 instruction
+						break;
+
+					case OperandType.InlineI8:
+						// Construct int64 instruction
+						break;
+
+					case OperandType.InlineNone:
+						break;
+
+					case OperandType.InlineR:
+						// Construct 64-bit floating point instruction
+						break;
+
+					case OperandType.InlineSig:
+						// Construct signature instruction
+						break;
+
+					case OperandType.InlineString:
+						// Construct string instruction
+						break;
+
+					case OperandType.InlineSwitch:
+						// Construct switch instruction
+						break;
+
+					case OperandType.InlineVar:
+						// Construct variable/argument instruction
+						break;
+
+					case OperandType.ShortInlineBrTarget:
+						// Construct 8bit branch target instruction
+						break;
+
+					case OperandType.ShortInlineI:
+						// Construct 8bit integer instruction
+						break;
+
+					case OperandType.ShortInlineR:
+						// Construct 32-bit floating point instruction
+						break;
+
+					case OperandType.ShortInlineVar:
+						// Construct 8bit variable/argument instruction
+						break;
 
 					default:
 						throw new NotSupportedException($"{nameof(MethodBodyParser)}.{nameof(ParseInstructions)}() is not supported for an {nameof(OperandType)} value of {currentOpcode.OperandType}");
 				}
 			}
 
-			// TODO: Once we've read all the instructions, iterate over the instructions list and
-			// connect instruction references..
+			foreach (var instruction in instructions)
+			{
+				switch (instruction.OpCode.OperandType)
+				{
+					case OperandType.InlineBrTarget:
+						// TODO: Lookup the instruction for the TargetOffset and set the TargetInstruction property
+						break;
+				}
+			}
 
 			return instructions;
 		}
@@ -62,5 +133,25 @@ namespace Rhinobyte.ReflectionHelpers
 
 			return _ilBytes[_bytePosition++];
 		}
+
+		/// <summary>
+		/// Convenience method to read the next four bytes as an Int32 value and to advance the _bytePosition
+		/// </summary>
+		internal int ReadInt32()
+		{
+			if (_bytePosition + 4 > _ilBytes.Length)
+			{
+				throw new InvalidOperationException("End of byte array reached");
+			}
+
+			var intValue = _ilBytes[_bytePosition]
+				| (_ilBytes[_bytePosition + 1] << 8)
+				| (_ilBytes[_bytePosition + 2] << 16)
+				| (_ilBytes[_bytePosition + 3] << 24);
+
+			_bytePosition += 4;
+			return intValue;
+		}
+
 	}
 }
