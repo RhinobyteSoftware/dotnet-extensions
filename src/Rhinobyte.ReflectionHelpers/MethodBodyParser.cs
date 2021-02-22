@@ -30,6 +30,7 @@ namespace Rhinobyte.ReflectionHelpers
 
 			while (_bytePosition < _ilBytes.Length)
 			{
+				var instructionOffset = _bytePosition;
 				var opcodeByte = ReadByte();
 				var currentOpcode = opcodeByte != 254 // OpCodes.Prefix1
 					? OpCodeHelper.SingleByteOpCodeLookup[opcodeByte]
@@ -40,7 +41,7 @@ namespace Rhinobyte.ReflectionHelpers
 					case OperandType.InlineBrTarget:
 						// Set the targetOffset = current _bytePosition + int32 operand following the opcode... we'll iterate over the
 						// instructions later and set the TargetInstruction property once we have all the instruction offsets calculated
-						instructions.Add(new InlineBranchTargetInstruction(false, _bytePosition, currentOpcode, _bytePosition + ReadInt32()));
+						instructions.Add(new InlineBranchTargetInstruction(false, instructionOffset, currentOpcode, _bytePosition + ReadInt32()));
 						break;
 
 					case OperandType.InlineField:
@@ -60,18 +61,18 @@ namespace Rhinobyte.ReflectionHelpers
 						break;
 
 					case OperandType.InlineI:
-						instructions.Add(new InlineInt32Instruction(_bytePosition, currentOpcode, ReadInt32()));
+						instructions.Add(new InlineInt32Instruction(instructionOffset, currentOpcode, ReadInt32()));
 						break;
 
 					case OperandType.InlineI8:
-						instructions.Add(new InlineInt64Instruction(_bytePosition, currentOpcode, ReadInt64()));
+						instructions.Add(new InlineInt64Instruction(instructionOffset, currentOpcode, ReadInt64()));
 						break;
 
 					case OperandType.InlineNone:
 						break;
 
 					case OperandType.InlineR:
-						// Construct 64-bit floating point instruction
+						instructions.Add(new InlineDoubleInstruction(instructionOffset, currentOpcode, ReadDouble()));
 						break;
 
 					case OperandType.InlineSig:
@@ -93,21 +94,21 @@ namespace Rhinobyte.ReflectionHelpers
 					case OperandType.ShortInlineBrTarget:
 						// Set the targetOffset = current _bytePosition + int8 operand following the opcode... we'll iterate over the
 						// instructions later and set the TargetInstruction property once we have all the instruction offsets calculated
-						instructions.Add(new InlineBranchTargetInstruction(true, _bytePosition, currentOpcode, _bytePosition + ((sbyte)ReadByte())));
+						instructions.Add(new InlineBranchTargetInstruction(true, instructionOffset, currentOpcode, _bytePosition + ((sbyte)ReadByte())));
 						break;
 
 					case OperandType.ShortInlineI:
 						if (currentOpcode == OpCodes.Ldc_I4_S)
 						{
-							instructions.Add(new InlineSignedByteInstruction(_bytePosition, currentOpcode, (sbyte)ReadByte()));
+							instructions.Add(new InlineSignedByteInstruction(instructionOffset, currentOpcode, (sbyte)ReadByte()));
 							break;
 						}
 
-						instructions.Add(new InlineByteInstruction(_bytePosition, currentOpcode, ReadByte()));
+						instructions.Add(new InlineByteInstruction(instructionOffset, currentOpcode, ReadByte()));
 						break;
 
 					case OperandType.ShortInlineR:
-						// Construct 32-bit floating point instruction
+						instructions.Add(new InlineFloatInstruction(instructionOffset, currentOpcode, ReadSingle()));
 						break;
 
 					case OperandType.ShortInlineVar:
@@ -156,6 +157,16 @@ namespace Rhinobyte.ReflectionHelpers
 		}
 
 		/// <summary>
+		/// Convenience method to read the next eight bytes as a double value and to advance the _bytePosition
+		/// </summary>
+		internal double ReadDouble()
+		{
+			var doubleValue = BitConverter.ToDouble(_ilBytes, _bytePosition);
+			_bytePosition += 8;
+			return doubleValue;
+		}
+
+		/// <summary>
 		/// Convenience method to read the next four bytes as an Int32 value and to advance the _bytePosition
 		/// </summary>
 		internal int ReadInt32()
@@ -166,13 +177,23 @@ namespace Rhinobyte.ReflectionHelpers
 		}
 
 		/// <summary>
-		/// Convenience method to read the next four bytes as an Int32 value and to advance the _bytePosition
+		/// Convenience method to read the next eight bytes as an Int64 value and to advance the _bytePosition
 		/// </summary>
 		internal long ReadInt64()
 		{
 			var longValue = BitConverter.ToInt64(_ilBytes, _bytePosition);
 			_bytePosition += 8;
 			return longValue;
+		}
+
+		/// <summary>
+		/// Convenience method to read the next four bytes as a float value and to advance the _bytePosition
+		/// </summary>
+		internal float ReadSingle()
+		{
+			var floatValue = BitConverter.ToSingle(_ilBytes, _bytePosition);
+			_bytePosition += 4;
+			return floatValue;
 		}
 
 	}
