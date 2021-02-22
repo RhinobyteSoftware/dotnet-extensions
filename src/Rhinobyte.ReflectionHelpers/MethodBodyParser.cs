@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Rhinobyte.ReflectionHelpers
 {
@@ -28,16 +29,36 @@ namespace Rhinobyte.ReflectionHelpers
 
 			while (_bytePosition < _ilBytes.Length)
 			{
-				// TODO: Read opcode for instruction and advance the _bytePosition
+				var opcodeByte = ReadByte();
+				var opcode = OpCodeHelper.OpCodeLookup[opcodeByte];
 
-				// TODO: Based on opcode type read operand bytes, advance the _bytePosition,
-				// and construct the instruction instance type
+				switch (opcode.OperandType)
+				{
+					// TODO: Based on opcode type read operand bytes, advance the _bytePosition,
+					// and construct the instruction instance type
+
+					default:
+						throw new NotSupportedException($"{nameof(MethodBodyParser)}.{nameof(ParseInstructions)}() is not supported for an {nameof(OperandType)} value of {opcode.OperandType}");
+				}
 			}
 
 			// TODO: Once we've read all the instructions, iterate over the instructions list and
 			// connect instruction references..
 
 			return instructions;
+		}
+
+		/// <summary>
+		/// Convenience method to read the next byte and advance the _bytePosition.
+		/// </summary>
+		internal byte ReadByte()
+		{
+			if (_bytePosition >= _ilBytes.Length)
+			{
+				throw new InvalidOperationException("End of byte array reached");
+			}
+
+			return _ilBytes[_bytePosition++];
 		}
 	}
 }
