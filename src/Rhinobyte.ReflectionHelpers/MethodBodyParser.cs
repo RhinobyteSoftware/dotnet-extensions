@@ -30,15 +30,17 @@ namespace Rhinobyte.ReflectionHelpers
 			while (_bytePosition < _ilBytes.Length)
 			{
 				var opcodeByte = ReadByte();
-				var opcode = OpCodeHelper.OpCodeLookup[opcodeByte];
+				var currentOpcode = opcodeByte != 254 // OpCodes.Prefix1
+					? OpCodeHelper.SingleByteOpCodeLookup[opcodeByte]
+					: OpCodeHelper.TwoByteOpCodeLookup[ReadByte()];
 
-				switch (opcode.OperandType)
+				switch (currentOpcode.OperandType)
 				{
 					// TODO: Based on opcode type read operand bytes, advance the _bytePosition,
 					// and construct the instruction instance type
 
 					default:
-						throw new NotSupportedException($"{nameof(MethodBodyParser)}.{nameof(ParseInstructions)}() is not supported for an {nameof(OperandType)} value of {opcode.OperandType}");
+						throw new NotSupportedException($"{nameof(MethodBodyParser)}.{nameof(ParseInstructions)}() is not supported for an {nameof(OperandType)} value of {currentOpcode.OperandType}");
 				}
 			}
 

@@ -5,4 +5,10 @@
         <IsPackable>true</IsPackable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Rhinobyte.ReflectionHelpers.UnitTests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
 </Project>
