@@ -11,6 +11,7 @@ namespace Rhinobyte.ReflectionHelpers
 	{
 		private int _bytePosition;
 		private readonly byte[] _ilBytes;
+		private readonly Module _module;
 
 		internal MethodBodyParser(MethodInfo method)
 		{
@@ -21,6 +22,8 @@ namespace Rhinobyte.ReflectionHelpers
 
 			_ilBytes = methodBody.GetILAsByteArray()
 				?? throw new ArgumentException($"{nameof(MethodBody)}.{nameof(MethodBody.GetILAsByteArray)}() returned null for the method: {method.Name}");
+
+			_module = method.Module ?? throw new ArgumentNullException($"{nameof(method)}.{nameof(method.Module)} is null");
 		}
 
 		internal IReadOnlyCollection<InstructionBase> ParseInstructions()
@@ -76,11 +79,11 @@ namespace Rhinobyte.ReflectionHelpers
 						break;
 
 					case OperandType.InlineSig:
-						// Construct signature instruction
+						instructions.Add(new InlineSignatureInstruction(instructionOffset, currentOpcode, _module.ResolveSignature(ReadInt32())));
 						break;
 
 					case OperandType.InlineString:
-						// Construct string instruction
+						instructions.Add(new InlineStringInstruction(instructionOffset, currentOpcode, _module.ResolveString(ReadInt32())));
 						break;
 
 					case OperandType.InlineSwitch:
