@@ -11,6 +11,236 @@ namespace Rhinobyte.ReflectionHelpers
 	/// </summary>
 	public static class OpCodeHelper
 	{
+		public static readonly IReadOnlyDictionary<short, string> DescriptionLookup = new Dictionary<short, string>()
+		{
+			{ 0, "No-op" }, // OpCodes.Nop
+			{ 1, "Break" }, // OpCodes.Break
+			{ 2, "Load Argument - Index 0" }, // OpCodes.Ldarg_0
+			{ 3, "Load Argument - Index 1" }, // OpCodes.Ldarg_1
+			{ 4, "Load Argument - Index 2" }, // OpCodes.Ldarg_2
+			{ 5, "Load Argument - Index 3" }, // OpCodes.Ldarg_3
+			{ 6, "Load LocalVariable - Index 0" }, // OpCodes.Ldloc_0
+			{ 7, "Load LocalVariable - Index 1" }, // OpCodes.Ldloc_1
+			{ 8, "Load LocalVariable - Index 2" }, // OpCodes.Ldloc_2
+			{ 9, "Load LocalVariable - Index 3" }, // OpCodes.Ldloc_3
+			{ 10, "Pop Stack To LocalVariable - Index 0" }, // OpCodes.Stloc_0
+			{ 11, "Pop Stack To LocalVariable - Index 1" }, // OpCodes.Stloc_1
+			{ 12, "Pop Stack To LocalVariable - Index 2" }, // OpCodes.Stloc_2
+			{ 13, "Pop Stack To LocalVariable - Index 3" }, // OpCodes.Stloc_3
+			{ 14, "Load Argument Reference - Specified Short Form Index" },  // OpCodes.Ldarg_S
+			{ 15, "Load Argument Address - Short Form" },  // OpCodes.Ldarga_S
+			{ 16, "Store Top Of Stack To Argument Slot - Specified Short Form Index" }, // OpCodes.Starg_S
+			{ 17, "Load LocalVariable - Specified Short Form Index" }, // OpCodes.Ldloc_S
+			{ 18, "Load LocalVariable Address - Short Form" }, // OpCodes.Ldloca_S
+			{ 19, "Pop Stack To LocalVariable - Specified Short Form Index" }, // OpCodes.Stloc_S
+			{ 20, "Push To Stack:  Null Reference (Type O)" }, // OpCodes.Ldnull
+			{ 21, "Push To Stack:  -1 (As Int32)" }, // OpCodes.Ldc_I4_M1
+			{ 22, "Push To Stack:  0 (As Int32)" }, // OpCodes.Ldc_I4_0
+			{ 23, "Push To Stack:  1 (As Int32)" }, // OpCodes.Ldc_I4_1
+			{ 24, "Push To Stack:  2 (As Int32)" }, // OpCodes.Ldc_I4_2
+			{ 25, "Push To Stack:  3 (As Int32)" }, // OpCodes.Ldc_I4_3
+			{ 26, "Push To Stack:  4 (As Int32)" }, // OpCodes.Ldc_I4_4
+			{ 27, "Push To Stack:  5 (As Int32)" }, // OpCodes.Ldc_I4_5
+			{ 28, "Push To Stack:  6 (As Int32)" }, // OpCodes.Ldc_I4_6
+			{ 29, "Push To Stack:  7 (As Int32)" }, // OpCodes.Ldc_I4_7
+			{ 30, "Push To Stack:  8 (As Int32)" }, // OpCodes.Ldc_I4_8
+			{ 31, "Push To Stack:  Supplied Int8 Value (As Int32)" }, // OpCodes.Ldc_I4_S
+			{ 32, "Push To Stack:  Supplied Int32 Value (As Int32)" }, // OpCodes.Ldc_I4
+			{ 33, "Push To Stack:  Supplied Int64 Value (As Int64)" }, // OpCodes.Ldc_I8
+			{ 34, "Push To Stack:  Supplied Float32 Value (As Type F / float)" }, // OpCodes.Ldc_R4
+			{ 35, "Push To Stack:  Supplied Float64 Value (As Type F / float)" }, // OpCodes.Ldc_R8
+			{ 37, "Copy Top Of Stack And Push Copy To Top Of Stack" }, // OpCodes.Dup
+			{ 38, "Pop Top Of Stack" }, // OpCodes.Pop
+			{ 39, "Exit Current Method And Jump To Specified Method" }, // OpCodes.Jmp
+			{ 40, "Call Method - Passed Method Descriptor" }, // OpCodes.Call
+			{ 41, "Call Method - Indicated On Evaluation Stack" }, // OpCodes.Calli
+			{ 42, "Return From Current Method - Push Return Value (If Present) To Caller's Evaluation Stack" }, // OpCodes.Ret
+			{ 43, "Unconditionally Transfer Control To Target Instruction (Short Form)" }, // OpCodes.Br_S
+			{ 44, "Transfer Control To Target Instruction, If value is false, a null reference, or zero (Short Form)" }, // OpCodes.Brfalse_S
+			{ 45, "Transfer Control To Target Instruction, If value is true, not null, or non-zero (Short Form)" }, // OpCodes.Brtrue_S
+			//{ 46, OpCodes.Beq_S }, // OpCodes.Beq_S
+			//{ 47, OpCodes.Bge_S }, // OpCodes.Bge_S
+			//{ 48, OpCodes.Bgt_S }, // OpCodes.Bgt_S
+			//{ 49, OpCodes.Ble_S }, // OpCodes.Ble_S
+			//{ 50, OpCodes.Blt_S }, // OpCodes.Blt_S
+			//{ 51, OpCodes.Bne_Un_S }, // OpCodes.Bne_Un_S
+			//{ 52, OpCodes.Bge_Un_S }, // OpCodes.Bge_Un_S
+			//{ 53, OpCodes.Bgt_Un_S }, // OpCodes.Bgt_Un_S
+			//{ 54, OpCodes.Ble_Un_S }, // OpCodes.Ble_Un_S
+			//{ 55, OpCodes.Blt_Un_S }, // OpCodes.Blt_Un_S
+			//{ 56, OpCodes.Br }, // OpCodes.Br
+			//{ 57, OpCodes.Brfalse }, // OpCodes.Brfalse
+			//{ 58, OpCodes.Brtrue }, // OpCodes.Brtrue
+			//{ 59, OpCodes.Beq }, // OpCodes.Beq
+			//{ 60, OpCodes.Bge }, // OpCodes.Bge
+			//{ 61, OpCodes.Bgt }, // OpCodes.Bgt
+			//{ 62, OpCodes.Ble }, // OpCodes.Ble
+			//{ 63, OpCodes.Blt }, // OpCodes.Blt
+			//{ 64, OpCodes.Bne_Un }, // OpCodes.Bne_Un
+			//{ 65, OpCodes.Bge_Un }, // OpCodes.Bge_Un
+			//{ 66, OpCodes.Bgt_Un }, // OpCodes.Bgt_Un
+			//{ 67, OpCodes.Ble_Un }, // OpCodes.Ble_Un
+			//{ 68, OpCodes.Blt_Un }, // OpCodes.Blt_Un
+			//{ 69, OpCodes.Switch }, // OpCodes.Switch
+			//{ 70, OpCodes.Ldind_I1 }, // OpCodes.Ldind_I1
+			//{ 71, OpCodes.Ldind_U1 }, // OpCodes.Ldind_U1
+			//{ 72, OpCodes.Ldind_I2 }, // OpCodes.Ldind_I2
+			//{ 73, OpCodes.Ldind_U2 }, // OpCodes.Ldind_U2
+			//{ 74, OpCodes.Ldind_I4 }, // OpCodes.Ldind_I4
+			//{ 75, OpCodes.Ldind_U4 }, // OpCodes.Ldind_U4
+			//{ 76, OpCodes.Ldind_I8 }, // OpCodes.Ldind_I8
+			//{ 77, OpCodes.Ldind_I }, // OpCodes.Ldind_I
+			//{ 78, OpCodes.Ldind_R4 }, // OpCodes.Ldind_R4
+			//{ 79, OpCodes.Ldind_R8 }, // OpCodes.Ldind_R8
+			//{ 80, OpCodes.Ldind_Ref }, // OpCodes.Ldind_Ref
+			//{ 81, OpCodes.Stind_Ref }, // OpCodes.Stind_Ref
+			//{ 82, OpCodes.Stind_I1 }, // OpCodes.Stind_I1
+			//{ 83, OpCodes.Stind_I2 }, // OpCodes.Stind_I2
+			//{ 84, OpCodes.Stind_I4 }, // OpCodes.Stind_I4
+			//{ 85, OpCodes.Stind_I8 }, // OpCodes.Stind_I8
+			//{ 86, OpCodes.Stind_R4 }, // OpCodes.Stind_R4
+			//{ 87, OpCodes.Stind_R8 }, // OpCodes.Stind_R8
+			//{ 88, OpCodes.Add }, // OpCodes.Add
+			//{ 89, OpCodes.Sub }, // OpCodes.Sub
+			//{ 90, OpCodes.Mul }, // OpCodes.Mul
+			//{ 91, OpCodes.Div }, // OpCodes.Div
+			//{ 92, OpCodes.Div_Un }, // OpCodes.Div_Un
+			//{ 93, OpCodes.Rem }, // OpCodes.Rem
+			//{ 94, OpCodes.Rem_Un }, // OpCodes.Rem_Un
+			//{ 95, OpCodes.And }, // OpCodes.And
+			//{ 96, OpCodes.Or }, // OpCodes.Or
+			//{ 97, OpCodes.Xor }, // OpCodes.Xor
+			//{ 98, OpCodes.Shl }, // OpCodes.Shl
+			//{ 99, OpCodes.Shr }, // OpCodes.Shr
+			//{ 100, OpCodes.Shr_Un }, // OpCodes.Shr_Un
+			//{ 101, OpCodes.Neg }, // OpCodes.Neg
+			//{ 102, OpCodes.Not }, // OpCodes.Not
+			//{ 103, OpCodes.Conv_I1 }, // OpCodes.Conv_I1
+			//{ 104, OpCodes.Conv_I2 }, // OpCodes.Conv_I2
+			//{ 105, OpCodes.Conv_I4 }, // OpCodes.Conv_I4
+			//{ 106, OpCodes.Conv_I8 }, // OpCodes.Conv_I8
+			//{ 107, OpCodes.Conv_R4 }, // OpCodes.Conv_R4
+			//{ 108, OpCodes.Conv_R8 }, // OpCodes.Conv_R8
+			//{ 109, OpCodes.Conv_U4 }, // OpCodes.Conv_U4
+			//{ 110, OpCodes.Conv_U8 }, // OpCodes.Conv_U8
+			//{ 111, OpCodes.Callvirt }, // OpCodes.Callvirt
+			//{ 112, OpCodes.Cpobj }, // OpCodes.Cpobj
+			//{ 113, OpCodes.Ldobj }, // OpCodes.Ldobj
+			//{ 114, OpCodes.Ldstr }, // OpCodes.Ldstr
+			//{ 115, OpCodes.Newobj }, // OpCodes.Newobj
+			//{ 116, OpCodes.Castclass }, // OpCodes.Castclass
+			//{ 117, OpCodes.Isinst }, // OpCodes.Isinst
+			//{ 118, OpCodes.Conv_R_Un }, // OpCodes.Conv_R_Un
+			//{ 121, OpCodes.Unbox }, // OpCodes.Unbox
+			//{ 122, OpCodes.Throw }, // OpCodes.Throw
+			//{ 123, OpCodes.Ldfld }, // OpCodes.Ldfld
+			//{ 124, OpCodes.Ldflda }, // OpCodes.Ldflda
+			//{ 125, OpCodes.Stfld }, // OpCodes.Stfld
+			//{ 126, OpCodes.Ldsfld }, // OpCodes.Ldsfld
+			//{ 127, OpCodes.Ldsflda }, // OpCodes.Ldsflda
+			//{ 128, OpCodes.Stsfld }, // OpCodes.Stsfld
+			//{ 129, OpCodes.Stobj }, // OpCodes.Stobj
+			//{ 130, OpCodes.Conv_Ovf_I1_Un }, // OpCodes.Conv_Ovf_I1_Un
+			//{ 131, OpCodes.Conv_Ovf_I2_Un }, // OpCodes.Conv_Ovf_I2_Un
+			//{ 132, OpCodes.Conv_Ovf_I4_Un }, // OpCodes.Conv_Ovf_I4_Un
+			//{ 133, OpCodes.Conv_Ovf_I8_Un }, // OpCodes.Conv_Ovf_I8_Un
+			//{ 134, OpCodes.Conv_Ovf_U1_Un }, // OpCodes.Conv_Ovf_U1_Un
+			//{ 135, OpCodes.Conv_Ovf_U2_Un }, // OpCodes.Conv_Ovf_U2_Un
+			//{ 136, OpCodes.Conv_Ovf_U4_Un }, // OpCodes.Conv_Ovf_U4_Un
+			//{ 137, OpCodes.Conv_Ovf_U8_Un }, // OpCodes.Conv_Ovf_U8_Un
+			//{ 138, OpCodes.Conv_Ovf_I_Un }, // OpCodes.Conv_Ovf_I_Un
+			//{ 139, OpCodes.Conv_Ovf_U_Un }, // OpCodes.Conv_Ovf_U_Un
+			//{ 140, OpCodes.Box }, // OpCodes.Box
+			//{ 141, OpCodes.Newarr }, // OpCodes.Newarr
+			//{ 142, OpCodes.Ldlen }, // OpCodes.Ldlen
+			//{ 143, OpCodes.Ldelema }, // OpCodes.Ldelema
+			//{ 144, OpCodes.Ldelem_I1 }, // OpCodes.Ldelem_I1
+			//{ 145, OpCodes.Ldelem_U1 }, // OpCodes.Ldelem_U1
+			//{ 146, OpCodes.Ldelem_I2 }, // OpCodes.Ldelem_I2
+			//{ 147, OpCodes.Ldelem_U2 }, // OpCodes.Ldelem_U2
+			//{ 148, OpCodes.Ldelem_I4 }, // OpCodes.Ldelem_I4
+			//{ 149, OpCodes.Ldelem_U4 }, // OpCodes.Ldelem_U4
+			//{ 150, OpCodes.Ldelem_I8 }, // OpCodes.Ldelem_I8
+			//{ 151, OpCodes.Ldelem_I }, // OpCodes.Ldelem_I
+			//{ 152, OpCodes.Ldelem_R4 }, // OpCodes.Ldelem_R4
+			//{ 153, OpCodes.Ldelem_R8 }, // OpCodes.Ldelem_R8
+			//{ 154, OpCodes.Ldelem_Ref }, // OpCodes.Ldelem_Ref
+			//{ 155, OpCodes.Stelem_I }, // OpCodes.Stelem_I
+			//{ 156, OpCodes.Stelem_I1 }, // OpCodes.Stelem_I1
+			//{ 157, OpCodes.Stelem_I2 }, // OpCodes.Stelem_I2
+			//{ 158, OpCodes.Stelem_I4 }, // OpCodes.Stelem_I4
+			//{ 159, OpCodes.Stelem_I8 }, // OpCodes.Stelem_I8
+			//{ 160, OpCodes.Stelem_R4 }, // OpCodes.Stelem_R4
+			//{ 161, OpCodes.Stelem_R8 }, // OpCodes.Stelem_R8
+			//{ 162, OpCodes.Stelem_Ref }, // OpCodes.Stelem_Ref
+			//{ 163, OpCodes.Ldelem }, // OpCodes.Ldelem
+			//{ 164, OpCodes.Stelem }, // OpCodes.Stelem
+			//{ 165, OpCodes.Unbox_Any }, // OpCodes.Unbox_Any
+			//{ 179, OpCodes.Conv_Ovf_I1 }, // OpCodes.Conv_Ovf_I1
+			//{ 180, OpCodes.Conv_Ovf_U1 }, // OpCodes.Conv_Ovf_U1
+			//{ 181, OpCodes.Conv_Ovf_I2 }, // OpCodes.Conv_Ovf_I2
+			//{ 182, OpCodes.Conv_Ovf_U2 }, // OpCodes.Conv_Ovf_U2
+			//{ 183, OpCodes.Conv_Ovf_I4 }, // OpCodes.Conv_Ovf_I4
+			//{ 184, OpCodes.Conv_Ovf_U4 }, // OpCodes.Conv_Ovf_U4
+			//{ 185, OpCodes.Conv_Ovf_I8 }, // OpCodes.Conv_Ovf_I8
+			//{ 186, OpCodes.Conv_Ovf_U8 }, // OpCodes.Conv_Ovf_U8
+			//{ 194, OpCodes.Refanyval }, // OpCodes.Refanyval
+			//{ 195, OpCodes.Ckfinite }, // OpCodes.Ckfinite
+			//{ 198, OpCodes.Mkrefany }, // OpCodes.Mkrefany
+			//{ 208, OpCodes.Ldtoken }, // OpCodes.Ldtoken
+			//{ 209, OpCodes.Conv_U2 }, // OpCodes.Conv_U2
+			//{ 210, OpCodes.Conv_U1 }, // OpCodes.Conv_U1
+			//{ 211, OpCodes.Conv_I }, // OpCodes.Conv_I
+			//{ 212, OpCodes.Conv_Ovf_I }, // OpCodes.Conv_Ovf_I
+			//{ 213, OpCodes.Conv_Ovf_U }, // OpCodes.Conv_Ovf_U
+			//{ 214, OpCodes.Add_Ovf }, // OpCodes.Add_Ovf
+			//{ 215, OpCodes.Add_Ovf_Un }, // OpCodes.Add_Ovf_Un
+			//{ 216, OpCodes.Mul_Ovf }, // OpCodes.Mul_Ovf
+			//{ 217, OpCodes.Mul_Ovf_Un }, // OpCodes.Mul_Ovf_Un
+			//{ 218, OpCodes.Sub_Ovf }, // OpCodes.Sub_Ovf
+			//{ 219, OpCodes.Sub_Ovf_Un }, // OpCodes.Sub_Ovf_Un
+			//{ 220, OpCodes.Endfinally }, // OpCodes.Endfinally
+			//{ 221, OpCodes.Leave }, // OpCodes.Leave
+			//{ 222, OpCodes.Leave_S }, // OpCodes.Leave_S
+			//{ 223, OpCodes.Stind_I }, // OpCodes.Stind_I
+			//{ 224, OpCodes.Conv_U }, // OpCodes.Conv_U
+			//{ 248, OpCodes.Prefix7 }, // OpCodes.Prefix7
+			//{ 249, OpCodes.Prefix6 }, // OpCodes.Prefix6
+			//{ 250, OpCodes.Prefix5 }, // OpCodes.Prefix5
+			//{ 251, OpCodes.Prefix4 }, // OpCodes.Prefix4
+			//{ 252, OpCodes.Prefix3 }, // OpCodes.Prefix3
+			//{ 253, OpCodes.Prefix2 }, // OpCodes.Prefix2
+			//{ 254, OpCodes.Prefix1 }, // OpCodes.Prefix1
+			//{ 255, OpCodes.Prefixref }, // OpCodes.Prefixref
+			//{ -512, OpCodes.Arglist }, // OpCodes.Arglist
+			//{ -511, OpCodes.Ceq }, // OpCodes.Ceq
+			//{ -510, OpCodes.Cgt }, // OpCodes.Cgt
+			//{ -509, OpCodes.Cgt_Un }, // OpCodes.Cgt_Un
+			//{ -508, OpCodes.Clt }, // OpCodes.Clt
+			//{ -507, OpCodes.Clt_Un }, // OpCodes.Clt_Un
+			//{ -506, OpCodes.Ldftn }, // OpCodes.Ldftn
+			//{ -505, OpCodes.Ldvirtftn }, // OpCodes.Ldvirtftn
+			//{ -503, OpCodes.Ldarg }, // OpCodes.Ldarg
+			//{ -502, OpCodes.Ldarga }, // OpCodes.Ldarga
+			//{ -501, OpCodes.Starg }, // OpCodes.Starg
+			//{ -500, OpCodes.Ldloc }, // OpCodes.Ldloc
+			//{ -499, OpCodes.Ldloca }, // OpCodes.Ldloca
+			//{ -498, OpCodes.Stloc }, // OpCodes.Stloc
+			//{ -497, OpCodes.Localloc }, // OpCodes.Localloc
+			//{ -495, OpCodes.Endfilter }, // OpCodes.Endfilter
+			//{ -494, OpCodes.Unaligned }, // OpCodes.Unaligned
+			//{ -493, OpCodes.Volatile }, // OpCodes.Volatile
+			//{ -492, OpCodes.Tailcall }, // OpCodes.Tailcall
+			//{ -491, OpCodes.Initobj }, // OpCodes.Initobj
+			//{ -490, OpCodes.Constrained }, // OpCodes.Constrained
+			//{ -489, OpCodes.Cpblk }, // OpCodes.Cpblk
+			//{ -488, OpCodes.Initblk }, // OpCodes.Initblk
+			//{ -486, OpCodes.Rethrow }, // OpCodes.Rethrow
+			//{ -484, OpCodes.Sizeof }, // OpCodes.Sizeof
+			//{ -483, OpCodes.Refanytype }, // OpCodes.Refanytype
+			{ -482, "Specify Subsequent Array Address Operation Is Readonly" } // OpCodes.Readonly
+		};
+
 		/// <summary>
 		/// Collection of <see cref="OpCodeType.Nternal"/> opcodes
 		/// </summary>

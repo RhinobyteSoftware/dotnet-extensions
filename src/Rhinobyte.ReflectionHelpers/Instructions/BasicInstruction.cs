@@ -10,6 +10,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 
 		}
 
-		// TODO: Override ToString() with a clean + descriptive summary of the instruction type
+		public override string ToString()
+		{
+			// TODO: Replace TryGetValue with a plain index lookup once all of the DescriptionLookup values have been filled out
+			if (OpCodeHelper.DescriptionLookup.TryGetValue(OpCode.Value, out var description))
+			{
+				return description;
+			}
+
+			return base.ToString();
+		}
 	}
 }
