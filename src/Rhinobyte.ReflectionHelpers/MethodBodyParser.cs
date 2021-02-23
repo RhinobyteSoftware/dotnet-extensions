@@ -12,12 +12,16 @@ namespace Rhinobyte.ReflectionHelpers
 		private int _bytePosition;
 		private readonly Type[]? _declaringTypeGenericArguments;
 		private readonly byte[] _ilBytes;
+		private readonly bool _isStaticMethod;
+		private readonly IList<LocalVariableInfo> _localVariables;
+		private readonly MethodBase _method;
 		private readonly Type[]? _methodGenericArguments;
 		private readonly Module _module;
+		private readonly ParameterInfo[] _parameters;
 
-		internal MethodBodyParser(MethodInfo method)
+		internal MethodBodyParser(MethodBase method)
 		{
-			_ = method ?? throw new ArgumentNullException(nameof(method));
+			_method = method ?? throw new ArgumentNullException(nameof(method));
 
 			var methodBody = method.GetMethodBody()
 				?? throw new ArgumentException($"{nameof(method)}.{nameof(MethodBase.GetMethodBody)}() returned null for the method: {method.Name}");
@@ -28,7 +32,10 @@ namespace Rhinobyte.ReflectionHelpers
 			_module = method.Module ?? throw new ArgumentNullException($"{nameof(method)}.{nameof(method.Module)} is null");
 
 			_declaringTypeGenericArguments = method.DeclaringType?.GetGenericArguments();
+			_isStaticMethod = method.IsStatic;
+			_localVariables = methodBody.LocalVariables;
 			_methodGenericArguments = method.GetGenericArguments();
+			_parameters = method.GetParameters();
 		}
 
 		internal IReadOnlyCollection<InstructionBase> ParseInstructions()
@@ -126,7 +133,24 @@ namespace Rhinobyte.ReflectionHelpers
 						break;
 
 					case OperandType.InlineVar:
-						// TODO: Construct variable/argument instruction
+					case OperandType.ShortInlineVar:
+						var variableIndex = currentOpcode.OperandType == OperandType.InlineVar
+							? ReadInt16()
+							: ReadByte();
+
+						if (OpCodeHelper.LocalVariableOpcodeValues.Contains(currentOpcode.Value))
+						{
+							instructions.Add(new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[variableIndex]));
+							break;
+						}
+
+						if (!_isStaticMethod && variableIndex == 0)
+						{
+							instructions.Add(new ThisKeywordInstruction(instructionOffset, currentOpcode, _method));
+							break;
+						}
+
+						instructions.Add(new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[variableIndex]));
 						break;
 
 					case OperandType.ShortInlineBrTarget:
@@ -147,10 +171,6 @@ namespace Rhinobyte.ReflectionHelpers
 
 					case OperandType.ShortInlineR:
 						instructions.Add(new FloatInstruction(instructionOffset, currentOpcode, ReadSingle()));
-						break;
-
-					case OperandType.ShortInlineVar:
-						// TODO: Construct 8bit variable/argument instruction
 						break;
 
 					default:
@@ -216,6 +236,16 @@ namespace Rhinobyte.ReflectionHelpers
 			var doubleValue = BitConverter.ToDouble(_ilBytes, _bytePosition);
 			_bytePosition += 8;
 			return doubleValue;
+		}
+
+		/// <summary>
+		/// Convenience method to read the next two bytes as an Int16 value and to advance the _bytePosition
+		/// </summary>
+		internal int ReadInt16()
+		{
+			var shortValue = BitConverter.ToInt16(_ilBytes, _bytePosition);
+			_bytePosition += 2;
+			return shortValue;
 		}
 
 		/// <summary>
