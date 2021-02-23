@@ -2,11 +2,11 @@
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
-	public sealed class InlineFloatInstruction : InstructionBase
+	public sealed class FloatInstruction : InstructionBase
 	{
 		public float Value { get; }
 
-		public InlineFloatInstruction(int offset, OpCode opcode, float value)
+		public FloatInstruction(int offset, OpCode opcode, float value)
 			: base(offset, opcode)
 		{
 			Value = value;

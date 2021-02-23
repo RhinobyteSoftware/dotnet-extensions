@@ -2,11 +2,11 @@
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
-	public sealed class InlineInt32Instruction : InstructionBase
+	public sealed class Int32Instruction : InstructionBase
 	{
 		public int Value { get; }
 
-		public InlineInt32Instruction(int offset, OpCode opcode, int value)
+		public Int32Instruction(int offset, OpCode opcode, int value)
 			: base(offset, opcode)
 		{
 			Value = value;

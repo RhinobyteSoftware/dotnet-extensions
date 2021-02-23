@@ -2,7 +2,7 @@
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
-	public sealed class InlineBranchTargetInstruction : InstructionBase
+	public sealed class BranchTargetInstruction : InstructionBase
 	{
 		/// <summary>
 		/// Whether or not the <see cref="OpCode.OperandType"/> is the <see cref="OperandType.ShortInlineBrTarget"/> for an 8bit operand or the <see cref="OperandType.InlineBrTarget"/> for a full 32bit operand.
@@ -11,7 +11,7 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		public InstructionBase TargetInstruction { get; internal set; }
 		public int TargetOffset { get; }
 
-		internal InlineBranchTargetInstruction(bool isShortInstruction, int offset, OpCode opcode, int targetOffset)
+		internal BranchTargetInstruction(bool isShortInstruction, int offset, OpCode opcode, int targetOffset)
 			: base(offset, opcode)
 		{
 			IsShortInstruction = isShortInstruction;
@@ -19,7 +19,7 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 			TargetOffset = targetOffset;
 		}
 
-		public InlineBranchTargetInstruction(bool isShortInstruction, int offset, OpCode opcode, InstructionBase targetInstruction, int targetOffset)
+		public BranchTargetInstruction(bool isShortInstruction, int offset, OpCode opcode, InstructionBase targetInstruction, int targetOffset)
 			: base(offset, opcode)
 		{
 			IsShortInstruction = isShortInstruction;
