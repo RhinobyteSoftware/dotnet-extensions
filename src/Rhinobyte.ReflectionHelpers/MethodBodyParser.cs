@@ -178,6 +178,7 @@ namespace Rhinobyte.ReflectionHelpers
 				}
 			}
 
+			var highestOffset = instructions.Last().Offset;
 			foreach (var instructionToUpdate in instructions)
 			{
 				switch (instructionToUpdate.OpCode.OperandType)
@@ -185,7 +186,7 @@ namespace Rhinobyte.ReflectionHelpers
 					case OperandType.InlineBrTarget:
 					case OperandType.ShortInlineBrTarget:
 						var branchTargetInstruction = (BranchTargetInstruction)instructionToUpdate;
-						branchTargetInstruction.TargetInstruction = FindInstructionByOffset(instructions, branchTargetInstruction, branchTargetInstruction.TargetOffset);
+						branchTargetInstruction.TargetInstruction = FindInstructionByOffset(highestOffset, instructions, branchTargetInstruction, branchTargetInstruction.TargetOffset);
 						break;
 
 					case OperandType.InlineSwitch:
@@ -193,7 +194,7 @@ namespace Rhinobyte.ReflectionHelpers
 						var targetInstructions = new List<InstructionBase>();
 						foreach (var targetOffset in switchInstruction.TargetOffsets)
 						{
-							targetInstructions.Add(FindInstructionByOffset(instructions, switchInstruction, targetOffset));
+							targetInstructions.Add(FindInstructionByOffset(highestOffset, instructions, switchInstruction, targetOffset));
 						}
 						switchInstruction.TargetInstructions = targetInstructions;
 						break;
@@ -203,16 +204,42 @@ namespace Rhinobyte.ReflectionHelpers
 			return instructions;
 		}
 
-		internal InstructionBase FindInstructionByOffset(IReadOnlyCollection<InstructionBase> instructions, InstructionBase sourceInstruction, int targetOffset)
+		internal static InstructionBase FindInstructionByOffset(
+			int highestInstructionOffset,
+			IReadOnlyList<InstructionBase> instructionsToSearch,
+			InstructionBase sourceInstruction,
+			int targetOffset)
 		{
-			// TODO: Optimize this... could track the offset -> instruction mappings using a dictionary or could use a binary search on the instructions list in stead of a brute force iteration of the list
-			var targetInstruction = instructions.FirstOrDefault(nextInstruction => nextInstruction.Offset == targetOffset);
-			if (targetInstruction == null)
+			if (targetOffset < 0 || targetOffset > highestInstructionOffset)
 			{
 				throw new InvalidOperationException($"Failed to locate the target instruction for target offset {targetOffset}. [SourceInstruction: {sourceInstruction}]");
 			}
 
-			return targetInstruction;
+			// Perform a binary search for the target offset
+			var minIndex = 0;
+			var maxIndex = instructionsToSearch.Count - 1;
+			while (minIndex <= maxIndex)
+			{
+				var indexToCheck = minIndex + ((maxIndex - minIndex) / 2);
+				var instructionToCheck = instructionsToSearch[indexToCheck];
+				var instructionOffset = instructionToCheck.Offset;
+
+				if (instructionOffset == targetOffset)
+				{
+					return instructionToCheck;
+				}
+
+				if (instructionOffset > targetOffset)
+				{
+					maxIndex = indexToCheck - 1;
+				}
+				else
+				{
+					minIndex = indexToCheck + 1;
+				}
+			}
+
+			throw new InvalidOperationException($"Failed to locate the target instruction for target offset {targetOffset}. [SourceInstruction: {sourceInstruction}]");
 		}
 
 		/// <summary>
