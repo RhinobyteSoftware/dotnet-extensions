@@ -14,7 +14,7 @@ namespace Rhinobyte.ReflectionHelpers.UnitTests
 			methodInfo.Should().NotBeNull();
 
 			var instructions = new MethodBodyParser(methodInfo!).ParseInstructions();
-			instructions.Count.Should().Be(0);
+			instructions.Count.Should().Be(12);
 		}
 
 		public static int MethodToParse()

@@ -38,6 +38,44 @@ namespace Rhinobyte.ReflectionHelpers
 			_parameters = method.GetParameters();
 		}
 
+		internal static InstructionBase FindInstructionByOffset(
+			int highestInstructionOffset,
+			IReadOnlyList<InstructionBase> instructionsToSearch,
+			InstructionBase sourceInstruction,
+			int targetOffset)
+		{
+			if (targetOffset < 0 || targetOffset > highestInstructionOffset)
+			{
+				throw new InvalidOperationException($"Failed to locate the target instruction for target offset {targetOffset}. [SourceInstruction: {sourceInstruction}]");
+			}
+
+			// Perform a binary search for the target offset
+			var minIndex = 0;
+			var maxIndex = instructionsToSearch.Count - 1;
+			while (minIndex <= maxIndex)
+			{
+				var indexToCheck = minIndex + ((maxIndex - minIndex) / 2);
+				var instructionToCheck = instructionsToSearch[indexToCheck];
+				var instructionOffset = instructionToCheck.Offset;
+
+				if (instructionOffset == targetOffset)
+				{
+					return instructionToCheck;
+				}
+
+				if (instructionOffset > targetOffset)
+				{
+					maxIndex = indexToCheck - 1;
+				}
+				else
+				{
+					minIndex = indexToCheck + 1;
+				}
+			}
+
+			throw new InvalidOperationException($"Failed to locate the target instruction for target offset {targetOffset}. [SourceInstruction: {sourceInstruction}]");
+		}
+
 		internal IReadOnlyCollection<InstructionBase> ParseInstructions()
 		{
 			_bytePosition = 0;
@@ -56,7 +94,9 @@ namespace Rhinobyte.ReflectionHelpers
 					case OperandType.InlineBrTarget:
 						// Set the targetOffset = current _bytePosition + int32 operand following the opcode... we'll iterate over the
 						// instructions later and set the TargetInstruction property once we have all the instruction offsets calculated
-						instructions.Add(new BranchTargetInstruction(false, instructionOffset, currentOpcode, _bytePosition + ReadInt32()));
+
+						// IMPORTANT: Call ReadInt32() first to advance the _bytePosition before appending _bytePosition for the calculated target offset
+						instructions.Add(new BranchTargetInstruction(false, instructionOffset, currentOpcode, ReadInt32() + _bytePosition));
 						break;
 
 					case OperandType.InlineField:
@@ -76,6 +116,7 @@ namespace Rhinobyte.ReflectionHelpers
 						break;
 
 					case OperandType.InlineNone:
+						instructions.Add(new BasicInstruction(instructionOffset, currentOpcode));
 						break;
 
 					case OperandType.InlineR:
@@ -96,7 +137,7 @@ namespace Rhinobyte.ReflectionHelpers
 						var targetOffsets = new int[numberOfTargets];
 						for (var targetIndex = 0; targetIndex < numberOfTargets; ++targetIndex)
 						{
-							targetOffsets[targetIndex] = baseOffset + ReadInt32();
+							targetOffsets[targetIndex] = ReadInt32() + baseOffset;
 						}
 
 						// Set the targetOffsets array now... we'll iterate over the
@@ -156,7 +197,9 @@ namespace Rhinobyte.ReflectionHelpers
 					case OperandType.ShortInlineBrTarget:
 						// Set the targetOffset = current _bytePosition + int8 operand following the opcode... we'll iterate over the
 						// instructions later and set the TargetInstruction property once we have all the instruction offsets calculated
-						instructions.Add(new BranchTargetInstruction(true, instructionOffset, currentOpcode, _bytePosition + ((sbyte)ReadByte())));
+
+						// IMPORTANT: Call ReadByte() first to advance the _bytePosition before appending _bytePosition for the calculated target offset
+						instructions.Add(new BranchTargetInstruction(true, instructionOffset, currentOpcode, ((sbyte)ReadByte()) + _bytePosition));
 						break;
 
 					case OperandType.ShortInlineI:
@@ -202,44 +245,6 @@ namespace Rhinobyte.ReflectionHelpers
 			}
 
 			return instructions;
-		}
-
-		internal static InstructionBase FindInstructionByOffset(
-			int highestInstructionOffset,
-			IReadOnlyList<InstructionBase> instructionsToSearch,
-			InstructionBase sourceInstruction,
-			int targetOffset)
-		{
-			if (targetOffset < 0 || targetOffset > highestInstructionOffset)
-			{
-				throw new InvalidOperationException($"Failed to locate the target instruction for target offset {targetOffset}. [SourceInstruction: {sourceInstruction}]");
-			}
-
-			// Perform a binary search for the target offset
-			var minIndex = 0;
-			var maxIndex = instructionsToSearch.Count - 1;
-			while (minIndex <= maxIndex)
-			{
-				var indexToCheck = minIndex + ((maxIndex - minIndex) / 2);
-				var instructionToCheck = instructionsToSearch[indexToCheck];
-				var instructionOffset = instructionToCheck.Offset;
-
-				if (instructionOffset == targetOffset)
-				{
-					return instructionToCheck;
-				}
-
-				if (instructionOffset > targetOffset)
-				{
-					maxIndex = indexToCheck - 1;
-				}
-				else
-				{
-					minIndex = indexToCheck + 1;
-				}
-			}
-
-			throw new InvalidOperationException($"Failed to locate the target instruction for target offset {targetOffset}. [SourceInstruction: {sourceInstruction}]");
 		}
 
 		/// <summary>
