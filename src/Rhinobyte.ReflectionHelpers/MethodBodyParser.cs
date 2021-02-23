@@ -84,7 +84,18 @@ namespace Rhinobyte.ReflectionHelpers
 						break;
 
 					case OperandType.InlineSwitch:
-						// Construct switch instruction
+						var numberOfTargets = ReadInt32();
+						var baseOffset = _bytePosition + (4 * numberOfTargets);
+						var targetOffsets = new int[numberOfTargets];
+						for (var targetIndex = 0; targetIndex < numberOfTargets; ++targetIndex)
+						{
+							targetOffsets[targetIndex] = baseOffset + ReadInt32();
+						}
+
+						// Set the targetOffsets array now... we'll iterate over the
+						// instructions later and set the TargetInstructions property once we have
+						// all the instruction offsets calculated
+						instructions.Add(new SwitchInstruction(instructionOffset, currentOpcode, targetOffsets));
 						break;
 
 					case OperandType.InlineTok:
@@ -115,7 +126,7 @@ namespace Rhinobyte.ReflectionHelpers
 						break;
 
 					case OperandType.InlineVar:
-						// Construct variable/argument instruction
+						// TODO: Construct variable/argument instruction
 						break;
 
 					case OperandType.ShortInlineBrTarget:
@@ -139,7 +150,7 @@ namespace Rhinobyte.ReflectionHelpers
 						break;
 
 					case OperandType.ShortInlineVar:
-						// Construct 8bit variable/argument instruction
+						// TODO: Construct 8bit variable/argument instruction
 						break;
 
 					default:
@@ -154,20 +165,34 @@ namespace Rhinobyte.ReflectionHelpers
 					case OperandType.InlineBrTarget:
 					case OperandType.ShortInlineBrTarget:
 						var branchTargetInstruction = (BranchTargetInstruction)instructionToUpdate;
+						branchTargetInstruction.TargetInstruction = FindInstructionByOffset(instructions, branchTargetInstruction, branchTargetInstruction.TargetOffset);
+						break;
 
-						// TODO: Optimize this... could track the offset -> instruction mappings using a dictionary or could use a binary search on the instructions list in stead of a brute force iteration of the list
-						var targetInstruction = instructions.FirstOrDefault(nextInstruction => nextInstruction.Offset == branchTargetInstruction.TargetOffset);
-						if (targetInstruction == null)
+					case OperandType.InlineSwitch:
+						var switchInstruction = (SwitchInstruction)instructionToUpdate;
+						var targetInstructions = new List<InstructionBase>();
+						foreach (var targetOffset in switchInstruction.TargetOffsets)
 						{
-							throw new InvalidOperationException($"Failed to locate the targetInstruction for target offset {branchTargetInstruction.TargetOffset}. [BranchTargetInstructionOffset: {instructionToUpdate.Offset}]");
+							targetInstructions.Add(FindInstructionByOffset(instructions, switchInstruction, targetOffset));
 						}
-
-						branchTargetInstruction.TargetInstruction = targetInstruction;
+						switchInstruction.TargetInstructions = targetInstructions;
 						break;
 				}
 			}
 
 			return instructions;
+		}
+
+		internal InstructionBase FindInstructionByOffset(IReadOnlyCollection<InstructionBase> instructions, InstructionBase sourceInstruction, int targetOffset)
+		{
+			// TODO: Optimize this... could track the offset -> instruction mappings using a dictionary or could use a binary search on the instructions list in stead of a brute force iteration of the list
+			var targetInstruction = instructions.FirstOrDefault(nextInstruction => nextInstruction.Offset == targetOffset);
+			if (targetInstruction == null)
+			{
+				throw new InvalidOperationException($"Failed to locate the target instruction for target offset {targetOffset}. [SourceInstruction: {sourceInstruction}]");
+			}
+
+			return targetInstruction;
 		}
 
 		/// <summary>
