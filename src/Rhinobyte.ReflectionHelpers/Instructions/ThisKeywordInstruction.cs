@@ -15,5 +15,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="MethodBase"/> of the "this" keyword.
 		/// </summary>
 		public MethodBase Method { get; }
+
+		public override string ToString()
+			=> $"{base.ToString()}  [this keyword]";
 	}
 }

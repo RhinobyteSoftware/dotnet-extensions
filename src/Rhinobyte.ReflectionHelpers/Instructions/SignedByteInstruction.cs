@@ -14,5 +14,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="sbyte"/> value of the instruction.
 		/// </summary>
 		public sbyte Value { get; }
+
+		public override string ToString()
+			=> $"{base.ToString()}  [SByte Value: {Value}]";
 	}
 }

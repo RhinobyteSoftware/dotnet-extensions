@@ -20,5 +20,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 			// Need to return a clone of the array so that consumers of this library cannot change its contents
 			return (byte[])_signatureBlob.Clone();
 		}
+
+		public override string ToString()
+		{
+			if (_signatureBlob == null)
+			{
+				return $"{base.ToString()}  [SignatureBlob: null]";
+			}
+
+			return $"{base.ToString()}  [SignatureBlob: {_signatureBlob.Length} bytes]";
+		}
 	}
 }

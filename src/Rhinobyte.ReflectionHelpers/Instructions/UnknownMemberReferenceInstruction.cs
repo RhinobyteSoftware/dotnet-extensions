@@ -15,5 +15,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="MemberInfo"/> reference of the instruction.
 		/// </summary>
 		public MemberInfo MemberReference { get; }
+
+		public override string ToString()
+		{
+			if (MemberReference == null)
+			{
+				return $"{base.ToString()}  [MemberReference: null]";
+			}
+
+			return $"{base.ToString()}  [MemberReference: {MemberReference.MemberType}  {MemberReference.Name} ({MemberReference.DeclaringType?.Name ?? "UnknownDeclaringType"})]";
+		}
 	}
 }

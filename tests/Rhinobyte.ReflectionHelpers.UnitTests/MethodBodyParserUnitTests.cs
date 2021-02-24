@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System.Reflection;
 
 namespace Rhinobyte.ReflectionHelpers.UnitTests
@@ -15,6 +16,9 @@ namespace Rhinobyte.ReflectionHelpers.UnitTests
 
 			var instructions = new MethodBodyParser(methodInfo!).ParseInstructions();
 			instructions.Count.Should().Be(12);
+
+			var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
+			results.Should().NotBeNullOrEmpty();
 		}
 
 		public static int MethodToParse()

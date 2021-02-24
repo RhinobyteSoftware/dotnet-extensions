@@ -15,5 +15,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="ParameterInfo"/> reference of the instruction.
 		/// </summary>
 		public ParameterInfo ParameterReference { get; }
+
+		public override string ToString()
+		{
+			if (ParameterReference == null)
+			{
+				return $"{base.ToString()}  [ParameterReference: null]";
+			}
+
+			return $"{base.ToString()}  [ParameterReference: {ParameterReference.ParameterType?.Name ?? "(Unknown Parameter Type)"} {ParameterReference.Name}{(ParameterReference.IsOptional ? " (Optional)" : null)}]";
+		}
 	}
 }

@@ -14,5 +14,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="double"/> value of the instruction.
 		/// </summary>
 		public double Value { get; }
+
+		public override string ToString()
+			=> $"{base.ToString()}  [Double Value: {Value}]";
 	}
 }

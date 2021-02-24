@@ -15,5 +15,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="Type"/> reference of the instruction.
 		/// </summary>
 		public Type TypeReference { get; }
+
+		public override string ToString()
+		{
+			if (TypeReference == null)
+			{
+				return $"{base.ToString()}  [TypeReference: null]";
+			}
+
+			return $"{base.ToString()}  [TypeReference: {TypeReference.Name}]";
+		}
 	}
 }

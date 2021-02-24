@@ -14,5 +14,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="long"/> value of the instruction.
 		/// </summary>
 		public long Value { get; }
+
+		public override string ToString()
+			=> $"{base.ToString()}  [Int64 Value: {Value}]";
 	}
 }

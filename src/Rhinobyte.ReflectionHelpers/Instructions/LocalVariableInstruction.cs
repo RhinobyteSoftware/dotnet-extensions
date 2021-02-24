@@ -15,5 +15,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="LocalVariableInfo"/> local variable of the instruction.
 		/// </summary>
 		public LocalVariableInfo LocalVariable { get; }
+
+		public override string ToString()
+		{
+			if (LocalVariable == null)
+			{
+				return $"{base.ToString()}  [LocalVariable: null]";
+			}
+
+			return $"{base.ToString()}  [LocalVariable: Index {LocalVariable.LocalIndex} ({LocalVariable.LocalType?.Name ?? "UnknownType"})]";
+		}
 	}
 }

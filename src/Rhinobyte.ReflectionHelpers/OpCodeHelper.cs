@@ -15,24 +15,24 @@ namespace Rhinobyte.ReflectionHelpers
 		public static readonly IReadOnlyDictionary<short, string> DescriptionLookup = new Dictionary<short, string>()
 		{
 			{ 0, "No-op" }, // OpCodes.Nop
-			{ 1, "Break" }, // OpCodes.Break
-			{ 2, "Load Argument - Index 0" }, // OpCodes.Ldarg_0
-			{ 3, "Load Argument - Index 1" }, // OpCodes.Ldarg_1
-			{ 4, "Load Argument - Index 2" }, // OpCodes.Ldarg_2
-			{ 5, "Load Argument - Index 3" }, // OpCodes.Ldarg_3
-			{ 6, "Load LocalVariable - Index 0" }, // OpCodes.Ldloc_0
-			{ 7, "Load LocalVariable - Index 1" }, // OpCodes.Ldloc_1
-			{ 8, "Load LocalVariable - Index 2" }, // OpCodes.Ldloc_2
-			{ 9, "Load LocalVariable - Index 3" }, // OpCodes.Ldloc_3
+			{ 1, "BREAK - Signals CLI To Inform Debugger That A Break Point Has Been Tripped" }, // OpCodes.Break
+			{ 2, "Load Argument Onto Stack - Index 0" }, // OpCodes.Ldarg_0
+			{ 3, "Load Argument Onto Stack - Index 1" }, // OpCodes.Ldarg_1
+			{ 4, "Load Argument Onto Stack - Index 2" }, // OpCodes.Ldarg_2
+			{ 5, "Load Argument Onto Stack - Index 3" }, // OpCodes.Ldarg_3
+			{ 6, "Load LocalVariable Onto Stack - Index 0" }, // OpCodes.Ldloc_0
+			{ 7, "Load LocalVariable Onto Stack - Index 1" }, // OpCodes.Ldloc_1
+			{ 8, "Load LocalVariable Onto Stack - Index 2" }, // OpCodes.Ldloc_2
+			{ 9, "Load LocalVariable Onto Stack - Index 3" }, // OpCodes.Ldloc_3
 			{ 10, "Pop Stack To LocalVariable - Index 0" }, // OpCodes.Stloc_0
 			{ 11, "Pop Stack To LocalVariable - Index 1" }, // OpCodes.Stloc_1
 			{ 12, "Pop Stack To LocalVariable - Index 2" }, // OpCodes.Stloc_2
 			{ 13, "Pop Stack To LocalVariable - Index 3" }, // OpCodes.Stloc_3
-			{ 14, "Load Argument Reference - Specified Short Form Index" },  // OpCodes.Ldarg_S
-			{ 15, "Load Argument Address - Short Form" },  // OpCodes.Ldarga_S
+			{ 14, "Load Argument Reference Onto Stack - Specified Short Form Index" },  // OpCodes.Ldarg_S
+			{ 15, "Load Argument Address Onto Stack - Short Form" },  // OpCodes.Ldarga_S
 			{ 16, "Store Top Of Stack To Argument Slot - Specified Short Form Index" }, // OpCodes.Starg_S
-			{ 17, "Load LocalVariable - Specified Short Form Index" }, // OpCodes.Ldloc_S
-			{ 18, "Load LocalVariable Address - Short Form" }, // OpCodes.Ldloca_S
+			{ 17, "Load LocalVariable Onto Stack - Specified Short Form Index" }, // OpCodes.Ldloc_S
+			{ 18, "Load LocalVariable Address Onto Stack - Short Form" }, // OpCodes.Ldloca_S
 			{ 19, "Pop Stack To LocalVariable - Specified Short Form Index" }, // OpCodes.Stloc_S
 			{ 20, "Push To Stack:  Null Reference (Type O)" }, // OpCodes.Ldnull
 			{ 21, "Push To Stack:  -1 (As Int32)" }, // OpCodes.Ldc_I4_M1
@@ -83,17 +83,17 @@ namespace Rhinobyte.ReflectionHelpers
 			{ 67, "Transfer Control To Target Instruction, If the first value is less than or equal to the second value [unsigned integer or unordered float]" }, // OpCodes.Ble_Un
 			{ 68, "Transfer Control To Target Instruction, If the first value is less than the second value [unsigned integer or unordered float]" }, // OpCodes.Blt_Un
 			{ 69, "Implements A Jump Table" }, // OpCodes.Switch
-			{ 70, "Load Indirect - Int8 Value As Int32" }, // OpCodes.Ldind_I1
-			{ 71, "Load Indirect - Unsigned Int8 Value As Int32" }, // OpCodes.Ldind_U1
-			{ 72, "Load Indirect - Int16 Value As Int32" }, // OpCodes.Ldind_I2
-			{ 73, "Load Indirect - Unsigned Int16 Value As Int32" }, // OpCodes.Ldind_U2
-			{ 74, "Load Indirect - Int32 Value As Int32" }, // OpCodes.Ldind_I4
-			{ 75, "Load Indirect - Unsigned Int32 Value As Int32" }, // OpCodes.Ldind_U4
-			{ 76, "Load Indirect - Int64 Value As Int64" }, // OpCodes.Ldind_I8
-			{ 77, "Load Indirect - Native Int Value As Native Int" }, // OpCodes.Ldind_I
-			{ 78, "Load Indirect - Float32 Value As Type F (float)" }, // OpCodes.Ldind_R4
-			{ 79, "Load Indirect - Float64 Value As Type F (float)" }, // OpCodes.Ldind_R8
-			{ 80, "Load Indirect - Object Reference As Type O" }, // OpCodes.Ldind_Ref
+			{ 70, "Load Indirect Onto Stack - Int8 Value As Int32" }, // OpCodes.Ldind_I1
+			{ 71, "Load Indirect Onto Stack - Unsigned Int8 Value As Int32" }, // OpCodes.Ldind_U1
+			{ 72, "Load Indirect Onto Stack - Int16 Value As Int32" }, // OpCodes.Ldind_I2
+			{ 73, "Load Indirect Onto Stack - Unsigned Int16 Value As Int32" }, // OpCodes.Ldind_U2
+			{ 74, "Load Indirect Onto Stack - Int32 Value As Int32" }, // OpCodes.Ldind_I4
+			{ 75, "Load Indirect Onto Stack - Unsigned Int32 Value As Int32" }, // OpCodes.Ldind_U4
+			{ 76, "Load Indirect Onto Stack - Int64 Value As Int64" }, // OpCodes.Ldind_I8
+			{ 77, "Load Indirect Onto Stack - Native Int Value As Native Int" }, // OpCodes.Ldind_I
+			{ 78, "Load Indirect Onto Stack - Float32 Value As Type F (float)" }, // OpCodes.Ldind_R4
+			{ 79, "Load Indirect Onto Stack - Float64 Value As Type F (float)" }, // OpCodes.Ldind_R8
+			{ 80, "Load Indirect Onto Stack - Object Reference As Type O" }, // OpCodes.Ldind_Ref
 			{ 81, "Store Value At Supplied Address - Object Reference" }, // OpCodes.Stind_Ref
 			{ 82, "Store Value At Supplied Address - Int8" }, // OpCodes.Stind_I1
 			{ 83, "Store Value At Supplied Address - Int16" }, // OpCodes.Stind_I2

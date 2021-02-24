@@ -132,7 +132,50 @@ namespace Rhinobyte.ReflectionHelpers
 						break;
 
 					case OperandType.InlineNone:
-						instructions.Add(new SimpleInstruction(instructionOffset, currentOpcode));
+						switch (currentOpcode.Value)
+						{
+							case 2: // Ldarg_0
+								instructions.Add(!_isStaticMethod
+									? new ThisKeywordInstruction(instructionOffset, currentOpcode, _method)
+									: new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[0]));
+								break;
+
+							case 3: // Ldarg_1
+								instructions.Add(new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[1]));
+								break;
+
+							case 4: // Ldarg_2
+								instructions.Add(new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[2]));
+								break;
+
+							case 5: // Ldarg_3
+								instructions.Add(new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[3]));
+								break;
+
+							case 6: // Ldloc_0
+							case 10: // Stloc_0
+								instructions.Add(new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[0]));
+								break;
+
+							case 7: // Ldloc_1
+							case 11: // Stloc_1
+								instructions.Add(new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[1]));
+								break;
+
+							case 8: // Ldloc_2
+							case 12: // Stloc_2
+								instructions.Add(new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[2]));
+								break;
+
+							case 9: // Ldloc_3
+							case 13: // Stloc_3
+								instructions.Add(new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[3]));
+								break;
+
+							default:
+								instructions.Add(new SimpleInstruction(instructionOffset, currentOpcode));
+								break;
+						}
 						break;
 
 					case OperandType.InlineR:

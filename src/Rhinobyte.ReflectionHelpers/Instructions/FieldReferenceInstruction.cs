@@ -15,5 +15,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="FieldInfo"/> reference of the instruction.
 		/// </summary>
 		public FieldInfo FieldReference { get; }
+
+		public override string ToString()
+			=> $"{base.ToString()}  [FieldReference: {FieldReference?.Name}]";
 	}
 }

@@ -31,8 +31,10 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// </summary>
 		public virtual int Size { get; }
 
-		public virtual string FullDescription()
-			=> $"[{GetType().Name}]  {ToString()}{Environment.NewLine}[Offset: {Offset}]  [Size: {Size}]{Environment.NewLine}[OpCode: {OpCodeHelper.NameLookup[OpCode.Value]}]  [OpCode.OperandType: {OpCode.OperandType}]  [OpCode.OpCodeType: {OpCode.OpCodeType}]  [OpCode.Size: {OpCode.Size}]  [Opcode.StackBehaviourPop: {OpCode.StackBehaviourPop}]  [Opcode.StackBehaviourPush: {OpCode.StackBehaviourPush}]";
+		public virtual string FullDescription() =>
+$@"{ToString()}
+[{GetType().Name}   Offset: {Offset}   Size: {Size}]
+[OpCode: {OpCodeHelper.NameLookup[OpCode.Value]}   OperandType: {OpCode.OperandType}   OpCodeType: {OpCode.OpCodeType}   Size: {OpCode.Size}   StackBehaviourPop: {OpCode.StackBehaviourPop}   Opcode.StackBehaviourPush: {OpCode.StackBehaviourPush}]";
 
 		public override string ToString()
 		{

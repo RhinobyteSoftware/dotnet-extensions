@@ -33,5 +33,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The instruction target offsets of the switch statement's jump table.
 		/// </summary>
 		public IReadOnlyCollection<int> TargetOffsets { get; }
+
+		public override string ToString()
+			=> $"{base.ToString()}  [TargetOffsets: {string.Join(", ", TargetOffsets)}]";
 	}
 }

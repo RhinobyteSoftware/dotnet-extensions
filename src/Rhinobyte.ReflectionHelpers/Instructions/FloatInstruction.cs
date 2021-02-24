@@ -14,5 +14,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="float"/> value of the instruction.
 		/// </summary>
 		public float Value { get; }
+
+		public override string ToString()
+			=> $"{base.ToString()}  [Float Value: {Value}]";
 	}
 }
