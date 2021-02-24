@@ -5,12 +5,16 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 {
 	public sealed class MethodReferenceInstruction : InstructionBase
 	{
-		public MethodBase MethodReference { get; }
-
 		public MethodReferenceInstruction(int offset, OpCode opcode, MethodBase methodReference)
-			: base(offset, opcode)
+			: base(offset, opcode, opcode.Size + 4)
 		{
 			MethodReference = methodReference;
 		}
+
+
+		/// <summary>
+		/// The <see cref="MethodBase"/> reference of the instruction.
+		/// </summary>
+		public MethodBase MethodReference { get; }
 	}
 }

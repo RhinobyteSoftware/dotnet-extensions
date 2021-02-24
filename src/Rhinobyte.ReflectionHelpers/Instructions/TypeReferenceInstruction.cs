@@ -5,12 +5,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 {
 	public sealed class TypeReferenceInstruction : InstructionBase
 	{
-		public Type TypeReference { get; }
-
 		public TypeReferenceInstruction(int offset, OpCode opcode, Type typeReference)
-			: base(offset, opcode)
+			: base(offset, opcode, opcode.Size + 4)
 		{
 			TypeReference = typeReference;
 		}
+
+		/// <summary>
+		/// The <see cref="Type"/> reference of the instruction.
+		/// </summary>
+		public Type TypeReference { get; }
 	}
 }

@@ -4,12 +4,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 {
 	public sealed class StringInstruction : InstructionBase
 	{
-		public string Value { get; }
-
 		public StringInstruction(int offset, OpCode opcode, string value)
-			: base(offset, opcode)
+			: base(offset, opcode, opcode.Size + 4)
 		{
 			Value = value;
 		}
+
+		/// <summary>
+		/// The <see cref="string"/> value of the instruction.
+		/// </summary>
+		public string Value { get; }
 	}
 }

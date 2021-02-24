@@ -4,12 +4,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 {
 	public sealed class DoubleInstruction : InstructionBase
 	{
-		public double Value { get; }
-
 		public DoubleInstruction(int offset, OpCode opcode, double value)
-			: base(offset, opcode)
+			: base(offset, opcode, opcode.Size + 8)
 		{
 			Value = value;
 		}
+
+		/// <summary>
+		/// The <see cref="double"/> value of the instruction.
+		/// </summary>
+		public double Value { get; }
 	}
 }

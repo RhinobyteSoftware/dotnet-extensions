@@ -116,7 +116,7 @@ namespace Rhinobyte.ReflectionHelpers
 						break;
 
 					case OperandType.InlineNone:
-						instructions.Add(new BasicInstruction(instructionOffset, currentOpcode));
+						instructions.Add(new SimpleInstruction(instructionOffset, currentOpcode));
 						break;
 
 					case OperandType.InlineR:
@@ -175,23 +175,24 @@ namespace Rhinobyte.ReflectionHelpers
 
 					case OperandType.InlineVar:
 					case OperandType.ShortInlineVar:
-						var variableIndex = currentOpcode.OperandType == OperandType.InlineVar
-							? ReadInt16()
-							: ReadByte();
+						var isShortForm = currentOpcode.OperandType == OperandType.ShortInlineVar;
+						var variableIndex = isShortForm
+							? ReadByte()
+							: ReadInt16();
 
 						if (OpCodeHelper.LocalVariableOpcodeValues.Contains(currentOpcode.Value))
 						{
-							instructions.Add(new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[variableIndex]));
+							instructions.Add(new LocalVariableInstruction(isShortForm, instructionOffset, currentOpcode, _localVariables[variableIndex]));
 							break;
 						}
 
 						if (!_isStaticMethod && variableIndex == 0)
 						{
-							instructions.Add(new ThisKeywordInstruction(instructionOffset, currentOpcode, _method));
+							instructions.Add(new ThisKeywordInstruction(isShortForm, instructionOffset, currentOpcode, _method));
 							break;
 						}
 
-						instructions.Add(new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[variableIndex]));
+						instructions.Add(new ParameterReferenceInstruction(isShortForm, instructionOffset, currentOpcode, _parameters[variableIndex]));
 						break;
 
 					case OperandType.ShortInlineBrTarget:

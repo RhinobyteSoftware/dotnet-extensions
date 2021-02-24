@@ -4,12 +4,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 {
 	public sealed class SignedByteInstruction : InstructionBase
 	{
-		public sbyte Value { get; }
-
 		public SignedByteInstruction(int offset, OpCode opcode, sbyte value)
-			: base(offset, opcode)
+			: base(offset, opcode, opcode.Size + 1)
 		{
 			Value = value;
 		}
+
+		/// <summary>
+		/// The <see cref="sbyte"/> value of the instruction.
+		/// </summary>
+		public sbyte Value { get; }
 	}
 }

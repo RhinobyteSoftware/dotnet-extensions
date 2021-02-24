@@ -7,13 +7,13 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		private readonly byte[] _signatureBlob;
 
 		public SignatureInstruction(int offset, OpCode opcode, byte[] signatureBlob)
-			: base(offset, opcode)
+			: base(offset, opcode, opcode.Size + 4)
 		{
 			_signatureBlob = signatureBlob;
 		}
 
 		/// <summary>
-		/// Returns a copy of the singature blob byte[]
+		/// Returns a copy of the instruction's singature blob <see cref="byte"/>[].
 		/// </summary>
 		public byte[] GetSignatureBlob()
 		{

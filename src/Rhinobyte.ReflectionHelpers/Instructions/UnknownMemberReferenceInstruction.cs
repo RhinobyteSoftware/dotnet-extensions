@@ -5,12 +5,15 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 {
 	public sealed class UnknownMemberReferenceInstruction : InstructionBase
 	{
-		public MemberInfo MemberReference { get; }
-
 		public UnknownMemberReferenceInstruction(int offset, OpCode opcode, MemberInfo memberReference)
-			: base(offset, opcode)
+			: base(offset, opcode, opcode.Size + 4)
 		{
 			MemberReference = memberReference;
 		}
+
+		/// <summary>
+		/// The <see cref="MemberInfo"/> reference of the instruction.
+		/// </summary>
+		public MemberInfo MemberReference { get; }
 	}
 }

@@ -1,25 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
 	public sealed class SwitchInstruction : InstructionBase
 	{
-		public IReadOnlyCollection<InstructionBase> TargetInstructions { get; internal set; }
-		public IReadOnlyCollection<int> TargetOffsets { get; }
-
 		internal SwitchInstruction(int offset, OpCode opcode, IReadOnlyCollection<int> targetOffsets)
-			: base(offset, opcode)
+			: base(offset, opcode, opcode.Size + 4 + (targetOffsets.Count * 4))
 		{
 			TargetInstructions = null!; // Nullability hack, the parser will be responsible for ensuring this is always set to a non-null instruction set
 			TargetOffsets = targetOffsets;
 		}
 
 		public SwitchInstruction(int offset, OpCode opcode, IReadOnlyCollection<InstructionBase> targetInstructions, IReadOnlyCollection<int> targetOffsets)
-			: base(offset, opcode)
+			: base(offset, opcode, opcode.Size + 4 + (4 * targetOffsets?.Count ?? throw new ArgumentNullException(nameof(targetOffsets))))
 		{
-			TargetInstructions = targetInstructions;
-			TargetOffsets = targetOffsets;
+			TargetInstructions = targetInstructions ?? throw new ArgumentNullException(nameof(targetInstructions));
+			TargetOffsets = targetOffsets!;
 		}
+
+		/// <summary>
+		/// The collection of <see cref="InstructionBase"/> targets of the switch statement's jump table.
+		/// </summary>
+		public IReadOnlyCollection<InstructionBase> TargetInstructions { get; internal set; }
+
+		/// <summary>
+		/// The instruction target offsets of the switch statement's jump table.
+		/// </summary>
+		public IReadOnlyCollection<int> TargetOffsets { get; }
 	}
 }
