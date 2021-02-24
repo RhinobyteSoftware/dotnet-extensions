@@ -58,63 +58,63 @@ namespace Rhinobyte.ReflectionHelpers
 			{ 43, "Unconditionally Transfer Control To Target Instruction (Short Form)" }, // OpCodes.Br_S
 			{ 44, "Transfer Control To Target Instruction, If value is false, a null reference, or zero (Short Form)" }, // OpCodes.Brfalse_S
 			{ 45, "Transfer Control To Target Instruction, If value is true, not null, or non-zero (Short Form)" }, // OpCodes.Brtrue_S
-			//{ 46, OpCodes.Beq_S }, // OpCodes.Beq_S
-			//{ 47, OpCodes.Bge_S }, // OpCodes.Bge_S
-			//{ 48, OpCodes.Bgt_S }, // OpCodes.Bgt_S
-			//{ 49, OpCodes.Ble_S }, // OpCodes.Ble_S
-			//{ 50, OpCodes.Blt_S }, // OpCodes.Blt_S
-			//{ 51, OpCodes.Bne_Un_S }, // OpCodes.Bne_Un_S
-			//{ 52, OpCodes.Bge_Un_S }, // OpCodes.Bge_Un_S
-			//{ 53, OpCodes.Bgt_Un_S }, // OpCodes.Bgt_Un_S
-			//{ 54, OpCodes.Ble_Un_S }, // OpCodes.Ble_Un_S
-			//{ 55, OpCodes.Blt_Un_S }, // OpCodes.Blt_Un_S
-			//{ 56, OpCodes.Br }, // OpCodes.Br
-			//{ 57, OpCodes.Brfalse }, // OpCodes.Brfalse
-			//{ 58, OpCodes.Brtrue }, // OpCodes.Brtrue
-			//{ 59, OpCodes.Beq }, // OpCodes.Beq
-			//{ 60, OpCodes.Bge }, // OpCodes.Bge
-			//{ 61, OpCodes.Bgt }, // OpCodes.Bgt
-			//{ 62, OpCodes.Ble }, // OpCodes.Ble
-			//{ 63, OpCodes.Blt }, // OpCodes.Blt
-			//{ 64, OpCodes.Bne_Un }, // OpCodes.Bne_Un
-			//{ 65, OpCodes.Bge_Un }, // OpCodes.Bge_Un
-			//{ 66, OpCodes.Bgt_Un }, // OpCodes.Bgt_Un
-			//{ 67, OpCodes.Ble_Un }, // OpCodes.Ble_Un
-			//{ 68, OpCodes.Blt_Un }, // OpCodes.Blt_Un
-			//{ 69, OpCodes.Switch }, // OpCodes.Switch
-			//{ 70, OpCodes.Ldind_I1 }, // OpCodes.Ldind_I1
-			//{ 71, OpCodes.Ldind_U1 }, // OpCodes.Ldind_U1
-			//{ 72, OpCodes.Ldind_I2 }, // OpCodes.Ldind_I2
-			//{ 73, OpCodes.Ldind_U2 }, // OpCodes.Ldind_U2
-			//{ 74, OpCodes.Ldind_I4 }, // OpCodes.Ldind_I4
-			//{ 75, OpCodes.Ldind_U4 }, // OpCodes.Ldind_U4
-			//{ 76, OpCodes.Ldind_I8 }, // OpCodes.Ldind_I8
-			//{ 77, OpCodes.Ldind_I }, // OpCodes.Ldind_I
-			//{ 78, OpCodes.Ldind_R4 }, // OpCodes.Ldind_R4
-			//{ 79, OpCodes.Ldind_R8 }, // OpCodes.Ldind_R8
-			//{ 80, OpCodes.Ldind_Ref }, // OpCodes.Ldind_Ref
-			//{ 81, OpCodes.Stind_Ref }, // OpCodes.Stind_Ref
-			//{ 82, OpCodes.Stind_I1 }, // OpCodes.Stind_I1
-			//{ 83, OpCodes.Stind_I2 }, // OpCodes.Stind_I2
-			//{ 84, OpCodes.Stind_I4 }, // OpCodes.Stind_I4
-			//{ 85, OpCodes.Stind_I8 }, // OpCodes.Stind_I8
-			//{ 86, OpCodes.Stind_R4 }, // OpCodes.Stind_R4
-			//{ 87, OpCodes.Stind_R8 }, // OpCodes.Stind_R8
-			//{ 88, OpCodes.Add }, // OpCodes.Add
-			//{ 89, OpCodes.Sub }, // OpCodes.Sub
-			//{ 90, OpCodes.Mul }, // OpCodes.Mul
-			//{ 91, OpCodes.Div }, // OpCodes.Div
-			//{ 92, OpCodes.Div_Un }, // OpCodes.Div_Un
-			//{ 93, OpCodes.Rem }, // OpCodes.Rem
-			//{ 94, OpCodes.Rem_Un }, // OpCodes.Rem_Un
-			//{ 95, OpCodes.And }, // OpCodes.And
-			//{ 96, OpCodes.Or }, // OpCodes.Or
-			//{ 97, OpCodes.Xor }, // OpCodes.Xor
-			//{ 98, OpCodes.Shl }, // OpCodes.Shl
-			//{ 99, OpCodes.Shr }, // OpCodes.Shr
-			//{ 100, OpCodes.Shr_Un }, // OpCodes.Shr_Un
-			//{ 101, OpCodes.Neg }, // OpCodes.Neg
-			//{ 102, OpCodes.Not }, // OpCodes.Not
+			{ 46, "Transfer Control To Target Instruction, If two values are equal (Short Form)" }, // OpCodes.Beq_S
+			{ 47, "Transfer Control To Target Instruction, If the first value is greater than or equal the second value (Short Form)" }, // OpCodes.Bge_S
+			{ 48, "Transfer Control To Target Instruction, If the first value is greater than the second value (Short Form)" }, // OpCodes.Bgt_S
+			{ 49, "Transfer Control To Target Instruction, If the first value is less than or equal to the second value (Short Form)" }, // OpCodes.Ble_S
+			{ 50, "Transfer Control To Target Instruction, If the first value is less than the second value (Short Form)" }, // OpCodes.Blt_S
+			{ 51, "Transfer Control To Target Instruction, When values are not equal [unsigned integer or unordered float] (Short Form)" }, // OpCodes.Bne_Un_S
+			{ 52, "Transfer Control To Target Instruction, If the first value is greater than or equal to the second value [unsigned integer or unordered float] (Short Form)" }, // OpCodes.Bge_Un_S
+			{ 53, "Transfer Control To Target Instruction, If the first value is greater than the second value [unsigned integer or unordered float] (Short Form)" }, // OpCodes.Bgt_Un_S
+			{ 54, "Transfer Control To Target Instruction, If the first value is less than or equal to the second value [unsigned integer or unordered float] (Short Form)" }, // OpCodes.Ble_Un_S
+			{ 55, "Transfer Control To Target Instruction, If the first value is less than the second value [unsigned integer or unordered float] (Short Form)" }, // OpCodes.Blt_Un_S
+			{ 56, "Unconditionally Transfer Control To Target Instruction (Short Form)" }, // OpCodes.Br
+			{ 57, "Transfer Control To Target Instruction, If value is false, a null reference, or zero" }, // OpCodes.Brfalse
+			{ 58, "Transfer Control To Target Instruction, If value is true, not null, or non-zero" }, // OpCodes.Brtrue
+			{ 59, "Transfer Control To Target Instruction, If two values are equal" }, // OpCodes.Beq
+			{ 60, "Transfer Control To Target Instruction, If the first value is greater than or equal the second value" }, // OpCodes.Bge
+			{ 61, "Transfer Control To Target Instruction, If the first value is greater than the second value" }, // OpCodes.Bgt
+			{ 62, "Transfer Control To Target Instruction, If the first value is less than or equal to the second value" }, // OpCodes.Ble
+			{ 63, "Transfer Control To Target Instruction, If the first value is less than the second value" }, // OpCodes.Blt
+			{ 64, "Transfer Control To Target Instruction, When values are not equal [unsigned integer or unordered float]" }, // OpCodes.Bne_Un
+			{ 65, "Transfer Control To Target Instruction, If the first value is greater than or equal to the second value [unsigned integer or unordered float]" }, // OpCodes.Bge_Un
+			{ 66, "Transfer Control To Target Instruction, If the first value is greater than the second value [unsigned integer or unordered float]" }, // OpCodes.Bgt_Un
+			{ 67, "Transfer Control To Target Instruction, If the first value is less than or equal to the second value [unsigned integer or unordered float]" }, // OpCodes.Ble_Un
+			{ 68, "Transfer Control To Target Instruction, If the first value is less than the second value [unsigned integer or unordered float]" }, // OpCodes.Blt_Un
+			{ 69, "Implements A Jump Table" }, // OpCodes.Switch
+			{ 70, "Load Indirect - Int8 Value As Int32" }, // OpCodes.Ldind_I1
+			{ 71, "Load Indirect - Unsigned Int8 Value As Int32" }, // OpCodes.Ldind_U1
+			{ 72, "Load Indirect - Int16 Value As Int32" }, // OpCodes.Ldind_I2
+			{ 73, "Load Indirect - Unsigned Int16 Value As Int32" }, // OpCodes.Ldind_U2
+			{ 74, "Load Indirect - Int32 Value As Int32" }, // OpCodes.Ldind_I4
+			{ 75, "Load Indirect - Unsigned Int32 Value As Int32" }, // OpCodes.Ldind_U4
+			{ 76, "Load Indirect - Int64 Value As Int64" }, // OpCodes.Ldind_I8
+			{ 77, "Load Indirect - Native Int Value As Native Int" }, // OpCodes.Ldind_I
+			{ 78, "Load Indirect - Float32 Value As Type F (float)" }, // OpCodes.Ldind_R4
+			{ 79, "Load Indirect - Float64 Value As Type F (float)" }, // OpCodes.Ldind_R8
+			{ 80, "Load Indirect - Object Reference As Type O" }, // OpCodes.Ldind_Ref
+			{ 81, "Store Value At Supplied Address - Object Reference" }, // OpCodes.Stind_Ref
+			{ 82, "Store Value At Supplied Address - Int8" }, // OpCodes.Stind_I1
+			{ 83, "Store Value At Supplied Address - Int16" }, // OpCodes.Stind_I2
+			{ 84, "Store Value At Supplied Address - Int32" }, // OpCodes.Stind_I4
+			{ 85, "Store Value At Supplied Address - Int64" }, // OpCodes.Stind_I8
+			{ 86, "Store Value At Supplied Address - Float32" }, // OpCodes.Stind_R4
+			{ 87, "Store Value At Supplied Address - Float64" }, // OpCodes.Stind_R8
+			{ 88, "ADD - Two Values - Push Result Onto Evalutation Stack" }, // OpCodes.Add
+			{ 89, "SUBTRACT - One Value From Another - Push Result Onto Evalutation Stack" }, // OpCodes.Sub
+			{ 90, "MULTIPLY - Two Values - Push Result Onto Evalutation Stack" }, // OpCodes.Mul
+			{ 91, "DIVIDE - Two Values - Push Result Onto Evalutation Stack - As Floating Point (Type F) Or Quotient (Type Int32)" }, // OpCodes.Div
+			{ 92, "DIVIDE - Two Unsigned Integer Values - Push Result Onto Evalutation Stack - As Int32" }, // OpCodes.Div_Un
+			{ 93, "REMAINDER - Divide Two Values And Take Remainder - Push Remainder Onto Evaluation Stack" }, // OpCodes.Rem
+			{ 94, "REMAINDER - Divide Two Unsigned Values And Take Remainder - Push Remainder Onto Evaluation Stack" }, // OpCodes.Rem_Un
+			{ 95, "Compute BITWISE AND - Two Values - Push Result Onto Evalutation Stack" }, // OpCodes.And
+			{ 96, "Compute BITWISE OR - Top Two Integer Values On Top Of Stack - Push Result Onto Evalutation Stack" }, // OpCodes.Or
+			{ 97, "Compute BITWISE XOR - Top Two Integer Values On Top Of Stack - Push Result Onto Evalutation Stack" }, // OpCodes.Xor
+			{ 98, "Left Shift Integer (Zeroes) - Specified Number Of Bits - Push Result Onto Evaluation Stack" }, // OpCodes.Shl
+			{ 99, "Right Shift Integer (In Sign) - Specified Number Of Bits - Push Result Onto Evaluation Stack" }, // OpCodes.Shr
+			{ 100, "Right Shift Unsigned Integer (Zeroes) - Specified Number Of Bits - Push Result Onto Evaluation Stack" }, // OpCodes.Shr_Un
+			{ 101, "Negate Value - Push Result Onto Evaluation Stack" }, // OpCodes.Neg
+			{ 102, "NOT (Bitwise Compliment) - Single Integer Value On Top Of Stack - Push Result Onto Evaluation Stack - As Same Type" }, // OpCodes.Not
 			//{ 103, OpCodes.Conv_I1 }, // OpCodes.Conv_I1
 			//{ 104, OpCodes.Conv_I2 }, // OpCodes.Conv_I2
 			//{ 105, OpCodes.Conv_I4 }, // OpCodes.Conv_I4
