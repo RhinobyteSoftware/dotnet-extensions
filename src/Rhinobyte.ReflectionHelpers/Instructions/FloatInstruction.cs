@@ -2,9 +2,12 @@
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class with an associated <see cref="float"/> value operand.
+	/// </summary>
 	public sealed class FloatInstruction : InstructionBase
 	{
-		public FloatInstruction(int offset, OpCode opcode, float value)
+		internal FloatInstruction(int offset, OpCode opcode, float value)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Value = value;

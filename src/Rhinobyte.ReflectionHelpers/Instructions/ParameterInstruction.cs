@@ -3,9 +3,12 @@ using System.Reflection.Emit;
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class with an associated <see cref="ParameterInfo"/> index.
+	/// </summary>
 	public sealed class ParameterReferenceInstruction : InstructionBase
 	{
-		public ParameterReferenceInstruction(int offset, OpCode opcode, ParameterInfo parameterReference)
+		internal ParameterReferenceInstruction(int offset, OpCode opcode, ParameterInfo parameterReference)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			ParameterReference = parameterReference;

@@ -2,9 +2,12 @@
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class with an associated <see cref="double"/> value operand.
+	/// </summary>
 	public sealed class DoubleInstruction : InstructionBase
 	{
-		public DoubleInstruction(int offset, OpCode opcode, double value)
+		internal DoubleInstruction(int offset, OpCode opcode, double value)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Value = value;

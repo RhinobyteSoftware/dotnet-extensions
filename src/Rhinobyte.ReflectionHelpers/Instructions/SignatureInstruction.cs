@@ -2,11 +2,14 @@
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class with an associated signature blob <see cref="byte"/>[].
+	/// </summary>
 	public sealed class SignatureInstruction : InstructionBase
 	{
 		private readonly byte[] _signatureBlob;
 
-		public SignatureInstruction(int offset, OpCode opcode, byte[] signatureBlob)
+		internal SignatureInstruction(int offset, OpCode opcode, byte[] signatureBlob)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			_signatureBlob = signatureBlob;

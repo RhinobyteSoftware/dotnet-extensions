@@ -2,9 +2,12 @@
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class with an associated <see cref="byte"/> value operand.
+	/// </summary>
 	public sealed class ByteInstruction : InstructionBase
 	{
-		public ByteInstruction(int offset, OpCode opcode, byte value)
+		internal ByteInstruction(int offset, OpCode opcode, byte value)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Value = value;

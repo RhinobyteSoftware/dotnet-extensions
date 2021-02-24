@@ -3,9 +3,12 @@ using System.Reflection.Emit;
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class associated with the "this" keyword which is represented by the method argument index 0 for non static methods.
+	/// </summary>
 	public sealed class ThisKeywordInstruction : InstructionBase
 	{
-		public ThisKeywordInstruction(int offset, OpCode opcode, MethodBase method)
+		internal ThisKeywordInstruction(int offset, OpCode opcode, MethodBase method)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Method = method;

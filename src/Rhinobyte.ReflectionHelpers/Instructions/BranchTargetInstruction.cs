@@ -2,19 +2,15 @@
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class for instructions that transfer control to a target instruction at a specified relative target offset.
+	/// </summary>
 	public sealed class BranchTargetInstruction : InstructionBase
 	{
 		internal BranchTargetInstruction(int offset, OpCode opcode, int targetOffset)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			TargetInstruction = null!; // Nullability hack, the parser will be responsible for ensuring this is always set to a non-null instruction
-			TargetOffset = targetOffset;
-		}
-
-		public BranchTargetInstruction(int offset, OpCode opcode, InstructionBase targetInstruction, int targetOffset)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
-		{
-			TargetInstruction = targetInstruction;
 			TargetOffset = targetOffset;
 		}
 

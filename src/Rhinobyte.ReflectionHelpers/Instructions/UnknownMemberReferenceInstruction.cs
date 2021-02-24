@@ -3,9 +3,16 @@ using System.Reflection.Emit;
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class with an associated <see cref="MemberInfo"/> reference token operand. 
+	/// <para>
+	/// This is a failsafe type that shouldn't ever actually be used. The token should be resolved to a FieldInfo, MethodBase, of Type instance and an instruction type specific to the resolved member is what the
+	/// parser should actually return.
+	/// </para>
+	/// </summary>
 	public sealed class UnknownMemberReferenceInstruction : InstructionBase
 	{
-		public UnknownMemberReferenceInstruction(int offset, OpCode opcode, MemberInfo memberReference)
+		internal UnknownMemberReferenceInstruction(int offset, OpCode opcode, MemberInfo memberReference)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			MemberReference = memberReference;

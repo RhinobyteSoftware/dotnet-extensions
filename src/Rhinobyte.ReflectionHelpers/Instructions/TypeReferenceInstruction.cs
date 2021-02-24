@@ -3,9 +3,12 @@ using System.Reflection.Emit;
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class with an associated <see cref="Type"/> reference token operand.
+	/// </summary>
 	public sealed class TypeReferenceInstruction : InstructionBase
 	{
-		public TypeReferenceInstruction(int offset, OpCode opcode, Type typeReference)
+		internal TypeReferenceInstruction(int offset, OpCode opcode, Type typeReference)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			TypeReference = typeReference;

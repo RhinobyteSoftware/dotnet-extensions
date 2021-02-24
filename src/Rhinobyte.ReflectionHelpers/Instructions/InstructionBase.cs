@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection.Emit;
+﻿using System.Reflection.Emit;
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
@@ -17,6 +16,11 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 
 
 		/// <summary>
+		/// The next instruction in the intermediate language (IL) bytes.
+		/// </summary>
+		public InstructionBase? NextInstruction { get; internal set; }
+
+		/// <summary>
 		/// The relative offset of this instruction within the intermediate language (IL) bytes.
 		/// </summary>
 		public int Offset { get; }
@@ -25,6 +29,11 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// The <see cref="OpCode"/> for this instruction.
 		/// </summary>
 		public OpCode OpCode { get; }
+
+		/// <summary>
+		/// The previous instruction in the intermediate language (IL) bytes.
+		/// </summary>
+		public InstructionBase? PreviousInstruction { get; internal set; }
 
 		/// <summary>
 		/// The size in bytes of the intermediate language (IL) instruction.

@@ -2,9 +2,12 @@
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class with an associated <see cref="string"/> value.
+	/// </summary>
 	public sealed class StringInstruction : InstructionBase
 	{
-		public StringInstruction(int offset, OpCode opcode, string value)
+		internal StringInstruction(int offset, OpCode opcode, string value)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Value = value;

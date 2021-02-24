@@ -3,9 +3,12 @@ using System.Reflection.Emit;
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
 {
+	/// <summary>
+	/// Instruction class with an associated <see cref="LocalVariableInfo"/> index.
+	/// </summary>
 	public sealed class LocalVariableInstruction : InstructionBase
 	{
-		public LocalVariableInstruction(int offset, OpCode opcode, LocalVariableInfo localVariable)
+		internal LocalVariableInstruction(int offset, OpCode opcode, LocalVariableInfo localVariable)
 			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			LocalVariable = localVariable;
