@@ -4,26 +4,19 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 {
 	public sealed class BranchTargetInstruction : InstructionBase
 	{
-		internal BranchTargetInstruction(bool isShortFormOperand, int offset, OpCode opcode, int targetOffset)
-			: base(offset, opcode, opcode.Size + (isShortFormOperand ? 1 : 4))
+		internal BranchTargetInstruction(int offset, OpCode opcode, int targetOffset)
+			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
-			IsShortFormOperand = isShortFormOperand;
 			TargetInstruction = null!; // Nullability hack, the parser will be responsible for ensuring this is always set to a non-null instruction
 			TargetOffset = targetOffset;
 		}
 
-		public BranchTargetInstruction(bool isShortFormOperand, int offset, OpCode opcode, InstructionBase targetInstruction, int targetOffset)
-			: base(offset, opcode, opcode.Size + (isShortFormOperand ? 1 : 4))
+		public BranchTargetInstruction(int offset, OpCode opcode, InstructionBase targetInstruction, int targetOffset)
+			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
-			IsShortFormOperand = isShortFormOperand;
 			TargetInstruction = targetInstruction;
 			TargetOffset = targetOffset;
 		}
-
-		/// <summary>
-		/// Whether or not the <see cref="OpCode.OperandType"/> is the <see cref="OperandType.ShortInlineBrTarget"/> for an 8bit operand or the <see cref="OperandType.InlineBrTarget"/> for a full 32bit operand.
-		/// </summary>
-		public bool IsShortFormOperand { get; }
 
 		/// <summary>
 		/// The target instruction of this branch instruction.

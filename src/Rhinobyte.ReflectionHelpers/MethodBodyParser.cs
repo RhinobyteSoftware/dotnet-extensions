@@ -80,10 +80,12 @@ namespace Rhinobyte.ReflectionHelpers
 		{
 			_bytePosition = 0;
 			var instructions = new List<InstructionBase>();
+			var branchInstructionsNeedingLinked = new List<InstructionBase>();
 
+			int instructionOffset = _bytePosition;
 			while (_bytePosition < _ilBytes.Length)
 			{
-				var instructionOffset = _bytePosition;
+				instructionOffset = _bytePosition;
 				var opcodeByte = ReadByte();
 				var currentOpcode = opcodeByte != 254 // OpCodes.Prefix1
 					? OpCodeHelper.SingleByteOpCodeLookup[opcodeByte]
@@ -92,12 +94,26 @@ namespace Rhinobyte.ReflectionHelpers
 				switch (currentOpcode.OperandType)
 				{
 					case OperandType.InlineBrTarget:
-						// Set the targetOffset = current _bytePosition + int32 operand following the opcode... we'll iterate over the
-						// instructions later and set the TargetInstruction property once we have all the instruction offsets calculated
+					case OperandType.ShortInlineBrTarget:
+					{
+						// IMPORTANT: Call ReadByte() / ReadInt32() first to advance the _bytePosition before appending _bytePosition for the calculated target offset
+						var targetOffset = currentOpcode.OperandType == OperandType.ShortInlineBrTarget
+							? ReadByte() + _bytePosition
+							: ReadInt32() + _bytePosition;
 
-						// IMPORTANT: Call ReadInt32() first to advance the _bytePosition before appending _bytePosition for the calculated target offset
-						instructions.Add(new BranchTargetInstruction(false, instructionOffset, currentOpcode, ReadInt32() + _bytePosition));
+						var newBranchTargetInstruction = new BranchTargetInstruction(instructionOffset, currentOpcode, targetOffset);
+						instructions.Add(newBranchTargetInstruction);
+
+						if (targetOffset < instructionOffset)
+						{
+							newBranchTargetInstruction.TargetInstruction = FindInstructionByOffset(instructionOffset, instructions, newBranchTargetInstruction, targetOffset);
+							break;
+						}
+
+						// Add to the "branchInstructionsNeedingLinked" collection so we can set the target instruction later
+						branchInstructionsNeedingLinked.Add(newBranchTargetInstruction);
 						break;
+					}
 
 					case OperandType.InlineField:
 						instructions.Add(new FieldReferenceInstruction(instructionOffset, currentOpcode, _module.ResolveField(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments)));
@@ -140,10 +156,11 @@ namespace Rhinobyte.ReflectionHelpers
 							targetOffsets[targetIndex] = ReadInt32() + baseOffset;
 						}
 
-						// Set the targetOffsets array now... we'll iterate over the
-						// instructions later and set the TargetInstructions property once we have
-						// all the instruction offsets calculated
-						instructions.Add(new SwitchInstruction(instructionOffset, currentOpcode, targetOffsets));
+						var newSwitchInstruction = new SwitchInstruction(instructionOffset, currentOpcode, targetOffsets);
+						instructions.Add(newSwitchInstruction);
+
+						// Add to the "branchInstructionsNeedingLinked" collection so we can set the target instructions later
+						branchInstructionsNeedingLinked.Add(newSwitchInstruction);
 						break;
 
 					case OperandType.InlineTok:
@@ -175,33 +192,26 @@ namespace Rhinobyte.ReflectionHelpers
 
 					case OperandType.InlineVar:
 					case OperandType.ShortInlineVar:
-						var isShortForm = currentOpcode.OperandType == OperandType.ShortInlineVar;
-						var variableIndex = isShortForm
+					{
+						var variableIndex = currentOpcode.OperandType == OperandType.ShortInlineVar
 							? ReadByte()
 							: ReadInt16();
 
 						if (OpCodeHelper.LocalVariableOpcodeValues.Contains(currentOpcode.Value))
 						{
-							instructions.Add(new LocalVariableInstruction(isShortForm, instructionOffset, currentOpcode, _localVariables[variableIndex]));
+							instructions.Add(new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[variableIndex]));
 							break;
 						}
 
 						if (!_isStaticMethod && variableIndex == 0)
 						{
-							instructions.Add(new ThisKeywordInstruction(isShortForm, instructionOffset, currentOpcode, _method));
+							instructions.Add(new ThisKeywordInstruction(instructionOffset, currentOpcode, _method));
 							break;
 						}
 
-						instructions.Add(new ParameterReferenceInstruction(isShortForm, instructionOffset, currentOpcode, _parameters[variableIndex]));
+						instructions.Add(new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[variableIndex]));
 						break;
-
-					case OperandType.ShortInlineBrTarget:
-						// Set the targetOffset = current _bytePosition + int8 operand following the opcode... we'll iterate over the
-						// instructions later and set the TargetInstruction property once we have all the instruction offsets calculated
-
-						// IMPORTANT: Call ReadByte() first to advance the _bytePosition before appending _bytePosition for the calculated target offset
-						instructions.Add(new BranchTargetInstruction(true, instructionOffset, currentOpcode, ((sbyte)ReadByte()) + _bytePosition));
-						break;
+					}
 
 					case OperandType.ShortInlineI:
 						if (currentOpcode == OpCodes.Ldc_I4_S)
@@ -222,15 +232,14 @@ namespace Rhinobyte.ReflectionHelpers
 				}
 			}
 
-			var highestOffset = instructions.Last().Offset;
-			foreach (var instructionToUpdate in instructions)
+			foreach (var instructionToUpdate in branchInstructionsNeedingLinked)
 			{
 				switch (instructionToUpdate.OpCode.OperandType)
 				{
 					case OperandType.InlineBrTarget:
 					case OperandType.ShortInlineBrTarget:
 						var branchTargetInstruction = (BranchTargetInstruction)instructionToUpdate;
-						branchTargetInstruction.TargetInstruction = FindInstructionByOffset(highestOffset, instructions, branchTargetInstruction, branchTargetInstruction.TargetOffset);
+						branchTargetInstruction.TargetInstruction = FindInstructionByOffset(instructionOffset, instructions, branchTargetInstruction, branchTargetInstruction.TargetOffset);
 						break;
 
 					case OperandType.InlineSwitch:
@@ -238,7 +247,7 @@ namespace Rhinobyte.ReflectionHelpers
 						var targetInstructions = new List<InstructionBase>();
 						foreach (var targetOffset in switchInstruction.TargetOffsets)
 						{
-							targetInstructions.Add(FindInstructionByOffset(highestOffset, instructions, switchInstruction, targetOffset));
+							targetInstructions.Add(FindInstructionByOffset(instructionOffset, instructions, switchInstruction, targetOffset));
 						}
 						switchInstruction.TargetInstructions = targetInstructions;
 						break;

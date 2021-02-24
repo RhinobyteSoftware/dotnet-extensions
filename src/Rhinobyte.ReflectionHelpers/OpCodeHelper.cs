@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 
 namespace Rhinobyte.ReflectionHelpers
@@ -481,7 +482,6 @@ namespace Rhinobyte.ReflectionHelpers
 			{ -482, "Readonly" }
 		};
 
-
 		/// <summary>
 		/// Array lookup of <see cref="OpCode"/> instances for single byte value opcodes.
 		/// The index corresponds with the single byte value of the opcode.
@@ -493,5 +493,37 @@ namespace Rhinobyte.ReflectionHelpers
 		/// The index corresponds with the 2nd byte of the opcode value.
 		/// </summary>
 		public static readonly OpCode[] TwoByteOpCodeLookup = new OpCode[] { OpCodes.Arglist, OpCodes.Ceq, OpCodes.Cgt, OpCodes.Cgt_Un, OpCodes.Clt, OpCodes.Clt_Un, OpCodes.Ldftn, OpCodes.Ldvirtftn, OpCodes.Nop, OpCodes.Ldarg, OpCodes.Ldarga, OpCodes.Starg, OpCodes.Ldloc, OpCodes.Ldloca, OpCodes.Stloc, OpCodes.Localloc, OpCodes.Nop, OpCodes.Endfilter, OpCodes.Unaligned, OpCodes.Volatile, OpCodes.Tailcall, OpCodes.Initobj, OpCodes.Constrained, OpCodes.Cpblk, OpCodes.Initblk, OpCodes.Nop, OpCodes.Rethrow, OpCodes.Nop, OpCodes.Sizeof, OpCodes.Refanytype, OpCodes.Readonly };
+
+		public static int GetOperandSize(OperandType operandType)
+		{
+			return operandType switch
+			{
+				OperandType.InlineBrTarget => 4,
+				OperandType.InlineField => 4,
+				OperandType.InlineI => 4,
+				OperandType.InlineI8 => 8,
+				OperandType.InlineMethod => 4,
+				OperandType.InlineNone => 0,
+				OperandType.InlineR => 8,
+				OperandType.InlineSig => 4,
+				OperandType.InlineString => 4,
+
+				// Note: The actual oprand size of OperandType.InlineSwitch is variable.
+				// The first four bytes of the operand contain the size of the jump table array.
+				// The following (4 * array size) bytes contain the target offset values that make up the array.
+				OperandType.InlineSwitch => 4,
+
+				OperandType.InlineTok => 4,
+				OperandType.InlineType => 4,
+				OperandType.InlineVar => 2,
+				OperandType.ShortInlineBrTarget => 1,
+				OperandType.ShortInlineI => 1,
+				OperandType.ShortInlineR => 4,
+				OperandType.ShortInlineVar => 1,
+
+				// case OperandType.InlinePhi:
+				_ => throw new NotSupportedException($"{nameof(OpCodeHelper)}.{nameof(GetOperandSize)}(..) is not supported for an {nameof(OperandType)} value of {operandType}"),
+			};
+		}
 	}
 }

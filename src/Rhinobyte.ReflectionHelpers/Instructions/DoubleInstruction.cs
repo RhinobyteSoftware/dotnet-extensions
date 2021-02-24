@@ -5,7 +5,7 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	public sealed class DoubleInstruction : InstructionBase
 	{
 		public DoubleInstruction(int offset, OpCode opcode, double value)
-			: base(offset, opcode, opcode.Size + 8)
+			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Value = value;
 		}

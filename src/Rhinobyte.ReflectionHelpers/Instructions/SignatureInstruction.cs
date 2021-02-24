@@ -7,7 +7,7 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		private readonly byte[] _signatureBlob;
 
 		public SignatureInstruction(int offset, OpCode opcode, byte[] signatureBlob)
-			: base(offset, opcode, opcode.Size + 4)
+			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			_signatureBlob = signatureBlob;
 		}

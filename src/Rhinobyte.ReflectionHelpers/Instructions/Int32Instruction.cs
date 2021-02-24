@@ -5,7 +5,7 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	public sealed class Int32Instruction : InstructionBase
 	{
 		public Int32Instruction(int offset, OpCode opcode, int value)
-			: base(offset, opcode, opcode.Size + 4)
+			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Value = value;
 		}

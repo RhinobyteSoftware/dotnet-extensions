@@ -6,7 +6,7 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	public sealed class UnknownMemberReferenceInstruction : InstructionBase
 	{
 		public UnknownMemberReferenceInstruction(int offset, OpCode opcode, MemberInfo memberReference)
-			: base(offset, opcode, opcode.Size + 4)
+			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			MemberReference = memberReference;
 		}
