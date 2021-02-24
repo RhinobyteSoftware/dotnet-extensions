@@ -116,31 +116,31 @@ namespace Rhinobyte.ReflectionHelpers
 			{ 100, "Right Shift Unsigned Integer (Zeroes) - Specified Number Of Bits - Push Result Onto Evaluation Stack" }, // OpCodes.Shr_Un
 			{ 101, "Negate Value - Push Result Onto Evaluation Stack" }, // OpCodes.Neg
 			{ 102, "NOT (Bitwise Compliment) - Single Integer Value On Top Of Stack - Push Result Onto Evaluation Stack - As Same Type" }, // OpCodes.Not
-			//{ 103, OpCodes.Conv_I1 }, // OpCodes.Conv_I1
-			//{ 104, OpCodes.Conv_I2 }, // OpCodes.Conv_I2
-			//{ 105, OpCodes.Conv_I4 }, // OpCodes.Conv_I4
-			//{ 106, OpCodes.Conv_I8 }, // OpCodes.Conv_I8
-			//{ 107, OpCodes.Conv_R4 }, // OpCodes.Conv_R4
-			//{ 108, OpCodes.Conv_R8 }, // OpCodes.Conv_R8
-			//{ 109, OpCodes.Conv_U4 }, // OpCodes.Conv_U4
-			//{ 110, OpCodes.Conv_U8 }, // OpCodes.Conv_U8
-			//{ 111, OpCodes.Callvirt }, // OpCodes.Callvirt
-			//{ 112, OpCodes.Cpobj }, // OpCodes.Cpobj
-			//{ 113, OpCodes.Ldobj }, // OpCodes.Ldobj
-			//{ 114, OpCodes.Ldstr }, // OpCodes.Ldstr
-			//{ 115, OpCodes.Newobj }, // OpCodes.Newobj
-			//{ 116, OpCodes.Castclass }, // OpCodes.Castclass
-			//{ 117, OpCodes.Isinst }, // OpCodes.Isinst
-			//{ 118, OpCodes.Conv_R_Un }, // OpCodes.Conv_R_Un
-			//{ 121, OpCodes.Unbox }, // OpCodes.Unbox
-			//{ 122, OpCodes.Throw }, // OpCodes.Throw
-			//{ 123, OpCodes.Ldfld }, // OpCodes.Ldfld
-			//{ 124, OpCodes.Ldflda }, // OpCodes.Ldflda
-			//{ 125, OpCodes.Stfld }, // OpCodes.Stfld
-			//{ 126, OpCodes.Ldsfld }, // OpCodes.Ldsfld
-			//{ 127, OpCodes.Ldsflda }, // OpCodes.Ldsflda
-			//{ 128, OpCodes.Stsfld }, // OpCodes.Stsfld
-			//{ 129, OpCodes.Stobj }, // OpCodes.Stobj
+			{ 103, "CONVERT INT - Value On Top Of Stack To Int8 Then Extend (Pad) To Int32" }, // OpCodes.Conv_I1
+			{ 104, "CONVERT INT - Value On Top Of Stack To Int16 Then Extend (Pad) To Int32" }, // OpCodes.Conv_I2
+			{ 105, "CONVERT INT - Value On Top Of Stack To Int32" }, // OpCodes.Conv_I4
+			{ 106, "CONVERT INT - Value On Top Of Stack To Int64" }, // OpCodes.Conv_I8
+			{ 107, "CONVERT FLOAT - Value On Top Of Stack To Float32" }, // OpCodes.Conv_R4
+			{ 108, "CONVERT FLOAT - Value On Top Of Stack To Float64" }, // OpCodes.Conv_R8
+			{ 109, "CONVERT INT - Value On Top Of Stack To UInt32 Then Extend To Int32" }, // OpCodes.Conv_U4
+			{ 110, "CONVERT INT - Value On Top Of Stack To UInt64 Then Extend To Int64" }, // OpCodes.Conv_U8
+			{ 111, "CALL VIRTUAL - Call A Late-Bound Method On An Object Then Push Return Value Onto Evaluation Stack" }, // OpCodes.Callvirt
+			{ 112, "CPOBJ - Copy Value Type At Address Of Source Object (Type &, *, Or Native Int) To The Address Of Destination Object (Type &, *, Or Native Int)" }, // OpCodes.Cpobj
+			{ 113, "LDOBJ - Copy Value Type Object Pointed To By Address To Top Of Evaluation Stack" }, // OpCodes.Ldobj
+			{ 114, "Load String Onto Stack - Push A New Object Reference To A String Literal Stored In The Metadata" }, // OpCodes.Ldstr
+			{ 115, "NEW OBJ - Create A New Object Or New Instance Of A Value Type - Push The Object Reference (Type O) Onto Evaluation Stack" }, // OpCodes.Newobj
+			{ 116, "CAST CLASS - Attempt To Cast Object Passed By Reference To The Specified Class" }, // OpCodes.Castclass
+			{ 117, "IS INSTANCE - Test Whether Object Reference (Type O) Is An Instance Of A Particular Class" }, // OpCodes.Isinst
+			{ 118, "CONVERT FLOAT - Unsigned Integer Value On Top Of Stack To Float32" }, // OpCodes.Conv_R_Un
+			{ 121, "UNBOX - Convert Boxed Representation Of Value Type To Unboxed Form" }, // OpCodes.Unbox
+			{ 122, "THROW - Throw The Exception Object Currently On The Evaluation Stack" }, // OpCodes.Throw
+			{ 123, "LOAD FIELD - Find Value Of Field In The Object Whose Reference Is Currently On The Evaluation Stack" }, // OpCodes.Ldfld
+			{ 124, "LOAD FIELD ADDRESS - Find Address Of Field In The Object Whose Reference Is Currently On The Evaluation Stack" }, // OpCodes.Ldflda
+			{ 125, "STORE FIELD - Replace Value Stored In The Field Of An Object Reference Or Pointer - With A New Value" }, // OpCodes.Stfld
+			{ 126, "LOAD STATIC FIELD - Push Value Of Static Field Onto The Evaluation Stack" }, // OpCodes.Ldsfld
+			{ 127, "LOAD STATIC FIELD ADDRESS - Push Address Of Static Field Onto The Evaluation Stack" }, // OpCodes.Ldsflda
+			{ 128, "STORE STATIC FIELD - Replace The Value Of A Static Field With The Value From The Evaluation Stack" }, // OpCodes.Stsfld
+			{ 129, "STORE OBJECT - Copy A Value Of A Specified Type From The Evaluation Stack Into A Supplied Memory Address" }, // OpCodes.Stobj
 			//{ 130, OpCodes.Conv_Ovf_I1_Un }, // OpCodes.Conv_Ovf_I1_Un
 			//{ 131, OpCodes.Conv_Ovf_I2_Un }, // OpCodes.Conv_Ovf_I2_Un
 			//{ 132, OpCodes.Conv_Ovf_I4_Un }, // OpCodes.Conv_Ovf_I4_Un
