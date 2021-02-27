@@ -53,6 +53,47 @@ namespace Rhinobyte.ReflectionHelpers
 		}
 
 		/// <summary>
+		/// Convenience extension method to check if <paramref name="methodInfo"/> has parameters matching the length, order, and type of <paramref name="parameterTypes"/>.
+		/// </summary>
+		/// <param name="methodInfo">The <see cref="MethodBase"/> instance to check</param>
+		/// <param name="parameterTypes">The array of parameter <see cref="Type"/>s to compare against</param>
+		/// <returns><see cref="true"/> if the method parameters match <paramref name="parameterTypes"/>, <see cref="false"/> otherwise</returns>
+		/// <exception cref="ArgumentNullException">Thrown if either of the <paramref name="methodInfo"/> or <paramref name="parameterTypes"/> arguments are null</exception>
+		public static bool HasMatchingParameterTypes(this MethodBase methodInfo, Type[] parameterTypes)
+		{
+			_ = methodInfo ?? throw new ArgumentNullException(nameof(methodInfo));
+			_ = parameterTypes ?? throw new ArgumentNullException(nameof(parameterTypes));
+
+			var methodParameters = methodInfo.GetParameters();
+			if (methodParameters.Length != parameterTypes.Length)
+			{
+				return false;
+			}
+
+			for (var parameterIndex = 0; parameterIndex < methodParameters.Length; ++parameterIndex)
+			{
+				if (methodParameters[parameterIndex].ParameterType != parameterTypes[parameterIndex])
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Convenience extension method to check if <paramref name="methodInfo"/> has parameters.
+		/// </summary>
+		/// <param name="methodInfo">The <see cref="MethodBase"/> instance to check</param>
+		/// <returns><see cref="true"/> if the method has zero parameters, <see cref="false"/> otherwise</returns>
+		/// <exception cref="ArgumentNullException">Thrown if the <paramref name="methodInfo"/> is null</exception>
+		public static bool HasNoParameters(this MethodBase methodInfo)
+		{
+			_ = methodInfo ?? throw new ArgumentNullException(nameof(methodInfo));
+			return methodInfo.GetParameters().Length == 0;
+		}
+
+		/// <summary>
 		/// Parse the <paramref name="methodInfo"/> body's intermediate language (IL) bytes into a collection of <see cref="InstructionBase"/> instances.
 		/// </summary>
 		/// <param name="methodInfo">The <see cref="MethodBase"/> instance to search within</param>
