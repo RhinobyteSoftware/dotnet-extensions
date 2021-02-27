@@ -14,169 +14,169 @@ namespace Rhinobyte.ReflectionHelpers
 	{
 		public static readonly IReadOnlyDictionary<short, string> DescriptionLookup = new Dictionary<short, string>()
 		{
-			{ 0, "No-op" }, // OpCodes.Nop
-			{ 1, "BREAK - Signals CLI To Inform Debugger That A Break Point Has Been Tripped" }, // OpCodes.Break
-			{ 2, "Load Argument Onto Stack - Index 0" }, // OpCodes.Ldarg_0
-			{ 3, "Load Argument Onto Stack - Index 1" }, // OpCodes.Ldarg_1
-			{ 4, "Load Argument Onto Stack - Index 2" }, // OpCodes.Ldarg_2
-			{ 5, "Load Argument Onto Stack - Index 3" }, // OpCodes.Ldarg_3
-			{ 6, "Load LocalVariable Onto Stack - Index 0" }, // OpCodes.Ldloc_0
-			{ 7, "Load LocalVariable Onto Stack - Index 1" }, // OpCodes.Ldloc_1
-			{ 8, "Load LocalVariable Onto Stack - Index 2" }, // OpCodes.Ldloc_2
-			{ 9, "Load LocalVariable Onto Stack - Index 3" }, // OpCodes.Ldloc_3
-			{ 10, "Pop Stack To LocalVariable - Index 0" }, // OpCodes.Stloc_0
-			{ 11, "Pop Stack To LocalVariable - Index 1" }, // OpCodes.Stloc_1
-			{ 12, "Pop Stack To LocalVariable - Index 2" }, // OpCodes.Stloc_2
-			{ 13, "Pop Stack To LocalVariable - Index 3" }, // OpCodes.Stloc_3
-			{ 14, "Load Argument Reference Onto Stack - Specified Short Form Index" },  // OpCodes.Ldarg_S
-			{ 15, "Load Argument Address Onto Stack - Short Form" },  // OpCodes.Ldarga_S
-			{ 16, "Store Top Of Stack To Argument Slot - Specified Short Form Index" }, // OpCodes.Starg_S
-			{ 17, "Load LocalVariable Onto Stack - Specified Short Form Index" }, // OpCodes.Ldloc_S
-			{ 18, "Load LocalVariable Address Onto Stack - Short Form" }, // OpCodes.Ldloca_S
-			{ 19, "Pop Stack To LocalVariable - Specified Short Form Index" }, // OpCodes.Stloc_S
-			{ 20, "Push To Stack:  Null Reference (Type O)" }, // OpCodes.Ldnull
-			{ 21, "Push To Stack:  -1 (As Int32)" }, // OpCodes.Ldc_I4_M1
-			{ 22, "Push To Stack:  0 (As Int32)" }, // OpCodes.Ldc_I4_0
-			{ 23, "Push To Stack:  1 (As Int32)" }, // OpCodes.Ldc_I4_1
-			{ 24, "Push To Stack:  2 (As Int32)" }, // OpCodes.Ldc_I4_2
-			{ 25, "Push To Stack:  3 (As Int32)" }, // OpCodes.Ldc_I4_3
-			{ 26, "Push To Stack:  4 (As Int32)" }, // OpCodes.Ldc_I4_4
-			{ 27, "Push To Stack:  5 (As Int32)" }, // OpCodes.Ldc_I4_5
-			{ 28, "Push To Stack:  6 (As Int32)" }, // OpCodes.Ldc_I4_6
-			{ 29, "Push To Stack:  7 (As Int32)" }, // OpCodes.Ldc_I4_7
-			{ 30, "Push To Stack:  8 (As Int32)" }, // OpCodes.Ldc_I4_8
-			{ 31, "Push To Stack:  Supplied Int8 Value (As Int32)" }, // OpCodes.Ldc_I4_S
-			{ 32, "Push To Stack:  Supplied Int32 Value (As Int32)" }, // OpCodes.Ldc_I4
-			{ 33, "Push To Stack:  Supplied Int64 Value (As Int64)" }, // OpCodes.Ldc_I8
-			{ 34, "Push To Stack:  Supplied Float32 Value (As Type F / float)" }, // OpCodes.Ldc_R4
-			{ 35, "Push To Stack:  Supplied Float64 Value (As Type F / float)" }, // OpCodes.Ldc_R8
-			{ 37, "Copy Top Of Stack And Push Copy To Top Of Stack" }, // OpCodes.Dup
-			{ 38, "Pop Top Of Stack" }, // OpCodes.Pop
-			{ 39, "Exit Current Method And Jump To Specified Method" }, // OpCodes.Jmp
-			{ 40, "Call Method - Passed Method Descriptor" }, // OpCodes.Call
-			{ 41, "Call Method - Indicated On Evaluation Stack" }, // OpCodes.Calli
-			{ 42, "Return From Current Method - Push Return Value (If Present) To Caller's Evaluation Stack" }, // OpCodes.Ret
-			{ 43, "Unconditionally Transfer Control To Target Instruction (Short Form)" }, // OpCodes.Br_S
-			{ 44, "Transfer Control To Target Instruction, If value is false, a null reference, or zero (Short Form)" }, // OpCodes.Brfalse_S
-			{ 45, "Transfer Control To Target Instruction, If value is true, not null, or non-zero (Short Form)" }, // OpCodes.Brtrue_S
-			{ 46, "Transfer Control To Target Instruction, If two values are equal (Short Form)" }, // OpCodes.Beq_S
-			{ 47, "Transfer Control To Target Instruction, If the first value is greater than or equal the second value (Short Form)" }, // OpCodes.Bge_S
-			{ 48, "Transfer Control To Target Instruction, If the first value is greater than the second value (Short Form)" }, // OpCodes.Bgt_S
-			{ 49, "Transfer Control To Target Instruction, If the first value is less than or equal to the second value (Short Form)" }, // OpCodes.Ble_S
-			{ 50, "Transfer Control To Target Instruction, If the first value is less than the second value (Short Form)" }, // OpCodes.Blt_S
-			{ 51, "Transfer Control To Target Instruction, When values are not equal [unsigned integer or unordered float] (Short Form)" }, // OpCodes.Bne_Un_S
-			{ 52, "Transfer Control To Target Instruction, If the first value is greater than or equal to the second value [unsigned integer or unordered float] (Short Form)" }, // OpCodes.Bge_Un_S
-			{ 53, "Transfer Control To Target Instruction, If the first value is greater than the second value [unsigned integer or unordered float] (Short Form)" }, // OpCodes.Bgt_Un_S
-			{ 54, "Transfer Control To Target Instruction, If the first value is less than or equal to the second value [unsigned integer or unordered float] (Short Form)" }, // OpCodes.Ble_Un_S
-			{ 55, "Transfer Control To Target Instruction, If the first value is less than the second value [unsigned integer or unordered float] (Short Form)" }, // OpCodes.Blt_Un_S
-			{ 56, "Unconditionally Transfer Control To Target Instruction (Short Form)" }, // OpCodes.Br
-			{ 57, "Transfer Control To Target Instruction, If value is false, a null reference, or zero" }, // OpCodes.Brfalse
-			{ 58, "Transfer Control To Target Instruction, If value is true, not null, or non-zero" }, // OpCodes.Brtrue
-			{ 59, "Transfer Control To Target Instruction, If two values are equal" }, // OpCodes.Beq
-			{ 60, "Transfer Control To Target Instruction, If the first value is greater than or equal the second value" }, // OpCodes.Bge
-			{ 61, "Transfer Control To Target Instruction, If the first value is greater than the second value" }, // OpCodes.Bgt
-			{ 62, "Transfer Control To Target Instruction, If the first value is less than or equal to the second value" }, // OpCodes.Ble
-			{ 63, "Transfer Control To Target Instruction, If the first value is less than the second value" }, // OpCodes.Blt
-			{ 64, "Transfer Control To Target Instruction, When values are not equal [unsigned integer or unordered float]" }, // OpCodes.Bne_Un
-			{ 65, "Transfer Control To Target Instruction, If the first value is greater than or equal to the second value [unsigned integer or unordered float]" }, // OpCodes.Bge_Un
-			{ 66, "Transfer Control To Target Instruction, If the first value is greater than the second value [unsigned integer or unordered float]" }, // OpCodes.Bgt_Un
-			{ 67, "Transfer Control To Target Instruction, If the first value is less than or equal to the second value [unsigned integer or unordered float]" }, // OpCodes.Ble_Un
-			{ 68, "Transfer Control To Target Instruction, If the first value is less than the second value [unsigned integer or unordered float]" }, // OpCodes.Blt_Un
-			{ 69, "Implements A Jump Table" }, // OpCodes.Switch
-			{ 70, "Load Indirect Onto Stack - Int8 Value As Int32" }, // OpCodes.Ldind_I1
-			{ 71, "Load Indirect Onto Stack - Unsigned Int8 Value As Int32" }, // OpCodes.Ldind_U1
-			{ 72, "Load Indirect Onto Stack - Int16 Value As Int32" }, // OpCodes.Ldind_I2
-			{ 73, "Load Indirect Onto Stack - Unsigned Int16 Value As Int32" }, // OpCodes.Ldind_U2
-			{ 74, "Load Indirect Onto Stack - Int32 Value As Int32" }, // OpCodes.Ldind_I4
-			{ 75, "Load Indirect Onto Stack - Unsigned Int32 Value As Int32" }, // OpCodes.Ldind_U4
-			{ 76, "Load Indirect Onto Stack - Int64 Value As Int64" }, // OpCodes.Ldind_I8
-			{ 77, "Load Indirect Onto Stack - Native Int Value As Native Int" }, // OpCodes.Ldind_I
-			{ 78, "Load Indirect Onto Stack - Float32 Value As Type F (float)" }, // OpCodes.Ldind_R4
-			{ 79, "Load Indirect Onto Stack - Float64 Value As Type F (float)" }, // OpCodes.Ldind_R8
-			{ 80, "Load Indirect Onto Stack - Object Reference As Type O" }, // OpCodes.Ldind_Ref
-			{ 81, "Store Value At Supplied Address - Object Reference" }, // OpCodes.Stind_Ref
-			{ 82, "Store Value At Supplied Address - Int8" }, // OpCodes.Stind_I1
-			{ 83, "Store Value At Supplied Address - Int16" }, // OpCodes.Stind_I2
-			{ 84, "Store Value At Supplied Address - Int32" }, // OpCodes.Stind_I4
-			{ 85, "Store Value At Supplied Address - Int64" }, // OpCodes.Stind_I8
-			{ 86, "Store Value At Supplied Address - Float32" }, // OpCodes.Stind_R4
-			{ 87, "Store Value At Supplied Address - Float64" }, // OpCodes.Stind_R8
-			{ 88, "ADD - Two Values - Push Result Onto Evalutation Stack" }, // OpCodes.Add
-			{ 89, "SUBTRACT - One Value From Another - Push Result Onto Evalutation Stack" }, // OpCodes.Sub
-			{ 90, "MULTIPLY - Two Values - Push Result Onto Evalutation Stack" }, // OpCodes.Mul
-			{ 91, "DIVIDE - Two Values - Push Result Onto Evalutation Stack - As Floating Point (Type F) Or Quotient (Type Int32)" }, // OpCodes.Div
-			{ 92, "DIVIDE - Two Unsigned Integer Values - Push Result Onto Evalutation Stack - As Int32" }, // OpCodes.Div_Un
-			{ 93, "REMAINDER - Divide Two Values And Take Remainder - Push Remainder Onto Evaluation Stack" }, // OpCodes.Rem
-			{ 94, "REMAINDER - Divide Two Unsigned Values And Take Remainder - Push Remainder Onto Evaluation Stack" }, // OpCodes.Rem_Un
-			{ 95, "Compute BITWISE AND - Two Values - Push Result Onto Evalutation Stack" }, // OpCodes.And
-			{ 96, "Compute BITWISE OR - Top Two Integer Values On Top Of Stack - Push Result Onto Evalutation Stack" }, // OpCodes.Or
-			{ 97, "Compute BITWISE XOR - Top Two Integer Values On Top Of Stack - Push Result Onto Evalutation Stack" }, // OpCodes.Xor
-			{ 98, "Left Shift Integer (Zeroes) - Specified Number Of Bits - Push Result Onto Evaluation Stack" }, // OpCodes.Shl
-			{ 99, "Right Shift Integer (In Sign) - Specified Number Of Bits - Push Result Onto Evaluation Stack" }, // OpCodes.Shr
-			{ 100, "Right Shift Unsigned Integer (Zeroes) - Specified Number Of Bits - Push Result Onto Evaluation Stack" }, // OpCodes.Shr_Un
-			{ 101, "Negate Value - Push Result Onto Evaluation Stack" }, // OpCodes.Neg
-			{ 102, "NOT (Bitwise Compliment) - Single Integer Value On Top Of Stack - Push Result Onto Evaluation Stack - As Same Type" }, // OpCodes.Not
-			{ 103, "CONVERT INT - Value On Top Of Stack To Int8 Then Extend (Pad) To Int32" }, // OpCodes.Conv_I1
-			{ 104, "CONVERT INT - Value On Top Of Stack To Int16 Then Extend (Pad) To Int32" }, // OpCodes.Conv_I2
-			{ 105, "CONVERT INT - Value On Top Of Stack To Int32" }, // OpCodes.Conv_I4
-			{ 106, "CONVERT INT - Value On Top Of Stack To Int64" }, // OpCodes.Conv_I8
-			{ 107, "CONVERT FLOAT - Value On Top Of Stack To Float32" }, // OpCodes.Conv_R4
-			{ 108, "CONVERT FLOAT - Value On Top Of Stack To Float64" }, // OpCodes.Conv_R8
-			{ 109, "CONVERT INT - Value On Top Of Stack To UInt32 Then Extend To Int32" }, // OpCodes.Conv_U4
-			{ 110, "CONVERT INT - Value On Top Of Stack To UInt64 Then Extend To Int64" }, // OpCodes.Conv_U8
-			{ 111, "CALL VIRTUAL - Call A Late-Bound Method On An Object Then Push Return Value Onto Evaluation Stack" }, // OpCodes.Callvirt
-			{ 112, "CPOBJ - Copy Value Type At Address Of Source Object (Type &, *, Or Native Int) To The Address Of Destination Object (Type &, *, Or Native Int)" }, // OpCodes.Cpobj
-			{ 113, "LDOBJ - Copy Value Type Object Pointed To By Address To Top Of Evaluation Stack" }, // OpCodes.Ldobj
-			{ 114, "Load String Onto Stack - Push A New Object Reference To A String Literal Stored In The Metadata" }, // OpCodes.Ldstr
-			{ 115, "NEW OBJ - Create A New Object Or New Instance Of A Value Type - Push The Object Reference (Type O) Onto Evaluation Stack" }, // OpCodes.Newobj
-			{ 116, "CAST CLASS - Attempt To Cast Object Passed By Reference To The Specified Class" }, // OpCodes.Castclass
-			{ 117, "IS INSTANCE - Test Whether Object Reference (Type O) Is An Instance Of A Particular Class" }, // OpCodes.Isinst
-			{ 118, "CONVERT FLOAT - Unsigned Integer Value On Top Of Stack To Float32" }, // OpCodes.Conv_R_Un
-			{ 121, "UNBOX - Convert Boxed Representation Of Value Type To Unboxed Form" }, // OpCodes.Unbox
-			{ 122, "THROW - Throw The Exception Object Currently On The Evaluation Stack" }, // OpCodes.Throw
-			{ 123, "LOAD FIELD - Find Value Of Field In The Object Whose Reference Is Currently On The Evaluation Stack" }, // OpCodes.Ldfld
-			{ 124, "LOAD FIELD ADDRESS - Find Address Of Field In The Object Whose Reference Is Currently On The Evaluation Stack" }, // OpCodes.Ldflda
-			{ 125, "STORE FIELD - Replace Value Stored In The Field Of An Object Reference Or Pointer - With A New Value" }, // OpCodes.Stfld
-			{ 126, "LOAD STATIC FIELD - Push Value Of Static Field Onto The Evaluation Stack" }, // OpCodes.Ldsfld
-			{ 127, "LOAD STATIC FIELD ADDRESS - Push Address Of Static Field Onto The Evaluation Stack" }, // OpCodes.Ldsflda
-			{ 128, "STORE STATIC FIELD - Replace The Value Of A Static Field With The Value From The Evaluation Stack" }, // OpCodes.Stsfld
-			{ 129, "STORE OBJECT - Copy A Value Of A Specified Type From The Evaluation Stack Into A Supplied Memory Address" }, // OpCodes.Stobj
-			//{ 130, OpCodes.Conv_Ovf_I1_Un }, // OpCodes.Conv_Ovf_I1_Un
-			//{ 131, OpCodes.Conv_Ovf_I2_Un }, // OpCodes.Conv_Ovf_I2_Un
-			//{ 132, OpCodes.Conv_Ovf_I4_Un }, // OpCodes.Conv_Ovf_I4_Un
-			//{ 133, OpCodes.Conv_Ovf_I8_Un }, // OpCodes.Conv_Ovf_I8_Un
-			//{ 134, OpCodes.Conv_Ovf_U1_Un }, // OpCodes.Conv_Ovf_U1_Un
-			//{ 135, OpCodes.Conv_Ovf_U2_Un }, // OpCodes.Conv_Ovf_U2_Un
-			//{ 136, OpCodes.Conv_Ovf_U4_Un }, // OpCodes.Conv_Ovf_U4_Un
-			//{ 137, OpCodes.Conv_Ovf_U8_Un }, // OpCodes.Conv_Ovf_U8_Un
-			//{ 138, OpCodes.Conv_Ovf_I_Un }, // OpCodes.Conv_Ovf_I_Un
-			//{ 139, OpCodes.Conv_Ovf_U_Un }, // OpCodes.Conv_Ovf_U_Un
-			//{ 140, OpCodes.Box }, // OpCodes.Box
-			//{ 141, OpCodes.Newarr }, // OpCodes.Newarr
-			//{ 142, OpCodes.Ldlen }, // OpCodes.Ldlen
-			//{ 143, OpCodes.Ldelema }, // OpCodes.Ldelema
-			//{ 144, OpCodes.Ldelem_I1 }, // OpCodes.Ldelem_I1
-			//{ 145, OpCodes.Ldelem_U1 }, // OpCodes.Ldelem_U1
-			//{ 146, OpCodes.Ldelem_I2 }, // OpCodes.Ldelem_I2
-			//{ 147, OpCodes.Ldelem_U2 }, // OpCodes.Ldelem_U2
-			//{ 148, OpCodes.Ldelem_I4 }, // OpCodes.Ldelem_I4
-			//{ 149, OpCodes.Ldelem_U4 }, // OpCodes.Ldelem_U4
-			//{ 150, OpCodes.Ldelem_I8 }, // OpCodes.Ldelem_I8
-			//{ 151, OpCodes.Ldelem_I }, // OpCodes.Ldelem_I
-			//{ 152, OpCodes.Ldelem_R4 }, // OpCodes.Ldelem_R4
-			//{ 153, OpCodes.Ldelem_R8 }, // OpCodes.Ldelem_R8
-			//{ 154, OpCodes.Ldelem_Ref }, // OpCodes.Ldelem_Ref
-			//{ 155, OpCodes.Stelem_I }, // OpCodes.Stelem_I
-			//{ 156, OpCodes.Stelem_I1 }, // OpCodes.Stelem_I1
-			//{ 157, OpCodes.Stelem_I2 }, // OpCodes.Stelem_I2
-			//{ 158, OpCodes.Stelem_I4 }, // OpCodes.Stelem_I4
-			//{ 159, OpCodes.Stelem_I8 }, // OpCodes.Stelem_I8
-			//{ 160, OpCodes.Stelem_R4 }, // OpCodes.Stelem_R4
-			//{ 161, OpCodes.Stelem_R8 }, // OpCodes.Stelem_R8
-			//{ 162, OpCodes.Stelem_Ref }, // OpCodes.Stelem_Ref
-			//{ 163, OpCodes.Ldelem }, // OpCodes.Ldelem
-			//{ 164, OpCodes.Stelem }, // OpCodes.Stelem
-			//{ 165, OpCodes.Unbox_Any }, // OpCodes.Unbox_Any
+			{ 0, "NO-OP" }, // OpCodes.Nop
+			{ 1, "DEBUGGER BREAK - Signals the CLI to inform debugger that a break point has been tripped" }, // OpCodes.Break
+			{ 2, "LOAD ARGUMENT (Index 0) - Push the argument at index 0 onto the top of the evaluation stack" }, // OpCodes.Ldarg_0
+			{ 3, "LOAD ARGUMENT (Index 1) - Push the argument at index 1 onto the top of the evaluation stack" }, // OpCodes.Ldarg_1
+			{ 4, "LOAD ARGUMENT (Index 2) - Push the argument at index 2 onto the top of the evaluation stack" }, // OpCodes.Ldarg_2
+			{ 5, "LOAD ARGUMENT (Index 3) - Push the argument at index 3 onto the top of the evaluation stack" }, // OpCodes.Ldarg_3
+			{ 6, "LOAD LOCAL VARIABLE (Index 0) - Push the local variable at index 0 onto the top of the evaluation stack" }, // OpCodes.Ldloc_0
+			{ 7, "LOAD LOCAL VARIABLE (Index 1) - Push the local variable at index 1 onto the top of the evaluation stack" }, // OpCodes.Ldloc_1
+			{ 8, "LOAD LOCAL VARIABLE (Index 2) - Push the local variable at index 2 onto the top of the evaluation stack" }, // OpCodes.Ldloc_2
+			{ 9, "LOAD LOCAL VARIABLE (Index 3) - Push the local variable at index 3 onto the top of the evaluation stack" }, // OpCodes.Ldloc_3
+			{ 10, "SET LOCAL VARIABLE (Index 0) - Pop the current value from the top of the evaluation stack and store it in the local variable list at index 0" }, // OpCodes.Stloc_0
+			{ 11, "SET LOCAL VARIABLE (Index 1) - Pop the current value from the top of the evaluation stack and store it in the local variable list at index 1" }, // OpCodes.Stloc_1
+			{ 12, "SET LOCAL VARIABLE (Index 2) - Pop the current value from the top of the evaluation stack and store it in the local variable list at index 2" }, // OpCodes.Stloc_2
+			{ 13, "SET LOCAL VARIABLE (Index 3) - Pop the current value from the top of the evaluation stack and store it in the local variable list at index 3" }, // OpCodes.Stloc_3
+			{ 14, "LOAD ARGUMENT (Specified Short Form Index) - Load the argument referenced by the specified short form index onto the evaluation stack" }, // OpCodes.Ldarg_S
+			{ 15, "LOAD ARGUMENT ADDRESS (Specified Short Form Index) - Load the argument address specified in short form index onto the evaluation stack" }, // OpCodes.Ldarga_S
+			{ 16, "SET ARGUMENT (Specified Short Form Index) - Store the current value on top of the evaluation stack into the argument slot at the specified short form index" }, // OpCodes.Starg_S
+			{ 17, "LOAD LOCAL VARIABLE (Specified Short Form Index) - Push the local variable value at the specified short form index onto the evaluation stack" }, // OpCodes.Ldloc_S
+			{ 18, "LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index) - Push the address of the local variable at the specified short form index onto the evaluation stack" }, // OpCodes.Ldloca_S
+			{ 19, "SET LOCAL VARIABLE (Specified Short Form Index) - Pop the current value on top of the evaluation stack into the local variable list at the specified short form index" }, // OpCodes.Stloc_S
+			{ 20, "LOAD NULL REFERENCE - Push a null reference (Type O) onto the evaluation stack" }, // OpCodes.Ldnull
+			{ 21, "LOAD INT LITERAL (-1) - Push the value -1 (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_M1
+			{ 22, "LOAD INT LITERAL (0) - Push the value 0 (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_0
+			{ 23, "LOAD INT LITERAL (1) - Push the value 1 (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_1
+			{ 24, "LOAD INT LITERAL (2) - Push the value 2 (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_2
+			{ 25, "LOAD INT LITERAL (3) - Push the value 3 (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_3
+			{ 26, "LOAD INT LITERAL (4) - Push the value 4 (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_4
+			{ 27, "LOAD INT LITERAL (5) - Push the value 5 (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_5
+			{ 28, "LOAD INT LITERAL (6) - Push the value 6 (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_6
+			{ 29, "LOAD INT LITERAL (7) - Push the value 7 (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_7
+			{ 30, "LOAD INT LITERAL (8) - Push the value 8 (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_8
+			{ 31, "LOAD INT VALUE (Int8) - Push the supplied Int8 value (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4_S
+			{ 32, "LOAD INT VALUE (Int32) - Push the supplied Int32 value (As Int32) onto the evaluation stack" }, // OpCodes.Ldc_I4
+			{ 33, "LOAD INT VALUE (Int64) - Push the supplied Int64 value (As Int64) onto the evaluation stack" }, // OpCodes.Ldc_I8
+			{ 34, "LOAD FLOAT VALUE (Float32) - Push the supplied Float32 value (As Type F) onto the evaluation stack" }, // OpCodes.Ldc_R4
+			{ 35, "LOAD FLOAT VALUE (Float64) - Push the supplied Float64 value (As Type F) onto the evaluation stack" }, // OpCodes.Ldc_R8
+			{ 37, "DUPLICATE - Copy top of stack and push copy to top of stack" }, // OpCodes.Dup
+			{ 38, "POP STACK - Remove the value currently on top of the evaluation stack" }, // OpCodes.Pop
+			{ 39, "JUMP - Exit current method and jump to specified method" }, // OpCodes.Jmp
+			{ 40, "CALL METHOD - Call passed method descriptor" }, // OpCodes.Call
+			{ 41, "CALL METHOD - Call method indicated on evaluation stack" }, // OpCodes.Calli
+			{ 42, "RETURN - Return from current method and push return value (if present) to caller's evaluation stack" }, // OpCodes.Ret
+			{ 43, "BRANCH UNCONDITIONALLY (Short Form) - Unconditionally transfer control to specified target instruction (Short Form)" }, // OpCodes.Br_S
+			{ 44, "BRANCH WHEN FALSE (Short Form) - Transfer control to specified (short form) target instruction, if the value is falsy (false, a null reference, or zero)" }, // OpCodes.Brfalse_S
+			{ 45, "BRANCH WHEN TRUE (Short Form) - Transfer control to specified (short form) target instruction, if the value is truthy (true, not null, or non-zero)" }, // OpCodes.Brtrue_S
+			{ 46, "BRANCH WHEN EQUAL (Short Form) - Transfer control to specified (short form) target instruction, if the two values are equal" }, // OpCodes.Beq_S
+			{ 47, "BRANCH WHEN GREATER THAN OR EQUAL (Short Form) - Transfer control to specified (short form) target instruction, if the first value is greater than or equal to the second value" }, // OpCodes.Bge_S
+			{ 48, "BRANCH WHEN GREATER THAN (Short Form) - Transfer control to specified (short form) target instruction, if the first value is greater than the second value" }, // OpCodes.Bgt_S
+			{ 49, "BRANCH WHEN LESS THAN OR EQUAL (Short Form) - Transfer control to specified (short form) target instruction, if the first value is less than or equal to the second value" }, // OpCodes.Ble_S
+			{ 50, "BRANCH WHEN LESS THAN (Short Form) - Transfer control to specified (short form) target instruction, if the first value is less than the second value" }, // OpCodes.Blt_S
+			{ 51, "BRANCH WHEN NOT EQUAL (Unsigned, Short Form) - Transfer control to specified (short form) target instruction, when the values are not equal [unsigned integer or unordered float]" }, // OpCodes.Bne_Un_S
+			{ 52, "BRANCH WHEN GREATER THAN OR EQUAL (Unsigned, Short Form) - Transfer control to specified (short form) target instruction, if the first value is greater than or equal to the second value [unsigned integer or unordered float]" }, // OpCodes.Bge_Un_S
+			{ 53, "BRANCH WHEN GREATER THAN (Unsigned, Short Form) - Transfer control to specified (short form) target instruction, if the first value is greater than the second value [unsigned integer or unordered float]" }, // OpCodes.Bgt_Un_S
+			{ 54, "BRANCH WHEN LESS THAN OR EQUAL (Unsigned, Short Form) - Transfer control to specified (short form) target instruction, if the first value is less than or equal to the second value [unsigned integer or unordered float]" }, // OpCodes.Ble_Un_S
+			{ 55, "BRANCH WHEN LESS THAN (Unsigned, Short Form) - Transfer control to specified (short form) target instruction, if the first value is less than the second value [unsigned integer or unordered float]" }, // OpCodes.Blt_Un_S
+			{ 56, "BRANCH UNCONDITIONALLY - Unconditionally transfer control to specified target instruction" }, // OpCodes.Br
+			{ 57, "BRANCH WHEN FALSE - Transfer control to specified target instruction, if the value is falsy (false, a null reference, or zero)" }, // OpCodes.Brfalse
+			{ 58, "BRANCH WHEN TRUE - Transfer control to specified target instruction, if the value is truthy (true, not null, or non-zero)" }, // OpCodes.Brtrue
+			{ 59, "BRANCH WHEN EQUAL - Transfer control to specified target instruction, if the two values are equal" }, // OpCodes.Beq
+			{ 60, "BRANCH WHEN GREATER THAN OR EQUAL - Transfer control to specified target instruction, if the first value is greater than or equal to the second value" }, // OpCodes.Bge
+			{ 61, "BRANCH WHEN GREATER THAN - Transfer control to specified target instruction, if the first value is greater than the second value" }, // OpCodes.Bgt
+			{ 62, "BRANCH WHEN LESS THAN OR EQUAL - Transfer control to specified target instruction, if the first value is less than or equal to the second value" }, // OpCodes.Ble
+			{ 63, "BRANCH WHEN LESS THAN - Transfer control to specified target instruction, if the first value is less than the second value" }, // OpCodes.Blt
+			{ 64, "BRANCH WHEN NOT EQUAL (Unsigned) - Transfer control to specified target instruction, when the values are not equal [unsigned integer or unordered float]" }, // OpCodes.Bne_Un
+			{ 65, "BRANCH WHEN GREATER THAN OR EQUAL (Unsigned) - Transfer control to specified target instruction, if the first value is greater than or equal to the second value [unsigned integer or unordered float]" }, // OpCodes.Bge_Un
+			{ 66, "BRANCH WHEN GREATER THAN (Unsigned) - Transfer control to specified target instruction, if the first value is greater than the second value [unsigned integer or unordered float]" }, // OpCodes.Bgt_Un
+			{ 67, "BRANCH WHEN LESS THAN OR EQUAL (Unsigned) - Transfer control to specified target instruction, if the first value is less than or equal to the second value [unsigned integer or unordered float]" }, // OpCodes.Ble_Un
+			{ 68, "BRANCH WHEN LESS THAN (Unsigned) - Transfer control to specified target instruction, if the first value is less than the second value [unsigned integer or unordered float]" }, // OpCodes.Blt_Un
+			{ 69, "SWITCH - Implement A Jump Table" }, // OpCodes.Switch
+			{ 70, "LOAD INDIRECT (Int8) - Indirectly load value of type Int8 onto the evaluation stack (As Int32)" }, // OpCodes.Ldind_I1
+			{ 71, "LOAD INDIRECT (UInt8) - Indirectly load value of type unsigned Int8 onto the evaluation stack (As Int32)" }, // OpCodes.Ldind_U1
+			{ 72, "LOAD INDIRECT (Int16) - Indirectly load value of type Int16 onto the evaluation stack (As Int32)" }, // OpCodes.Ldind_I2
+			{ 73, "LOAD INDIRECT (UInt16) - Indirectly load value of type unsigned Int16 onto the evaluation stack (As Int32)" }, // OpCodes.Ldind_U2
+			{ 74, "LOAD INDIRECT (Int32) - Indirectly load value of type Int32 onto the evaluation stack (As Int32)" }, // OpCodes.Ldind_I4
+			{ 75, "LOAD INDIRECT (UInt32) - Indirectly load value of type unsigned Int32 onto the evaluation stack (As Int32)" }, // OpCodes.Ldind_U4
+			{ 76, "LOAD INDIRECT (Int64) - Indirectly load value of type Int64 onto the evaluation stack (As Int64)" }, // OpCodes.Ldind_I8
+			{ 77, "LOAD INDIRECT (Native Int) - Indirectly load value of type Native Int onto the evaluation stack (As Native Int)" }, // OpCodes.Ldind_I
+			{ 78, "LOAD INDIRECT (Float32) - Indirectly load value of type Float32 onto the evaluation stack (As Type F)" }, // OpCodes.Ldind_R4
+			{ 79, "LOAD INDIRECT (Float64) - Indirectly load value of type Float64 onto the evaluation stack (As Type F)" }, // OpCodes.Ldind_R8
+			{ 80, "LOAD INDIRECT (Object) - Indirectly load an object reference onto the evaluation stack (As Type O)" }, // OpCodes.Ldind_Ref
+			{ 81, "STORE AT ADDRESS (Object) - Store an object reference value at a supplied address" }, // OpCodes.Stind_Ref
+			{ 82, "STORE AT ADDRESS (Int8) - Store a value of type Int8 at a supplied address" }, // OpCodes.Stind_I1
+			{ 83, "STORE AT ADDRESS (Int16) - Store a value of type Int16 at a supplied address" }, // OpCodes.Stind_I2
+			{ 84, "STORE AT ADDRESS (Int32) - Store a value of type Int32 at a supplied address" }, // OpCodes.Stind_I4
+			{ 85, "STORE AT ADDRESS (Int64) - Store a value of type Int64 at a supplied address" }, // OpCodes.Stind_I8
+			{ 86, "STORE AT ADDRESS (Float32) - Store a value of type Float32 at a supplied address" }, // OpCodes.Stind_R4
+			{ 87, "STORE AT ADDRESS (Float64) - Store a value of type Float64 at a supplied address" }, // OpCodes.Stind_R8
+			{ 88, "ADD - Add two values and push the result onto the evalutation stack" }, // OpCodes.Add
+			{ 89, "SUBTRACT - Subtract one value from another and push the result onto the evalutation stack" }, // OpCodes.Sub
+			{ 90, "MULTIPLY - Multiply two values and push the result onto the evalutation stack" }, // OpCodes.Mul
+			{ 91, "DIVIDE - Divide two values and push the result as a floating-point (Type F) or a quotient (Int32) onto the evalutation stack" }, // OpCodes.Div
+			{ 92, "DIVIDE - Divide two unsigned integer values and push the result (Int32) onto the evalutation stack" }, // OpCodes.Div_Un
+			{ 93, "REMAINDER - Divide two values and push the remainder onto the evaluation stack" }, // OpCodes.Rem
+			{ 94, "REMAINDER - Divide two unsigned values and push the remainder onto the evaluation stack" }, // OpCodes.Rem_Un
+			{ 95, "BITWISE AND - Compute the bitwise AND of two values and push the result onto the evalutation stack" }, // OpCodes.And
+			{ 96, "BITWISE OR - Compute the bitwise OR (bitwise complement) of the two integer values on the top of the stack and push the result onto the evalutation stack" }, // OpCodes.Or
+			{ 97, "BITWISE XOR - Compute the bitwise XOR of top two values from the evaluation stack and push the result onto the evalutation stack" }, // OpCodes.Xor
+			{ 98, "LEFT SHIFT INTEGER - Shift an integer value to the left (in zeroes) by the specified number of bits and push the result onto the evaluation stack" }, // OpCodes.Shl
+			{ 99, "RIGHT SHIFT INTEGER (Signed) - Shift an integer value (in sign) to the right by the specified number of bits and push the result onto the evaluation stack" }, // OpCodes.Shr
+			{ 100, "RIGHT SHIFT INTEGER (Unsigned) - Shift an unsigned integer value (in zeroes) to the right by the specified number of bits and push the result onto the evaluation stack" }, // OpCodes.Shr_Un
+			{ 101, "NEGATE VALUE - Negate a value and push the result onto the evaluation stack" }, // OpCodes.Neg
+			{ 102, "NOT (Bitwise Complement) - Compute the bitwise complement of the single integer value on top of the stack and push the result onto the evaluation stack (As Same Type)" }, // OpCodes.Not
+			{ 103, "CONVERT (Int8) - Convert the value on the top of the stack to Int8 then extend (pad) to Int32" }, // OpCodes.Conv_I1
+			{ 104, "CONVERT (Int16) - Convert the value on the top of the stack to Int16 then extend (pad) to Int32" }, // OpCodes.Conv_I2
+			{ 105, "CONVERT (Int32) - Convert the value on the top of the stack to Int32" }, // OpCodes.Conv_I4
+			{ 106, "CONVERT (Int64) - Convert the value on the top of the stack to Int64" }, // OpCodes.Conv_I8
+			{ 107, "CONVERT (Float32) - Convert the value on the top of the stack to Float32" }, // OpCodes.Conv_R4
+			{ 108, "CONVERT (Float64) - Convert the value on the top of the stack to Float64" }, // OpCodes.Conv_R8
+			{ 109, "CONVERT (UInt32) - Convert the value on the top of the stack to UInt32 then extend to Int32" }, // OpCodes.Conv_U4
+			{ 110, "CONVERT (UInt64) - Convert the value on the top of the stack to UInt64 then extend to Int64" }, // OpCodes.Conv_U8
+			{ 111, "CALL VIRTUAL - Call a late-bound method on an object then push the return value onto the evaluation stack" }, // OpCodes.Callvirt
+			{ 112, "COPY OBJECT - Copy the value type at the address of a source object (Type &, Type *, Or Type Native Int) to the address of destination object (Type &, Type *, Or Type Native Int)" }, // OpCodes.Cpobj
+			{ 113, "LOAD OBJECT - Copy the value type object pointed to an address to top of evaluation stack" }, // OpCodes.Ldobj
+			{ 114, "LOAD STRING - Push a new object reference to a string literal stored in the metadata" }, // OpCodes.Ldstr
+			{ 115, "NEW OBJECT - Create a new object or new instance of a value type then push an object reference (Type O) onto the evaluation stack" }, // OpCodes.Newobj
+			{ 116, "CAST CLASS - Attempt to cast object passed by reference to the specified class" }, // OpCodes.Castclass
+			{ 117, "IS INSTANCE - Test whether an object reference (Type O) is an instance of a particular class" }, // OpCodes.Isinst
+			{ 118, "CONVERT (Unsigned Int To Float32) - Convert the unsigned integer value on the top of the evaluation stack to Float32" }, // OpCodes.Conv_R_Un
+			{ 121, "UNBOX (Value Type) - Convert the boxed representation of a value type to its unboxed form" }, // OpCodes.Unbox
+			{ 122, "THROW - Throw the exception object currently on the evaluation stack" }, // OpCodes.Throw
+			{ 123, "LOAD FIELD - Find the value of a field in the object whose reference is currently on the evaluation stack" }, // OpCodes.Ldfld
+			{ 124, "LOAD FIELD ADDRESS - Find the address of a field in the object whose reference is currently on the evaluation stack" }, // OpCodes.Ldflda
+			{ 125, "STORE FIELD - Replace the value stored in the field of an object reference or pointer with a new value" }, // OpCodes.Stfld
+			{ 126, "LOAD STATIC FIELD - Push the value of a static field onto the evaluation stack" }, // OpCodes.Ldsfld
+			{ 127, "LOAD STATIC FIELD ADDRESS - Push the address of a static field onto the evaluation stack" }, // OpCodes.Ldsflda
+			{ 128, "STORE STATIC FIELD - Replace the value of a static field with the value from the evaluation stack" }, // OpCodes.Stsfld
+			{ 129, "STORE OBJECT - Copy a value of a specified type from the evaluation stack into a supplied memory address" }, // OpCodes.Stobj
+			{ 130, "CONVERT OR THROW OVERFLOW (Unsigned to Int8) - Convert the unsigned value on the top of the stack to a signed Int8 then extend to Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I1_Un
+			{ 131, "CONVERT OR THROW OVERFLOW (Unsigned to Int16) - Convert the unsigned value on the top of the stack to a signed Int16 then extend to Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I2_Un
+			{ 132, "CONVERT OR THROW OVERFLOW (Unsigned to Int32) - Convert the unsigned value on the top of the stack to a signed Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I4_Un
+			{ 133, "CONVERT OR THROW OVERFLOW (Unsigned to Int64) - Convert the unsigned value on the top of the stack to a signed Int64 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I8_Un
+			{ 134, "CONVERT OR THROW OVERFLOW (Unsigned to UInt8) - Convert the unsigned value on the top of the stack to an unsigned Int8 then extend to Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U1_Un
+			{ 135, "CONVERT OR THROW OVERFLOW (Unsigned to UInt16) - Convert the unsigned value on the top of the stack to an unsigned Int16 then extend to Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U2_Un
+			{ 136, "CONVERT OR THROW OVERFLOW (Unsigned to UInt32) - Convert the unsigned value on the top of the stack to an unsigned Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U4_Un
+			{ 137, "CONVERT OR THROW OVERFLOW (Unsigned to UInt64) - Convert the unsigned value on the top of the stack to an unsigned Int64 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U8_Un
+			{ 138, "CONVERT OR THROW OVERFLOW (Unsigned to Signed Native Int) - Convert the unsinged value on the top of the stack to a signed Native Int - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I_Un
+			{ 139, "CONVERT OR THROW OVERFLOW (Unsigned to Unsigned Native Int) - Convert the unsinged value on the top of the stack to an unsigned Native Int - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U_Un
+			{ 140, "BOX VALUE - Convert the value type to an object reference (Type O)" }, // OpCodes.Box
+			{ 141, "NEW ARRAY - Push an object reference to a new array (zero-based, one-dimensional array of specified element type) onto the evaluation stack" }, // OpCodes.Newarr
+			{ 142, "LOAD MULTIPLE ELEMENTS FROM ARRAY - Push the specified number of elements from a zero-based one-dimentional array onto the evaluation stack" }, // OpCodes.Ldlen
+			{ 143, "LOAD FROM ARRAY (Element Address) - Push the address of the element at the specified array index onto the evaluation stack as Type & (managed pointer)" }, // OpCodes.Ldelema
+			{ 144, "LOAD FROM ARRAY (Int8) - Push the element with type signed Int8 at the specified array index onto the evaluation stack as an Int32" }, // OpCodes.Ldelem_I1
+			{ 145, "LOAD FROM ARRAY (UInt8) - Push the element with type unsigned Int8 at the specified array index onto the evaluation stack as an Int32" }, // OpCodes.Ldelem_U1
+			{ 146, "LOAD FROM ARRAY (Int16) - Push the element with type signed Int16 at the specified array index onto the evaluation stack as an Int32" }, // OpCodes.Ldelem_I2
+			{ 147, "LOAD FROM ARRAY (UInt16) - Push the element with type unsigned Int16 at the specified array index onto the evaluation stack as an Int32" }, // OpCodes.Ldelem_U2
+			{ 148, "LOAD FROM ARRAY (Int32) - Push the element with type signed Int32 at the specified array index onto the evaluation stack as an Int32" }, // OpCodes.Ldelem_I4
+			{ 149, "LOAD FROM ARRAY (UInt32) - Push the element with type unsigned Int32 at the specified array index onto the evaluation stack as an Int32" }, // OpCodes.Ldelem_U4
+			{ 150, "LOAD FROM ARRAY (Int64) - Push the element with type Int64 at the specified array index onto the evaluation stack as an Int64" }, // OpCodes.Ldelem_I8
+			{ 151, "LOAD FROM ARRAY (Native Int) - Push the element with type Native Int at the specified array index onto the evaluation stack as a Native Int" }, // OpCodes.Ldelem_I
+			{ 152, "LOAD FROM ARRAY (Float32) - Push the element with type Float32 at the specified array index onto the evaluation stack as Type F (float)" }, // OpCodes.Ldelem_R4
+			{ 153, "LOAD FROM ARRAY (Float64) - Push the element with type Float64 at the specified array index onto the evaluation stack as Type F (float)" }, // OpCodes.Ldelem_R8
+			{ 154, "LOAD FROM ARRAY (Object Reference) - Push the object reference at the specified array index onto the evaluation stack as Type O (object reference)" }, // OpCodes.Ldelem_Ref
+			{ 155, "STORE ARRAY ELEMENT (Native Int) - Replace the array element at the specified index with the native int value on the evaluation stack" }, // OpCodes.Stelem_I
+			{ 156, "STORE ARRAY ELEMENT (Int8) - Replace the array element at the specified index with the Int8 value on the evaluation stack" }, // OpCodes.Stelem_I1
+			{ 157, "STORE ARRAY ELEMENT (Int16) - Replace the array element at the specified index with the Int16 value on the evaluation stack" }, // OpCodes.Stelem_I2
+			{ 158, "STORE ARRAY ELEMENT (Int32) - Replace the array element at the specified index with the Int32 value on the evaluation stack" }, // OpCodes.Stelem_I4
+			{ 159, "STORE ARRAY ELEMENT (Int64) - Replace the array element at the specified index with the Int64 value on the evaluation stack" }, // OpCodes.Stelem_I8
+			{ 160, "STORE ARRAY ELEMENT (Float32) - Replace the array element at the specified index with the Float32 value on the evaluation stack" }, // OpCodes.Stelem_R4
+			{ 161, "STORE ARRAY ELEMENT (Float64) - Replace the array element at the specified index with the Float64 value on the evaluation stack" }, // OpCodes.Stelem_R8
+			{ 162, "STORE ARRAY ELEMENT (Object Reference) - Replace the array element at the specified index with the object reference value (Type O) on the evaluation stack" }, // OpCodes.Stelem_Ref
+			{ 163, "LOAD FROM ARRAY (Specified Type) - Push the element at the specified array index onto the evaluation stack as the type specified in the instruction" }, // OpCodes.Ldelem
+			{ 164, "STORE ARRAY ELEMENT (Specified Type) - Replace the array element at the specified index with the value on the evaluation stack whose type is specified in the instruction" }, // OpCodes.Stelem
+			{ 165, "UNBOX (Any Type) - Convert the boxed representation of a type specified in the instruction to its unboxed form" }, // OpCodes.Unbox_Any
 			//{ 179, OpCodes.Conv_Ovf_I1 }, // OpCodes.Conv_Ovf_I1
 			//{ 180, OpCodes.Conv_Ovf_U1 }, // OpCodes.Conv_Ovf_U1
 			//{ 181, OpCodes.Conv_Ovf_I2 }, // OpCodes.Conv_Ovf_I2
