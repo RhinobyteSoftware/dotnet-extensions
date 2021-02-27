@@ -90,7 +90,7 @@ namespace Rhinobyte.ReflectionHelpers
 			{ 74, "LOAD INDIRECT (Int32) - Indirectly load value of type Int32 onto the evaluation stack (As Int32)" }, // OpCodes.Ldind_I4
 			{ 75, "LOAD INDIRECT (UInt32) - Indirectly load value of type unsigned Int32 onto the evaluation stack (As Int32)" }, // OpCodes.Ldind_U4
 			{ 76, "LOAD INDIRECT (Int64) - Indirectly load value of type Int64 onto the evaluation stack (As Int64)" }, // OpCodes.Ldind_I8
-			{ 77, "LOAD INDIRECT (Native Int) - Indirectly load value of type Native Int onto the evaluation stack (As Native Int)" }, // OpCodes.Ldind_I
+			{ 77, "LOAD INDIRECT (NativeInt) - Indirectly load value of type NativeInt onto the evaluation stack (As NativeInt)" }, // OpCodes.Ldind_I
 			{ 78, "LOAD INDIRECT (Float32) - Indirectly load value of type Float32 onto the evaluation stack (As Type F)" }, // OpCodes.Ldind_R4
 			{ 79, "LOAD INDIRECT (Float64) - Indirectly load value of type Float64 onto the evaluation stack (As Type F)" }, // OpCodes.Ldind_R8
 			{ 80, "LOAD INDIRECT (Object) - Indirectly load an object reference onto the evaluation stack (As Type O)" }, // OpCodes.Ldind_Ref
@@ -125,7 +125,7 @@ namespace Rhinobyte.ReflectionHelpers
 			{ 109, "CONVERT (UInt32) - Convert the value on the top of the stack to UInt32 then extend to Int32" }, // OpCodes.Conv_U4
 			{ 110, "CONVERT (UInt64) - Convert the value on the top of the stack to UInt64 then extend to Int64" }, // OpCodes.Conv_U8
 			{ 111, "CALL VIRTUAL - Call a late-bound method on an object then push the return value onto the evaluation stack" }, // OpCodes.Callvirt
-			{ 112, "COPY OBJECT - Copy the value type at the address of a source object (Type &, Type *, Or Type Native Int) to the address of destination object (Type &, Type *, Or Type Native Int)" }, // OpCodes.Cpobj
+			{ 112, "COPY OBJECT - Copy the value type at the address of a source object (Type &, Type *, Or Type NativeInt) to the address of destination object (Type &, Type *, Or Type NativeInt)" }, // OpCodes.Cpobj
 			{ 113, "LOAD OBJECT - Copy the value type object pointed to an address to top of evaluation stack" }, // OpCodes.Ldobj
 			{ 114, "LOAD STRING - Push a new object reference to a string literal stored in the metadata" }, // OpCodes.Ldstr
 			{ 115, "NEW OBJECT - Create a new object or new instance of a value type then push an object reference (Type O) onto the evaluation stack" }, // OpCodes.Newobj
@@ -149,8 +149,8 @@ namespace Rhinobyte.ReflectionHelpers
 			{ 135, "CONVERT OR THROW OVERFLOW (Unsigned to UInt16) - Convert the unsigned value on the top of the stack to an unsigned Int16 then extend to Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U2_Un
 			{ 136, "CONVERT OR THROW OVERFLOW (Unsigned to UInt32) - Convert the unsigned value on the top of the stack to an unsigned Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U4_Un
 			{ 137, "CONVERT OR THROW OVERFLOW (Unsigned to UInt64) - Convert the unsigned value on the top of the stack to an unsigned Int64 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U8_Un
-			{ 138, "CONVERT OR THROW OVERFLOW (Unsigned to Signed Native Int) - Convert the unsinged value on the top of the stack to a signed Native Int - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I_Un
-			{ 139, "CONVERT OR THROW OVERFLOW (Unsigned to Unsigned Native Int) - Convert the unsinged value on the top of the stack to an unsigned Native Int - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U_Un
+			{ 138, "CONVERT OR THROW OVERFLOW (Unsigned to Signed NativeInt) - Convert the unsinged value on the top of the stack to a signed NativeInt - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I_Un
+			{ 139, "CONVERT OR THROW OVERFLOW (Unsigned to Unsigned NativeInt) - Convert the unsinged value on the top of the stack to an unsigned NativeInt - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U_Un
 			{ 140, "BOX VALUE - Convert the value type to an object reference (Type O)" }, // OpCodes.Box
 			{ 141, "NEW ARRAY - Push an object reference to a new array (zero-based, one-dimensional array of specified element type) onto the evaluation stack" }, // OpCodes.Newarr
 			{ 142, "LOAD MULTIPLE ELEMENTS FROM ARRAY - Push the specified number of elements from a zero-based one-dimentional array onto the evaluation stack" }, // OpCodes.Ldlen
@@ -162,11 +162,11 @@ namespace Rhinobyte.ReflectionHelpers
 			{ 148, "LOAD FROM ARRAY (Int32) - Push the element with type signed Int32 at the specified array index onto the evaluation stack as an Int32" }, // OpCodes.Ldelem_I4
 			{ 149, "LOAD FROM ARRAY (UInt32) - Push the element with type unsigned Int32 at the specified array index onto the evaluation stack as an Int32" }, // OpCodes.Ldelem_U4
 			{ 150, "LOAD FROM ARRAY (Int64) - Push the element with type Int64 at the specified array index onto the evaluation stack as an Int64" }, // OpCodes.Ldelem_I8
-			{ 151, "LOAD FROM ARRAY (Native Int) - Push the element with type Native Int at the specified array index onto the evaluation stack as a Native Int" }, // OpCodes.Ldelem_I
+			{ 151, "LOAD FROM ARRAY (NativeInt) - Push the element with type NativeInt at the specified array index onto the evaluation stack as a NativeInt" }, // OpCodes.Ldelem_I
 			{ 152, "LOAD FROM ARRAY (Float32) - Push the element with type Float32 at the specified array index onto the evaluation stack as Type F (float)" }, // OpCodes.Ldelem_R4
 			{ 153, "LOAD FROM ARRAY (Float64) - Push the element with type Float64 at the specified array index onto the evaluation stack as Type F (float)" }, // OpCodes.Ldelem_R8
 			{ 154, "LOAD FROM ARRAY (Object Reference) - Push the object reference at the specified array index onto the evaluation stack as Type O (object reference)" }, // OpCodes.Ldelem_Ref
-			{ 155, "STORE ARRAY ELEMENT (Native Int) - Replace the array element at the specified index with the native int value on the evaluation stack" }, // OpCodes.Stelem_I
+			{ 155, "STORE ARRAY ELEMENT (NativeInt) - Replace the array element at the specified index with the NativeInt value on the evaluation stack" }, // OpCodes.Stelem_I
 			{ 156, "STORE ARRAY ELEMENT (Int8) - Replace the array element at the specified index with the Int8 value on the evaluation stack" }, // OpCodes.Stelem_I1
 			{ 157, "STORE ARRAY ELEMENT (Int16) - Replace the array element at the specified index with the Int16 value on the evaluation stack" }, // OpCodes.Stelem_I2
 			{ 158, "STORE ARRAY ELEMENT (Int32) - Replace the array element at the specified index with the Int32 value on the evaluation stack" }, // OpCodes.Stelem_I4
@@ -177,69 +177,77 @@ namespace Rhinobyte.ReflectionHelpers
 			{ 163, "LOAD FROM ARRAY (Specified Type) - Push the element at the specified array index onto the evaluation stack as the type specified in the instruction" }, // OpCodes.Ldelem
 			{ 164, "STORE ARRAY ELEMENT (Specified Type) - Replace the array element at the specified index with the value on the evaluation stack whose type is specified in the instruction" }, // OpCodes.Stelem
 			{ 165, "UNBOX (Any Type) - Convert the boxed representation of a type specified in the instruction to its unboxed form" }, // OpCodes.Unbox_Any
-			//{ 179, OpCodes.Conv_Ovf_I1 }, // OpCodes.Conv_Ovf_I1
-			//{ 180, OpCodes.Conv_Ovf_U1 }, // OpCodes.Conv_Ovf_U1
-			//{ 181, OpCodes.Conv_Ovf_I2 }, // OpCodes.Conv_Ovf_I2
-			//{ 182, OpCodes.Conv_Ovf_U2 }, // OpCodes.Conv_Ovf_U2
-			//{ 183, OpCodes.Conv_Ovf_I4 }, // OpCodes.Conv_Ovf_I4
-			//{ 184, OpCodes.Conv_Ovf_U4 }, // OpCodes.Conv_Ovf_U4
-			//{ 185, OpCodes.Conv_Ovf_I8 }, // OpCodes.Conv_Ovf_I8
-			//{ 186, OpCodes.Conv_Ovf_U8 }, // OpCodes.Conv_Ovf_U8
-			//{ 194, OpCodes.Refanyval }, // OpCodes.Refanyval
-			//{ 195, OpCodes.Ckfinite }, // OpCodes.Ckfinite
-			//{ 198, OpCodes.Mkrefany }, // OpCodes.Mkrefany
-			//{ 208, OpCodes.Ldtoken }, // OpCodes.Ldtoken
-			//{ 209, OpCodes.Conv_U2 }, // OpCodes.Conv_U2
-			//{ 210, OpCodes.Conv_U1 }, // OpCodes.Conv_U1
-			//{ 211, OpCodes.Conv_I }, // OpCodes.Conv_I
-			//{ 212, OpCodes.Conv_Ovf_I }, // OpCodes.Conv_Ovf_I
-			//{ 213, OpCodes.Conv_Ovf_U }, // OpCodes.Conv_Ovf_U
-			//{ 214, OpCodes.Add_Ovf }, // OpCodes.Add_Ovf
-			//{ 215, OpCodes.Add_Ovf_Un }, // OpCodes.Add_Ovf_Un
-			//{ 216, OpCodes.Mul_Ovf }, // OpCodes.Mul_Ovf
-			//{ 217, OpCodes.Mul_Ovf_Un }, // OpCodes.Mul_Ovf_Un
-			//{ 218, OpCodes.Sub_Ovf }, // OpCodes.Sub_Ovf
-			//{ 219, OpCodes.Sub_Ovf_Un }, // OpCodes.Sub_Ovf_Un
-			//{ 220, OpCodes.Endfinally }, // OpCodes.Endfinally
-			//{ 221, OpCodes.Leave }, // OpCodes.Leave
-			//{ 222, OpCodes.Leave_S }, // OpCodes.Leave_S
-			//{ 223, OpCodes.Stind_I }, // OpCodes.Stind_I
-			//{ 224, OpCodes.Conv_U }, // OpCodes.Conv_U
-			//{ 248, OpCodes.Prefix7 }, // OpCodes.Prefix7
-			//{ 249, OpCodes.Prefix6 }, // OpCodes.Prefix6
-			//{ 250, OpCodes.Prefix5 }, // OpCodes.Prefix5
-			//{ 251, OpCodes.Prefix4 }, // OpCodes.Prefix4
-			//{ 252, OpCodes.Prefix3 }, // OpCodes.Prefix3
-			//{ 253, OpCodes.Prefix2 }, // OpCodes.Prefix2
-			//{ 254, OpCodes.Prefix1 }, // OpCodes.Prefix1
-			//{ 255, OpCodes.Prefixref }, // OpCodes.Prefixref
-			//{ -512, OpCodes.Arglist }, // OpCodes.Arglist
-			//{ -511, OpCodes.Ceq }, // OpCodes.Ceq
-			//{ -510, OpCodes.Cgt }, // OpCodes.Cgt
-			//{ -509, OpCodes.Cgt_Un }, // OpCodes.Cgt_Un
-			//{ -508, OpCodes.Clt }, // OpCodes.Clt
-			//{ -507, OpCodes.Clt_Un }, // OpCodes.Clt_Un
-			//{ -506, OpCodes.Ldftn }, // OpCodes.Ldftn
-			//{ -505, OpCodes.Ldvirtftn }, // OpCodes.Ldvirtftn
-			//{ -503, OpCodes.Ldarg }, // OpCodes.Ldarg
-			//{ -502, OpCodes.Ldarga }, // OpCodes.Ldarga
-			//{ -501, OpCodes.Starg }, // OpCodes.Starg
-			//{ -500, OpCodes.Ldloc }, // OpCodes.Ldloc
-			//{ -499, OpCodes.Ldloca }, // OpCodes.Ldloca
-			//{ -498, OpCodes.Stloc }, // OpCodes.Stloc
-			//{ -497, OpCodes.Localloc }, // OpCodes.Localloc
-			//{ -495, OpCodes.Endfilter }, // OpCodes.Endfilter
-			//{ -494, OpCodes.Unaligned }, // OpCodes.Unaligned
-			//{ -493, OpCodes.Volatile }, // OpCodes.Volatile
-			//{ -492, OpCodes.Tailcall }, // OpCodes.Tailcall
-			//{ -491, OpCodes.Initobj }, // OpCodes.Initobj
-			//{ -490, OpCodes.Constrained }, // OpCodes.Constrained
-			//{ -489, OpCodes.Cpblk }, // OpCodes.Cpblk
-			//{ -488, OpCodes.Initblk }, // OpCodes.Initblk
-			//{ -486, OpCodes.Rethrow }, // OpCodes.Rethrow
-			//{ -484, OpCodes.Sizeof }, // OpCodes.Sizeof
-			//{ -483, OpCodes.Refanytype }, // OpCodes.Refanytype
-			{ -482, "Specify Subsequent Array Address Operation Is Readonly" } // OpCodes.Readonly
+			{ 179, "CONVERT OR THROW OVERFLOW (Signed to Int8) - Convert the signed value on the top of the stack to a signed Int8 then extend to Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I1
+			{ 180, "CONVERT OR THROW OVERFLOW (Signed to UInt8) - Convert the signed value on the top of the stack to an unsigned Int8 then extend to Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U1
+			{ 181, "CONVERT OR THROW OVERFLOW (Signed to Int16) - Convert the signed value on the top of the stack to a signed Int16 then extend to Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I2
+			{ 182, "CONVERT OR THROW OVERFLOW (Signed to UInt16) - Convert the signed value on the top of the stack to an unsigned Int16 then extend to Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U2
+			{ 183, "CONVERT OR THROW OVERFLOW (Signed to Int32) - Convert the signed value on the top of the stack to a signed Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I4
+			{ 184, "CONVERT OR THROW OVERFLOW (Signed to UInt32) - Convert the signed value on the top of the stack to an unsigned Int32 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U4
+			{ 185, "CONVERT OR THROW OVERFLOW (Signed to Int64) - Convert the signed value on the top of the stack to a signed Int64 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I8
+			{ 186, "CONVERT OR THROW OVERFLOW (Signed to UInt64) - Convert the signed value on the top of the stack to an unsigned Int64 - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U8
+
+			// TODO: Give this a non abbreviated name once I better understand what specifically this instruction type does/is used for
+			{ 194, "REF ANY VAL - Retrieve the address (Type &) embedded in a type reference" }, // OpCodes.Refanyval
+
+			{ 195, "CHECK IS FINITE - Throw an ArithmeticException if the value is not a finite number" }, // OpCodes.Ckfinite
+			{ 198, "MAKE REFERENCE - Push a typed reference to an instance of a specified type onto the evaluation stack" }, // OpCodes.Mkrefany
+			{ 208, "LOAD TOKEN - Convert a metadata token into its runtime representation and push it onto the evaluation stack" }, // OpCodes.Ldtoken
+			{ 209, "CONVERT (UInt16) - Convert the value on the top of the stack to UInt16 then extend (pad) to Int32" }, // OpCodes.Conv_U2
+			{ 210, "CONVERT (UInt8) - Convert the value on the top of the stack to UInt8 then extend (pad) to Int32" }, // OpCodes.Conv_U1
+			{ 211, "CONVERT (NativeInt) - Convert the value on the top of the stack to a NativeInt" }, // OpCodes.Conv_I
+			{ 212, "CONVERT OR THROW OVERFLOW (Signed to Signed NativeInt) - Convert the singed value on the top of the stack to a signed NativeInt - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_I
+			{ 213, "CONVERT OR THROW OVERFLOW (Signed to Unsigned NativeInt) - Convert the singed value on the top of the stack to an unsigned NativeInt - Throw an OverflowException on overflow" }, // OpCodes.Conv_Ovf_U
+			{ 214, "ADD OR THROW OVERFLOW (Signed) - Add two integers and push the result onto the evaluation stack - Throw an OverflowException if an overflow occurs" }, // OpCodes.Add_Ovf
+			{ 215, "ADD OR THROW OVERFLOW (Unsigned) - Add two unsigned integers and push the result onto the evaluation stack - Throw an OverflowException if an overflow occurs" }, // OpCodes.Add_Ovf_Un
+			{ 216, "MULTIPLY OR THROW OVERFLOW (Signed) - Multiply two integers and push the result onto the evaluation stack - Throw an OverflowException if an overflow occurs" }, // OpCodes.Mul_Ovf
+			{ 217, "MULTIPLY OR THROW OVERFLOW (Unsigned) - Multiply two unsigned integers and push the result onto the evaluation stack - Throw an OverflowException if an overflow occurs" }, // OpCodes.Mul_Ovf_Un
+			{ 218, "SUBTRACT OR THROW OVERFLOW (Signed) - Subtract one integer value from another and push the result onto the evaluation stack - Throw an OverflowException if an overflow occurs" }, // OpCodes.Sub_Ovf
+			{ 219, "SUBTRACT OR THROW OVERFLOW (Unsigned) - Subtract one unsigned integer value from another and push the result onto the evaluation stack - Throw an OverflowException if an overflow occurs" }, // OpCodes.Sub_Ovf_Un
+			{ 220, "END CATCH OR FINALLY - Transfer control from the fault or from the finally clause of an exception block back to the CLI exception handler" }, // OpCodes.Endfinally
+			{ 221, "LEAVE PROTECTED REGION - Exit a protected region of code and unconditionally transfer control to a specified target instruction" }, // OpCodes.Leave
+			{ 222, "LEAVE PROTECTED REGION (Short Form) - Exit a protected region of code and unconditionally transfer control to a specified target instruction (short form)" }, // OpCodes.Leave_S
+			{ 223, "STORE AT ADDRESS (NativeInt) - Store a value of type NativeInt at a supplied address" }, // OpCodes.Stind_I
+			{ 224, "CONVERT (Unsigned NativeInt) - Convert the value on the top of the stack to an Unsigned NativeInt then extend it to a NativeInt" }, // OpCodes.Conv_U
+			{ 248, "PREFIX 7 [Reserved Instruction]" }, // OpCodes.Prefix7
+			{ 249, "PREFIX 6 [Reserved Instruction]" }, // OpCodes.Prefix6
+			{ 250, "PREFIX 5 [Reserved Instruction]" }, // OpCodes.Prefix5
+			{ 251, "PREFIX 4 [Reserved Instruction]" }, // OpCodes.Prefix4
+			{ 252, "PREFIX 3 [Reserved Instruction]" }, // OpCodes.Prefix3
+			{ 253, "PREFIX 2 [Reserved Instruction]" }, // OpCodes.Prefix2
+			{ 254, "PREFIX 1 [Reserved Instruction] - Prefix for the non single byte opcodes with values of -512 (0 for the second byte) to -482 (30 for the second byte)" }, // OpCodes.Prefix1
+			{ 255, "PREFIX REF [Reserved Instruction]" }, // OpCodes.Prefixref
+
+			// TWO-BYTE OPCODES WITH PREFIX 1 (254) FOR THE VALUE OF THE FIRST BYTE
+			{ -512, "GET ARGUMENT LIST - Return an unmanaged pointer to the argument list of the current method" }, // OpCodes.Arglist
+			{ -511, "COMPARE (Equals) - Compare two values. If they are equal push the value of 1 (Int32) onto the evaluation stack. Otherwise push the value of 0 (Int32) onto the evaluation stack." }, // OpCodes.Ceq
+			{ -510, "COMPARE (GreaterThan) - Compare two values. If the first value is greater than the second value push the value of 1 (Int32) onto the evaluation stack. Otherwise push the value of 0 (Int32) onto the evaluation stack." }, // OpCodes.Cgt
+			{ -509, "COMPARE (GreaterThan, Unsigned) - Compare two unsigned or unordered values. If the first value is greater than the second value push the value of 1 (Int32) onto the evaluation stack. Otherwise push the value of 0 (Int32) onto the evaluation stack." }, // OpCodes.Cgt_Un
+			{ -508, "COMPARE (LessThan) - Compare two values. If the first value is less than the second value push the value of 1 (Int32) onto the evaluation stack. Otherwise push the value of 0 (Int32) onto the evaluation stack." }, // OpCodes.Clt
+			{ -507, "COMPARE (LessThan, Unsigned) - Compare two unsigned or unordered values. If the first value is less than the second value push the value of 1 (Int32) onto the evaluation stack. Otherwise push the value of 0 (Int32) onto the evaluation stack." }, // OpCodes.Clt_Un
+			{ -506, "LOAD NATIVE FUNCTION - Push an unmanaged pointer (NativeInt) for the native code implementing a specific method onto the evaluation stack" }, // OpCodes.Ldftn
+			{ -505, "LOAD VIRTUAL NATIVE FUNCTION - Push an unmanaged pointer (NativeInt) for the native code implementing a particular virtual method associated with a specified object onto the evaluation stack" }, // OpCodes.Ldvirtftn
+			{ -503, "LOAD ARGUMENT (Specified Index) - Load the argument referenced by the specified index onto the evaluation stack" }, // OpCodes.Ldarg
+			{ -502, "LOAD ARGUMENT ADDRESS (Specified Index) - Load the argument address of the specified index onto the evaluation stack" }, // OpCodes.Ldarga
+			{ -501, "SET ARGUMENT (Specified Index) - Store the value on the top of the evaluation stack into the argument slot at a specified index" }, // OpCodes.Starg
+			{ -500, "LOAD LOCAL VARIABLE (Specified Index) - Push the local variable value at the specified index onto the evaluation stack" }, // OpCodes.Ldloc
+			{ -499, "LOAD LOCAL VARIABLE ADDRESS (Specified Index) - Push the address of the local variable at the specified index onto the evaluation stack" }, // OpCodes.Ldloca
+			{ -498, "SET LOCAL VARIABLE (Specified Index) - Pop the current value on top of the evaluation stack into the local variable list at the specified index" }, // OpCodes.Stloc
+			{ -497, "ALLOCATE LOCAL DYNAMIC MEMORY - Allocate a certain number of bytes from the local dynamic memory pool and push the address (a transient pointer, Type *) of the first allocated byte onto the evaluation stack" }, // OpCodes.Localloc
+			{ -495, "END FILTER - Transfer control from the filter clause of an exception back to the CLI exception handler" }, // OpCodes.Endfilter
+			{ -494, "INDICATE UNALIGNED ADDRESS - Indicate that an address currently on top of the evaluation stack might not be aligned to the natural size of the immediately following LDIND (Load Indirect), STIND (Store Indirect), LDFLD (Load Field), STFLD (Store Field), LDOBJ (Load Object), STOBJ (Store Object), INITBLK (Initialize Block), or CPBLK (Copy Block) instruction" }, // OpCodes.Unaligned
+			{ -493, "VOLATILE - Specify that an address currently on top of the evaluation stack might be volatile and the results of reading that location cannot be cached or multiple stores to the location cannot be suppressed" }, // OpCodes.Volatile
+			{ -492, "TAIL CALL - Perform a postfixed method call instruction such that the current method's stack frame is removed before the actual call instruction is executed" }, // OpCodes.Tailcall
+			{ -491, "INITIALIZE OBJECT - Initialize each field of a value type at a specified address to a null reference or to a zero of the appropriate primitive type" }, // OpCodes.Initobj
+			{ -490, "CONSTRAIN VIRTUAL CALL - Constrain the type on which a virtual method call is made" }, // OpCodes.Constrained
+			{ -489, "COPY BLOCK - Copy a specified number of bytes from a source address to a destination address" }, // OpCodes.Cpblk
+			{ -488, "INITIALIZE BLOCK - Initialize a specified block of memory at a specific address to a given size and initial value" }, // OpCodes.Initblk
+			{ -486, "RETHROW - Rethrow the current exception" }, // OpCodes.Rethrow
+			{ -484, "SIZE OF - Push the size, in bytes, of a supplied value type onto the evaluation stack" }, // OpCodes.Sizeof
+
+			// TODO: Give this a non abbreviated name once I better understand what specifically this instruction type does/is used for
+			{ -483, "REF ANY TYPE - Retrieve the type token embedded in a typed reference" }, // OpCodes.Refanytype
+
+			{ -482, "READONLY - Specify that the subsequent array address operation is readonly (performs no type check at runtime and returns a managed pointer whose mutability is restricted)" } // OpCodes.Readonly
 		};
 
 		/// <summary>

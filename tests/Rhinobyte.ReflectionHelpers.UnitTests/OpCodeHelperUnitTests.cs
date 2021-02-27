@@ -10,12 +10,23 @@ namespace Rhinobyte.ReflectionHelpers.UnitTests
 	[TestClass]
 	public class OpCodeHelperUnitTests
 	{
+		private static readonly FieldInfo[] OpcodeStaticFields = typeof(OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static);
+
+		[TestMethod]
+		public void DescriptionLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
+		{
+			foreach (var opcodeField in OpcodeStaticFields)
+			{
+				var opcode = (OpCode)opcodeField.GetValue(null)!;
+				OpCodeHelper.DescriptionLookup.ContainsKey(opcode.Value).Should().BeTrue();
+			}
+		}
+
 		[TestMethod]
 		public void LocalVariableOpcodeValues_should_match_the_values_found_using_reflection()
 		{
-			var opcodeStaticFields = typeof(OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static);
 			var variableOpcodes = new List<OpCode>();
-			foreach (var opcodeField in opcodeStaticFields)
+			foreach (var opcodeField in OpcodeStaticFields)
 			{
 				var opcode = (OpCode)opcodeField.GetValue(null)!;
 				if (opcode.OperandType == OperandType.InlineVar || opcode.OperandType == OperandType.ShortInlineVar)
@@ -30,12 +41,21 @@ namespace Rhinobyte.ReflectionHelpers.UnitTests
 		}
 
 		[TestMethod]
+		public void NameLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
+		{
+			foreach (var opcodeField in OpcodeStaticFields)
+			{
+				var opcode = (OpCode)opcodeField.GetValue(null)!;
+				OpCodeHelper.NameLookup[opcode.Value].Should().Be(opcodeField.Name);
+			}
+		}
+
+		[TestMethod]
 		public void SingleByteOpCodeLookup_should_match_the_values_found_using_reflection()
 		{
 			// Build the array of single byte opcodes using reflection
 			var singleByteOpcodes = new OpCode[256];
-			var opcodeStaticFields = typeof(OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static);
-			foreach (var opcodeField in opcodeStaticFields)
+			foreach (var opcodeField in OpcodeStaticFields)
 			{
 				var opcode = (OpCode)opcodeField.GetValue(null)!;
 				if (opcode.Size == 1)
@@ -52,8 +72,7 @@ namespace Rhinobyte.ReflectionHelpers.UnitTests
 		{
 			// Build the array of two byte opcodes using reflection
 			var twoByteOpcodes = new OpCode[31];
-			var opcodeStaticFields = typeof(OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static);
-			foreach (var opcodeField in opcodeStaticFields)
+			foreach (var opcodeField in OpcodeStaticFields)
 			{
 				var opcode = (OpCode)opcodeField.GetValue(null)!;
 				if (opcode.Size == 1)
