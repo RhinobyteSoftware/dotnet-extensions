@@ -38,6 +38,137 @@ namespace Rhinobyte.ReflectionHelpers
 			_parameters = method.GetParameters();
 		}
 
+		/// <summary>
+		/// Returns true if a reference to each of the <paramref name="memberReferencesToLookFor"/> members is found. Returns false otherwise.
+		/// </summary>
+		internal bool ContainsReferencesToAll(IEnumerable<MemberInfo> memberReferencesToLookFor)
+		{
+			_bytePosition = 0;
+
+			var referencesToLookFor = new HashSet<MemberInfo>(memberReferencesToLookFor);
+
+			while (_bytePosition < _ilBytes.Length)
+			{
+				var opcodeByte = ReadByte();
+				var currentOpcode = opcodeByte != 254 // OpCodes.Prefix1
+					? OpCodeHelper.SingleByteOpCodeLookup[opcodeByte]
+					: OpCodeHelper.TwoByteOpCodeLookup[ReadByte()];
+
+				switch (currentOpcode.OperandType)
+				{
+					case OperandType.InlineField:
+					case OperandType.InlineMethod:
+					case OperandType.InlineType:
+					case OperandType.InlineTok:
+						var memberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
+						if (referencesToLookFor.Remove(memberReference) && referencesToLookFor.Count == 0)
+						{
+							return true;
+						}
+						break;
+
+					case OperandType.InlineSwitch:
+						// For inline switch we have to read the actual size of the targets array for the jump table to know
+						// how many operand bytes to skip
+						var numberOfTargets = ReadInt32();
+						_bytePosition += (4 * numberOfTargets);
+						break;
+
+					default:
+						_bytePosition += OpCodeHelper.GetOperandSize(currentOpcode.OperandType);
+						break;
+				}
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Returns true if a reference to the <paramref name="memberReferenceToLookFor"/> is found. Returns false otherwise.
+		/// </summary>
+		internal bool ContainsReferenceTo(MemberInfo memberReferenceToLookFor)
+		{
+			_bytePosition = 0;
+
+			while (_bytePosition < _ilBytes.Length)
+			{
+				var opcodeByte = ReadByte();
+				var currentOpcode = opcodeByte != 254 // OpCodes.Prefix1
+					? OpCodeHelper.SingleByteOpCodeLookup[opcodeByte]
+					: OpCodeHelper.TwoByteOpCodeLookup[ReadByte()];
+
+				switch (currentOpcode.OperandType)
+				{
+					case OperandType.InlineField:
+					case OperandType.InlineMethod:
+					case OperandType.InlineType:
+					case OperandType.InlineTok:
+						var memberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
+						if (memberReferenceToLookFor.Equals(memberReference))
+						{
+							return true;
+						}
+						break;
+
+					case OperandType.InlineSwitch:
+						// For inline switch we have to read the actual size of the targets array for the jump table to know
+						// how many operand bytes to skip
+						var numberOfTargets = ReadInt32();
+						_bytePosition += (4 * numberOfTargets);
+						break;
+
+					default:
+						_bytePosition += OpCodeHelper.GetOperandSize(currentOpcode.OperandType);
+						break;
+				}
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Returns true if a reference to any of the <paramref name="memberReferencesToLookFor"/> is found. Returns false otherwise.
+		/// </summary>
+		internal bool ContainsReferenceToAny(IEnumerable<MemberInfo> memberReferencesToLookFor)
+		{
+			_bytePosition = 0;
+
+			while (_bytePosition < _ilBytes.Length)
+			{
+				var opcodeByte = ReadByte();
+				var currentOpcode = opcodeByte != 254 // OpCodes.Prefix1
+					? OpCodeHelper.SingleByteOpCodeLookup[opcodeByte]
+					: OpCodeHelper.TwoByteOpCodeLookup[ReadByte()];
+
+				switch (currentOpcode.OperandType)
+				{
+					case OperandType.InlineField:
+					case OperandType.InlineMethod:
+					case OperandType.InlineType:
+					case OperandType.InlineTok:
+						var memberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
+						if (memberReferencesToLookFor.Contains(memberReference))
+						{
+							return true;
+						}
+						break;
+
+					case OperandType.InlineSwitch:
+						// For inline switch we have to read the actual size of the targets array for the jump table to know
+						// how many operand bytes to skip
+						var numberOfTargets = ReadInt32();
+						_bytePosition += (4 * numberOfTargets);
+						break;
+
+					default:
+						_bytePosition += OpCodeHelper.GetOperandSize(currentOpcode.OperandType);
+						break;
+				}
+			}
+
+			return false;
+		}
+
 		internal static InstructionBase FindInstructionByOffset(
 			int highestInstructionOffset,
 			IReadOnlyList<InstructionBase> instructionsToSearch,
