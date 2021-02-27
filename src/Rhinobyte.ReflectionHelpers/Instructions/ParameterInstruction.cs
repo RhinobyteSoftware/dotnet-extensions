@@ -26,7 +26,7 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 				return $"{base.ToString()}  [ParameterReference: null]";
 			}
 
-			return $"{base.ToString()}  [ParameterReference: {ParameterReference.ParameterType?.Name ?? "(Unknown Parameter Type)"} {ParameterReference.Name}{(ParameterReference.IsOptional ? " (Optional)" : null)}]";
+			return $"{base.ToString()}  [ParameterReference: {ParameterReference.ParameterType?.FullName ?? "(Unknown Parameter Type)"} {ParameterReference.Name}{(ParameterReference.IsOptional ? " (Optional)" : null)}]";
 		}
 	}
 }
