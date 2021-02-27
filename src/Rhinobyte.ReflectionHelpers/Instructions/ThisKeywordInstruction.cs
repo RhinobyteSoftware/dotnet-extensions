@@ -8,8 +8,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class ThisKeywordInstruction : InstructionBase
 	{
-		internal ThisKeywordInstruction(int offset, OpCode opcode, MethodBase method)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal ThisKeywordInstruction(int index, int offset, OpCode opcode, MethodBase method)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Method = method;
 		}

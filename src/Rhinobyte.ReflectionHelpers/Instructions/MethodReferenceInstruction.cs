@@ -8,8 +8,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class MethodReferenceInstruction : InstructionBase
 	{
-		internal MethodReferenceInstruction(int offset, OpCode opcode, MethodBase methodReference)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal MethodReferenceInstruction(int index, int offset, OpCode opcode, MethodBase methodReference)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			MethodReference = methodReference;
 		}

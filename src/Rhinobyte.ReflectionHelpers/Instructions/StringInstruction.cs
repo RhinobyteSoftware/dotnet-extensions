@@ -7,8 +7,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class StringInstruction : InstructionBase
 	{
-		internal StringInstruction(int offset, OpCode opcode, string value)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal StringInstruction(int index, int offset, OpCode opcode, string value)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Value = value;
 		}

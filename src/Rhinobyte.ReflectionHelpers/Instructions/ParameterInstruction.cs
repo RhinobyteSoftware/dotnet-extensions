@@ -8,8 +8,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class ParameterReferenceInstruction : InstructionBase
 	{
-		internal ParameterReferenceInstruction(int offset, OpCode opcode, ParameterInfo parameterReference)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal ParameterReferenceInstruction(int index, int offset, OpCode opcode, ParameterInfo parameterReference)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			ParameterReference = parameterReference;
 		}

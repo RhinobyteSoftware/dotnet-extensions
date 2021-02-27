@@ -84,6 +84,7 @@ namespace Rhinobyte.ReflectionHelpers
 
 			InstructionBase? previousInstruction = null;
 
+			int instructionIndex = 0;
 			int instructionOffset = _bytePosition;
 			while (_bytePosition < _ilBytes.Length)
 			{
@@ -105,7 +106,7 @@ namespace Rhinobyte.ReflectionHelpers
 							? ReadByte() + _bytePosition
 							: ReadInt32() + _bytePosition;
 
-						currentInstruction = new BranchTargetInstruction(instructionOffset, currentOpcode, targetOffset);
+						currentInstruction = new BranchTargetInstruction(instructionIndex, instructionOffset, currentOpcode, targetOffset);
 
 						if (targetOffset < instructionOffset)
 						{
@@ -119,19 +120,19 @@ namespace Rhinobyte.ReflectionHelpers
 					}
 
 					case OperandType.InlineField:
-						currentInstruction = new FieldReferenceInstruction(instructionOffset, currentOpcode, _module.ResolveField(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments));
+						currentInstruction = new FieldReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, _module.ResolveField(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments));
 						break;
 
 					case OperandType.InlineI:
-						currentInstruction = new Int32Instruction(instructionOffset, currentOpcode, ReadInt32());
+						currentInstruction = new Int32Instruction(instructionIndex, instructionOffset, currentOpcode, ReadInt32());
 						break;
 
 					case OperandType.InlineI8:
-						currentInstruction = new Int64Instruction(instructionOffset, currentOpcode, ReadInt64());
+						currentInstruction = new Int64Instruction(instructionIndex, instructionOffset, currentOpcode, ReadInt64());
 						break;
 
 					case OperandType.InlineMethod:
-						currentInstruction = new MethodReferenceInstruction(instructionOffset, currentOpcode, _module.ResolveMethod(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments));
+						currentInstruction = new MethodReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, _module.ResolveMethod(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments));
 						break;
 
 					case OperandType.InlineNone:
@@ -139,58 +140,58 @@ namespace Rhinobyte.ReflectionHelpers
 						{
 							case 2: // Ldarg_0
 								currentInstruction = !_isStaticMethod
-									? new ThisKeywordInstruction(instructionOffset, currentOpcode, _method)
-									: new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[0]);
+									? new ThisKeywordInstruction(instructionIndex, instructionOffset, currentOpcode, _method)
+									: new ParameterReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, _parameters[0]);
 								break;
 
 							case 3: // Ldarg_1
-								currentInstruction = new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[1]);
+								currentInstruction = new ParameterReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, _parameters[1]);
 								break;
 
 							case 4: // Ldarg_2
-								currentInstruction = new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[2]);
+								currentInstruction = new ParameterReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, _parameters[2]);
 								break;
 
 							case 5: // Ldarg_3
-								currentInstruction = new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[3]);
+								currentInstruction = new ParameterReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, _parameters[3]);
 								break;
 
 							case 6: // Ldloc_0
 							case 10: // Stloc_0
-								currentInstruction = new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[0]);
+								currentInstruction = new LocalVariableInstruction(instructionIndex, instructionOffset, currentOpcode, _localVariables[0]);
 								break;
 
 							case 7: // Ldloc_1
 							case 11: // Stloc_1
-								currentInstruction = new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[1]);
+								currentInstruction = new LocalVariableInstruction(instructionIndex, instructionOffset, currentOpcode, _localVariables[1]);
 								break;
 
 							case 8: // Ldloc_2
 							case 12: // Stloc_2
-								currentInstruction = new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[2]);
+								currentInstruction = new LocalVariableInstruction(instructionIndex, instructionOffset, currentOpcode, _localVariables[2]);
 								break;
 
 							case 9: // Ldloc_3
 							case 13: // Stloc_3
-								currentInstruction = new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[3]);
+								currentInstruction = new LocalVariableInstruction(instructionIndex, instructionOffset, currentOpcode, _localVariables[3]);
 								break;
 
 							default:
-								currentInstruction = new SimpleInstruction(instructionOffset, currentOpcode);
+								currentInstruction = new SimpleInstruction(instructionIndex, instructionOffset, currentOpcode);
 								break;
 						}
 						break;
 
 					case OperandType.InlineR:
-						currentInstruction = new DoubleInstruction(instructionOffset, currentOpcode, ReadDouble());
+						currentInstruction = new DoubleInstruction(instructionIndex, instructionOffset, currentOpcode, ReadDouble());
 						break;
 
 					case OperandType.InlineSig:
-						currentInstruction = new SignatureInstruction(instructionOffset, currentOpcode, _module.ResolveSignature(ReadInt32()));
+						currentInstruction = new SignatureInstruction(instructionIndex, instructionOffset, currentOpcode, _module.ResolveSignature(ReadInt32()));
 						break;
 
 					case OperandType.InlineString:
-						currentInstruction = new StringInstruction(instructionOffset, currentOpcode, _module.ResolveString(ReadInt32()));
+						currentInstruction = new StringInstruction(instructionIndex, instructionOffset, currentOpcode, _module.ResolveString(ReadInt32()));
 						break;
 
 					case OperandType.InlineSwitch:
@@ -202,7 +203,7 @@ namespace Rhinobyte.ReflectionHelpers
 							targetOffsets[targetIndex] = ReadInt32() + baseOffset;
 						}
 
-						currentInstruction = new SwitchInstruction(instructionOffset, currentOpcode, targetOffsets);
+						currentInstruction = new SwitchInstruction(instructionIndex, instructionOffset, currentOpcode, targetOffsets);
 
 						// Add to the "branchInstructionsNeedingLinked" collection so we can set the target instructions later
 						branchInstructionsNeedingLinked.Add(currentInstruction);
@@ -213,26 +214,26 @@ namespace Rhinobyte.ReflectionHelpers
 						switch (memberReference)
 						{
 							case FieldInfo fieldReference:
-								currentInstruction = new FieldReferenceInstruction(instructionOffset, currentOpcode, fieldReference);
+								currentInstruction = new FieldReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, fieldReference);
 								break;
 
 							case MethodBase methodReference:
-								currentInstruction = new MethodReferenceInstruction(instructionOffset, currentOpcode, methodReference);
+								currentInstruction = new MethodReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, methodReference);
 								break;
 
 							case Type typeReference:
-								currentInstruction = new TypeReferenceInstruction(instructionOffset, currentOpcode, typeReference);
+								currentInstruction = new TypeReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, typeReference);
 								break;
 
 							default:
 								// Not sure if this is possible or if I should make this case throw...
-								currentInstruction = new UnknownMemberReferenceInstruction(instructionOffset, currentOpcode, memberReference);
+								currentInstruction = new UnknownMemberReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, memberReference);
 								break;
 						}
 						break;
 
 					case OperandType.InlineType:
-						currentInstruction = new TypeReferenceInstruction(instructionOffset, currentOpcode, _module.ResolveType(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments));
+						currentInstruction = new TypeReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, _module.ResolveType(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments));
 						break;
 
 					case OperandType.InlineVar:
@@ -244,32 +245,32 @@ namespace Rhinobyte.ReflectionHelpers
 
 						if (OpCodeHelper.LocalVariableOpcodeValues.Contains(currentOpcode.Value))
 						{
-							currentInstruction = new LocalVariableInstruction(instructionOffset, currentOpcode, _localVariables[variableIndex]);
+							currentInstruction = new LocalVariableInstruction(instructionIndex, instructionOffset, currentOpcode, _localVariables[variableIndex]);
 							break;
 						}
 
 						if (!_isStaticMethod && variableIndex == 0)
 						{
-							currentInstruction = new ThisKeywordInstruction(instructionOffset, currentOpcode, _method);
+							currentInstruction = new ThisKeywordInstruction(instructionIndex, instructionOffset, currentOpcode, _method);
 							break;
 						}
 
-						currentInstruction = new ParameterReferenceInstruction(instructionOffset, currentOpcode, _parameters[variableIndex]);
+						currentInstruction = new ParameterReferenceInstruction(instructionIndex, instructionOffset, currentOpcode, _parameters[variableIndex]);
 						break;
 					}
 
 					case OperandType.ShortInlineI:
 						if (currentOpcode == OpCodes.Ldc_I4_S)
 						{
-							currentInstruction = new SignedByteInstruction(instructionOffset, currentOpcode, (sbyte)ReadByte());
+							currentInstruction = new SignedByteInstruction(instructionIndex, instructionOffset, currentOpcode, (sbyte)ReadByte());
 							break;
 						}
 
-						currentInstruction = new ByteInstruction(instructionOffset, currentOpcode, ReadByte());
+						currentInstruction = new ByteInstruction(instructionIndex, instructionOffset, currentOpcode, ReadByte());
 						break;
 
 					case OperandType.ShortInlineR:
-						currentInstruction = new FloatInstruction(instructionOffset, currentOpcode, ReadSingle());
+						currentInstruction = new FloatInstruction(instructionIndex, instructionOffset, currentOpcode, ReadSingle());
 						break;
 
 					default:
@@ -285,6 +286,8 @@ namespace Rhinobyte.ReflectionHelpers
 
 				instructions.Add(currentInstruction);
 				previousInstruction = currentInstruction;
+
+				++instructionIndex;
 			}
 
 			foreach (var instructionToUpdate in branchInstructionsNeedingLinked)

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Emit;
 
 namespace Rhinobyte.ReflectionHelpers.Instructions
@@ -8,8 +9,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class SwitchInstruction : InstructionBase
 	{
-		internal SwitchInstruction(int offset, OpCode opcode, IReadOnlyCollection<int> targetOffsets)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType) + (targetOffsets.Count * 4))
+		internal SwitchInstruction(int index, int offset, OpCode opcode, IReadOnlyCollection<int> targetOffsets)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType) + (targetOffsets.Count * 4))
 		{
 			TargetInstructions = null!; // Nullability hack, the parser will be responsible for ensuring this is always set to a non-null instruction set
 			TargetOffsets = targetOffsets;
@@ -26,6 +27,13 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		public IReadOnlyCollection<int> TargetOffsets { get; }
 
 		public override string ToString()
-			=> $"{base.ToString()}  [TargetOffsets: {string.Join(", ", TargetOffsets)}]";
+		{
+			if (TargetInstructions != null)
+			{
+				return $"{base.ToString()}  [TargetInstructions: null]  [TargetOffsets: {string.Join(", ", TargetOffsets)}]";
+			}
+
+			return $"{base.ToString()}  [TargetInstructions: {string.Join(", ", TargetInstructions.Select(instruction => instruction.Index))}]  [TargetOffsets: {string.Join(", ", TargetOffsets)}]";
+		}
 	}
 }

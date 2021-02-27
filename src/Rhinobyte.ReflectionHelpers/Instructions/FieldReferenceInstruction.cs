@@ -8,8 +8,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class FieldReferenceInstruction : InstructionBase
 	{
-		internal FieldReferenceInstruction(int offset, OpCode opcode, FieldInfo fieldReference)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal FieldReferenceInstruction(int index, int offset, OpCode opcode, FieldInfo fieldReference)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			FieldReference = fieldReference;
 		}

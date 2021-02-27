@@ -8,8 +8,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class LocalVariableInstruction : InstructionBase
 	{
-		internal LocalVariableInstruction(int offset, OpCode opcode, LocalVariableInfo localVariable)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal LocalVariableInstruction(int index, int offset, OpCode opcode, LocalVariableInfo localVariable)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			LocalVariable = localVariable;
 		}

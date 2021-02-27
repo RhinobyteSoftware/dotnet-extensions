@@ -7,8 +7,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class Int64Instruction : InstructionBase
 	{
-		internal Int64Instruction(int offset, OpCode opcode, long value)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal Int64Instruction(int index, int offset, OpCode opcode, long value)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Value = value;
 		}

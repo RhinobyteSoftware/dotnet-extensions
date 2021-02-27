@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhinobyte.ReflectionHelpers.UnitTests.Setup;
-using System.Linq;
 using System.Reflection;
 
 namespace Rhinobyte.ReflectionHelpers.UnitTests
@@ -30,6 +29,9 @@ namespace Rhinobyte.ReflectionHelpers.UnitTests
 
 			var instructions = new MethodBodyParser(nullCheckMethodInfo!).ParseInstructions();
 			instructions.Count.Should().Be(15);
+
+			//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
+			//results.Should().NotBeNullOrEmpty();
 		}
 
 		[TestMethod]
@@ -40,6 +42,9 @@ namespace Rhinobyte.ReflectionHelpers.UnitTests
 
 			var instructions = new MethodBodyParser(nullCheckMethodInfo!).ParseInstructions();
 			instructions.Count.Should().Be(11);
+
+			//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
+			//results.Should().NotBeNullOrEmpty();
 		}
 	}
 }

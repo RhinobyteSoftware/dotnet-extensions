@@ -4,8 +4,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 {
 	public sealed class SignedByteInstruction : InstructionBase
 	{
-		internal SignedByteInstruction(int offset, OpCode opcode, sbyte value)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal SignedByteInstruction(int index, int offset, OpCode opcode, sbyte value)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			Value = value;
 		}

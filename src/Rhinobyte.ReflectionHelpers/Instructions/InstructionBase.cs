@@ -7,13 +7,18 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public abstract class InstructionBase
 	{
-		protected InstructionBase(int offset, OpCode opcode, int size)
+		protected InstructionBase(int index, int offset, OpCode opcode, int size)
 		{
+			Index = index;
 			Offset = offset;
 			OpCode = opcode;
 			Size = size;
 		}
 
+		/// <summary>
+		/// The instruction's index within the list of method body instructions.
+		/// </summary>
+		public int Index { get; }
 
 		/// <summary>
 		/// The next instruction in the intermediate language (IL) bytes.
@@ -47,13 +52,12 @@ $@"{ToString()}
 
 		public override string ToString()
 		{
-			// TODO: Replace TryGetValue with a plain index lookup once all of the DescriptionLookup values have been filled out
 			if (OpCodeHelper.DescriptionLookup.TryGetValue(OpCode.Value, out var description))
 			{
-				return description;
+				return $"({Index}) {description}";
 			}
 
-			return base.ToString();
+			return $"({Index}) {base.ToString()}";
 		}
 	}
 }

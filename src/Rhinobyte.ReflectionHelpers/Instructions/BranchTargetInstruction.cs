@@ -7,8 +7,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class BranchTargetInstruction : InstructionBase
 	{
-		internal BranchTargetInstruction(int offset, OpCode opcode, int targetOffset)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal BranchTargetInstruction(int index, int offset, OpCode opcode, int targetOffset)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			TargetInstruction = null!; // Nullability hack, the parser will be responsible for ensuring this is always set to a non-null instruction
 			TargetOffset = targetOffset;
@@ -25,6 +25,6 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		public int TargetOffset { get; }
 
 		public override string ToString()
-			=> $"{base.ToString()}  [TargetOffset: {TargetOffset}]";
+			=> $"{base.ToString()}  [TargetInstruction: {TargetInstruction.Index}]  [TargetOffset: {TargetOffset}]";
 	}
 }

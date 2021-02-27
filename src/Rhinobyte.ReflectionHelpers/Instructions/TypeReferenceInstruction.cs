@@ -8,8 +8,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class TypeReferenceInstruction : InstructionBase
 	{
-		internal TypeReferenceInstruction(int offset, OpCode opcode, Type typeReference)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal TypeReferenceInstruction(int index, int offset, OpCode opcode, Type typeReference)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			TypeReference = typeReference;
 		}

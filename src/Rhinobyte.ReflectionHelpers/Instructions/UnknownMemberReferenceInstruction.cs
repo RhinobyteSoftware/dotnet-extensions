@@ -12,8 +12,8 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 	/// </summary>
 	public sealed class UnknownMemberReferenceInstruction : InstructionBase
 	{
-		internal UnknownMemberReferenceInstruction(int offset, OpCode opcode, MemberInfo memberReference)
-			: base(offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
+		internal UnknownMemberReferenceInstruction(int index, int offset, OpCode opcode, MemberInfo memberReference)
+			: base(index, offset, opcode, opcode.Size + OpCodeHelper.GetOperandSize(opcode.OperandType))
 		{
 			MemberReference = memberReference;
 		}
