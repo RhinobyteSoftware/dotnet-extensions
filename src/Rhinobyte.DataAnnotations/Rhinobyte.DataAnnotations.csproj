@@ -2,10 +2,14 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-
         <IsPackable>true</IsPackable>
+        
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <Description>Provides DataAnnotation extensions for improved validation</Description>
         <FileVersion>1.0.0.0</FileVersion>
+        <InformationalVersion>1.0.0</InformationalVersion>
+        <PackageTags>dataannotations validation</PackageTags>
+        <PackageVersion>1.0.0</PackageVersion>
         <Version>1.0.0</Version>
     </PropertyGroup>
     
