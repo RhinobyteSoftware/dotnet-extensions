@@ -1,19 +1,40 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFrameworks>netstandard2.0</TargetFrameworks>
         <IsPackable>true</IsPackable>
-        
+
+        <AssemblyName>Rhinobyte.DataAnnotations</AssemblyName>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <Authors>Ryan Thomas</Authors>
+        <Company>Rhinobyte Software</Company>
+        <Copyright>Copyright © Rhinobyte Software $([System.DateTime]::Now.ToString("yyyy"))</Copyright>
         <Description>Provides DataAnnotation extensions for improved validation</Description>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <FileVersion>1.0.0.0</FileVersion>
+        <IncludeSymbols>true</IncludeSymbols>
         <InformationalVersion>1.0.0</InformationalVersion>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <PackageId>Rhinobyte.DataAnnotations</PackageId>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>dataannotations validation</PackageTags>
         <PackageVersion>1.0.0</PackageVersion>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/RhinobyteSoftware/DataAnnotations</RepositoryUrl>
+        <RootNamespace>Rhinobyte.DataAnnotations</RootNamespace>
+        <Summary>Provides DataAnnotation extensions for improved validation</Summary>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Title>Rhinobyte.DataAnnotations</Title>
         <Version>1.0.0</Version>
     </PropertyGroup>
     
     <ItemGroup>
+        <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
     </ItemGroup>
 
