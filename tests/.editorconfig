@@ -1,0 +1,7 @@
+
+### tests\ specific overrides
+[*.cs]
+
+# Rule: (CA1062) Consider calling ConfigureAwait on the awaited task. Reason: Not a concern in tests
+dotnet_diagnostic.CA1062.severity    = none
+
