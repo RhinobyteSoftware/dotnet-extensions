@@ -3,7 +3,7 @@
 
 [![NuGet version (Rhinobyte.DataAnnotations)](https://img.shields.io/nuget/v/Rhinobyte.DataAnnotations.svg?style=flat)](https://www.nuget.org/packages/Rhinobyte.DataAnnotations/)
 
-This repo contains the code to build the Rhinobyte.DataAnnotations library for .Net
+This repository contains the code to build the Rhinobyte.DataAnnotations library for .Net
 
 This library contains types to extend the behavior provided by the `System.ComponentModel.DataAnnotations` types.
 
@@ -40,4 +40,4 @@ namespace SomeNamespace
 
 ## License
 
-This repo is licensed under the [MIT](LICENSE) license.
+This repository is licensed under the [MIT](LICENSE) license.
