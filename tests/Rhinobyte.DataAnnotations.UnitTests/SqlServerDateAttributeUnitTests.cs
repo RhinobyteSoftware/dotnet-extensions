@@ -59,7 +59,7 @@ namespace Rhinobyte.DataAnnotations.UnitTests
 			Invoking(() => sqlServerDateAttribute.IsValid(value))
 				.Should()
 				.Throw<InvalidCastException>()
-				.WithMessage("The [SqlServerDate] attribute must be used on a DateTime member");
+				.WithMessage(@"The [SqlServerDate] attribute must be used on a DateTime member. [MemberName: """"]");
 		}
 	}
 }

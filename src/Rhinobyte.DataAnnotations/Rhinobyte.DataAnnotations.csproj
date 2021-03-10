@@ -3,30 +3,32 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0</TargetFrameworks>
         <IsPackable>true</IsPackable>
+        
+        <!-- VERSION VALUES -->
+        <AssemblyVersion>1.0.1.0</AssemblyVersion>
+        <FileVersion>1.0.1.0</FileVersion>
+        <InformationalVersion>1.0.1</InformationalVersion>
+        <PackageVersion>1.0.1</PackageVersion>
+        <Version>1.0.1</Version>
 
         <AssemblyName>Rhinobyte.DataAnnotations</AssemblyName>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
         <Authors>Ryan Thomas</Authors>
         <Company>Rhinobyte Software</Company>
         <Copyright>Copyright © Rhinobyte Software $([System.DateTime]::Now.ToString("yyyy"))</Copyright>
         <Description>Provides DataAnnotation extensions for improved validation</Description>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <FileVersion>1.0.0.0</FileVersion>
         <IncludeSymbols>true</IncludeSymbols>
-        <InformationalVersion>1.0.0</InformationalVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageId>Rhinobyte.DataAnnotations</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>dataannotations validation</PackageTags>
-        <PackageVersion>1.0.0</PackageVersion>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/RhinobyteSoftware/DataAnnotations</RepositoryUrl>
+        <RepositoryUrl>https://github.com/RhinobyteSoftware/Validation</RepositoryUrl>
         <RootNamespace>Rhinobyte.DataAnnotations</RootNamespace>
         <Summary>Provides DataAnnotation extensions for improved validation</Summary>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <Title>Rhinobyte.DataAnnotations</Title>
-        <Version>1.0.0</Version>
     </PropertyGroup>
     
     <ItemGroup>

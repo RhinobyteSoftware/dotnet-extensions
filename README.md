@@ -1,11 +1,14 @@
 
-# Rhinobyte.DataAnnotationsValidation
+# Rhinobyte.Validation
+
+Helper libraries for validation.
+
+## Rhinobyte.DataAnnotations
 
 [![NuGet version (Rhinobyte.DataAnnotations)](https://img.shields.io/nuget/v/Rhinobyte.DataAnnotations.svg?style=flat)](https://www.nuget.org/packages/Rhinobyte.DataAnnotations/)
 
-This repository contains the code to build the Rhinobyte.DataAnnotations library for .Net
-
-This library contains types to extend the behavior provided by the `System.ComponentModel.DataAnnotations` types.
+This library contains the code to build the Rhinobyte.DataAnnotations library for .Net.
+It contains types to extend the behavior provided by the `System.ComponentModel.DataAnnotations` types.
 
 ## DateTime Validation Attributes
 

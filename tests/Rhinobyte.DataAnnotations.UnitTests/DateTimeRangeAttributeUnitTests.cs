@@ -26,33 +26,34 @@ namespace Rhinobyte.DataAnnotations.UnitTests
 		[DataTestMethod]
 		[DataRow("SomeProperty", "1900-01-01", "invalid")]
 		[DataRow("DateEntered", "blue", "1999-12-31")]
+		public void DateTimeRangeAttribute_FormattedErrorMessage_throws_format_excpetion_when_the_attribute_parameters_are_invalid(string memberName, string minimum, string maximum)
+		{
+			Invoking(() => new DateTimeRangeAttribute(minimum, maximum).FormatErrorMessage(memberName))
+				.Should()
+				.Throw<FormatException>()
+				.WithMessage($@"The [DateTimeRange] attribute minimum/maximum parameters must be valid datetime strings. [MemberName: ""{memberName}""]");
+		}
+
+		[TestMethod]
+		public void DateTimeRangeAttribute_FormattedErrorMessage_throws_invalid_operation_exception_if_the_minimum_is_greater_than_the_maximum()
+		{
+			Invoking(() => new DateTimeRangeAttribute("2001-01-01", "1900-01-01").FormatErrorMessage("MinimumGreaterThanMaximum"))
+				.Should()
+				.Throw<InvalidOperationException>()
+				.WithMessage(@"[DateTimeRange] attribute minimum must be less than or equal to the maximum. [MemberName: ""MinimumGreaterThanMaximum""]");
+		}
+
+		[DataTestMethod]
 		[DataRow("EnteredOn", "", "1999-12-31")]
 		[DataRow("EnteredOn", "1900-01-01", "")]
 		[DataRow("BirthDate", null, "1999-12-31")]
 		[DataRow("Something", "-500-01-01", null)]
-		[DataRow("MinimumGreaterThanMaximum", "1999-01-01", "1900-01-01")]
-		public void DateTimeRangeAttribute_FormattedErrorMessage_throws_when_the_attribute_parameters_are_invalid(string memberName, string minimum, string maximum)
+		public void DateTimeRangeAttribute_FormattedErrorMessage_throws_invalid_operation_exception_when_the_attribute_parameters_are_null_or_empty(string memberName, string minimum, string maximum)
 		{
 			Invoking(() => new DateTimeRangeAttribute(minimum, maximum).FormatErrorMessage(memberName))
 				.Should()
 				.Throw<InvalidOperationException>()
-				.WithMessage($@"[DateTimeRange] attribute minimum/maximum are missing or invalid. [FieldName: ""{memberName}""]");
-		}
-
-
-
-		[DataTestMethod]
-		[DataRow("1900-01-01", "invalid")]
-		[DataRow("blue", "1999-12-31")]
-		[DataRow("", "1999-12-31")]
-		[DataRow("1900-01-01", "")]
-		[DataRow(null, "1999-12-31")]
-		[DataRow("-500-01-01", null)]
-		[DataRow("1999-01-01", "1900-01-01")]
-		public void DateTimeRangeAttribute_IsValid_returns_false_when_the_attribute_parameters_are_invalid(string minimum, string maximum)
-		{
-			var dateTimeRangeAttribute = new DateTimeRangeAttribute(minimum, maximum);
-			dateTimeRangeAttribute.IsValid(DateTime.Today).Should().Be(false);
+				.WithMessage($@"[DateTimeRange] attribute minimum/maximum are required. [MemberName: ""{memberName}""]");
 		}
 
 		[DataTestMethod]
@@ -92,7 +93,40 @@ namespace Rhinobyte.DataAnnotations.UnitTests
 			Invoking(() => dateTimeRangeAttribute.IsValid(value))
 				.Should()
 				.Throw<InvalidCastException>()
-				.WithMessage("The [DateTimeRange] attribute must be used on a DateTime member");
+				.WithMessage(@"The [DateTimeRange] attribute must be used on a DateTime member. [MemberName: """"]");
+		}
+
+		[TestMethod]
+		public void DateTimeRangeAttribute_IsValid_throws_if_the_minimum_is_greater_than_the_maximum()
+		{
+			Invoking(() => new DateTimeRangeAttribute("2001-01-01", "1900-01-01").IsValid(DateTime.Today))
+				.Should()
+				.Throw<InvalidOperationException>()
+				.WithMessage(@"[DateTimeRange] attribute minimum must be less than or equal to the maximum. [MemberName: """"]");
+		}
+
+		[DataTestMethod]
+		[DataRow("1900-01-01", "invalid")]
+		[DataRow("blue", "1999-12-31")]
+		public void DateTimeRangeAttribute_IsValid_throws_when_the_attribute_parameters_are_invalid(string minimum, string maximum)
+		{
+			Invoking(() => new DateTimeRangeAttribute(minimum, maximum).IsValid(DateTime.Today))
+				.Should()
+				.Throw<FormatException>()
+				.WithMessage(@"The [DateTimeRange] attribute minimum/maximum parameters must be valid datetime strings. [MemberName: """"]");
+		}
+
+		[DataTestMethod]
+		[DataRow("", "1999-12-31")]
+		[DataRow("1900-01-01", "")]
+		[DataRow(null, "1999-12-31")]
+		[DataRow("-500-01-01", null)]
+		public void DateTimeRangeAttribute_IsValid_throws_when_the_attribute_parameters_are_null_or_empty(string minimum, string maximum)
+		{
+			Invoking(() => new DateTimeRangeAttribute(minimum, maximum).IsValid(DateTime.Today))
+				.Should()
+				.Throw<InvalidOperationException>()
+				.WithMessage(@"[DateTimeRange] attribute minimum/maximum are required. [MemberName: """"]");
 		}
 	}
 }

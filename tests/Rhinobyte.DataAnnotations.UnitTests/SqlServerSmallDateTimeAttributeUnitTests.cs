@@ -61,7 +61,7 @@ namespace Rhinobyte.DataAnnotations.UnitTests
 			Invoking(() => sqlServerSmallDateTimeAttribute.IsValid(value))
 				.Should()
 				.Throw<InvalidCastException>()
-				.WithMessage("The [SqlServerSmallDateTime] attribute must be used on a DateTime member");
+				.WithMessage(@"The [SqlServerSmallDateTime] attribute must be used on a DateTime member. [MemberName: """"]");
 		}
 	}
 }

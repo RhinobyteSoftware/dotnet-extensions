@@ -29,11 +29,9 @@ namespace Rhinobyte.DataAnnotations
 		/// Construct a new SqlServerDateAttribute instance.
 		/// </summary>
 		public SqlServerDateAttribute()
-			: base(ErrorMessageAccessor)
+			: base(errorMessageAccessor: null)
 		{
 		}
-
-		private static string ErrorMessageAccessor() => "The field {0} must be between {1} and {2}.";
 
 		/// <summary>
 		///     Override of <see cref="ValidationAttribute.FormatErrorMessage" />
@@ -41,33 +39,41 @@ namespace Rhinobyte.DataAnnotations
 		/// <param name="name">The user-visible name to include in the formatted message.</param>
 		/// <returns>A localized string describing the minimum and maximum values</returns>
 		/// <remarks>This override exists to provide a formatted message describing the minimum and maximum values</remarks>
-		public override string FormatErrorMessage(string name)
-			=> string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, Minimum, Maximum);
+		public override string FormatErrorMessage(string? name)
+			=> string.Format(CultureInfo.CurrentCulture, "The field {0} must be between {1} and {2}.", name, Minimum, Maximum);
 
 		/// <summary>
-		///		Returns true if the <paramref name="value"/> falls between minimum and maximum, inclusive.
+		///		Returns <see cref="ValidationResult.Success"/> if the <paramref name="value"/> falls between minimum and maximum, inclusive.
 		/// </summary>
 		/// <remarks>
-		///		Returns true for null values. Use the <see cref="RequiredAttribute"/> to assert a value is not empty.
+		///		Returns <see cref="ValidationResult.Success"/> for null values. Use the <see cref="RequiredAttribute"/> to assert a value is not empty.
 		/// </remarks>
 		/// <exception cref="InvalidCastException">Thrown if the <paramref name="value"/> cannot be cast to a <see cref="DateTime"/>.</exception>
-		public override bool IsValid(object? value)
+		protected override ValidationResult IsValid(object? value, ValidationContext? validationContext)
 		{
 			// Automatically pass if value is null or empty. RequiredAttribute should be used to assert a value is not empty.
 			if (value == null)
 			{
-				return true;
+				return ValidationResult.Success;
 			}
 
 			try
 			{
 				var dateTimeValue = (DateTime)value;
-				return Minimum <= dateTimeValue && dateTimeValue <= Maximum;
+				if (Minimum <= dateTimeValue && dateTimeValue <= Maximum)
+				{
+					return ValidationResult.Success;
+				}
+
+				string[]? memberNames = validationContext?.MemberName is { } memberName
+					? new[] { memberName }
+					: null;
+				return new ValidationResult(FormatErrorMessage(validationContext?.DisplayName), memberNames);
 			}
 			catch (InvalidCastException exc)
 			{
-				var castException = new InvalidCastException("The [SqlServerDate] attribute must be used on a DateTime member", exc);
-				castException.Data["value"] = value;
+				var castException = new InvalidCastException($@"The [SqlServerDate] attribute must be used on a DateTime member. [MemberName: ""{validationContext?.DisplayName}""]", exc);
+				castException.Data["ValidationValue"] = value;
 				throw castException;
 			}
 		}
