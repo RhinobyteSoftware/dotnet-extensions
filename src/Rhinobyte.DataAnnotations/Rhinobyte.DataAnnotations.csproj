@@ -5,16 +5,16 @@
         <IsPackable>true</IsPackable>
         
         <!-- VERSION VALUES -->
-        <AssemblyVersion>1.0.1.0</AssemblyVersion>
-        <FileVersion>1.0.1.0</FileVersion>
-        <InformationalVersion>1.0.1</InformationalVersion>
-        <PackageVersion>1.0.1</PackageVersion>
-        <Version>1.0.1</Version>
+        <AssemblyVersion>1.0.2.0</AssemblyVersion>
+        <FileVersion>1.0.2.0</FileVersion>
+        <InformationalVersion>1.0.2</InformationalVersion>
+        <PackageVersion>1.0.2</PackageVersion>
+        <Version>1.0.2</Version>
 
         <AssemblyName>Rhinobyte.DataAnnotations</AssemblyName>
         <Authors>Ryan Thomas</Authors>
         <Company>Rhinobyte Software</Company>
-        <Copyright>Copyright © Rhinobyte Software $([System.DateTime]::Now.ToString("yyyy"))</Copyright>
+        <Copyright>Copyright © Ryan Thomas $([System.DateTime]::Now.ToString("yyyy"))</Copyright>
         <Description>Provides DataAnnotation extensions for improved validation</Description>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
