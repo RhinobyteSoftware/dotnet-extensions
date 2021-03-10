@@ -14,8 +14,10 @@ namespace Rhinobyte.DataAnnotations
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
 	public class DateTimeRangeAttribute : ValidationAttribute
 	{
-		private readonly DateTime? _maximum;
-		private readonly DateTime? _minimum;
+		private DateTime? _maximum;
+		private DateTime? _minimum;
+		private readonly string? _maximumStringValue;
+		private readonly string? _minimumStringValue;
 
 		protected DateTimeRangeAttribute(DateTime minimum, DateTime maximum)
 		{
@@ -23,28 +25,21 @@ namespace Rhinobyte.DataAnnotations
 			_maximum = maximum;
 		}
 
-		/// <summary>
-		/// Constructor takes the minimum and maximum date values (inclusive) and attempts to parse them using <see cref="DateTime.TryParse(string, out DateTime)"/>.
-		/// If the values cannot be parsed then <see cref="IsValid(object?)"/> will return false and <see cref="FormatErrorMessage(string)"/> will throw an exception
-		/// indicating that the attribute values we're not correctly set.
+		///	<summary>
+		///		Constructor takes the minimum and maximum date values (inclusive).
+		///		<para>
+		///			The <see cref="IsValid(object, ValidationContext)"/> and <see cref="FormatErrorMessage(string)"/> methods will attempt to parse
+		///			the values (and cache the parsed result). If the values cannot be parsed then an exception will be thrown.
+		///		</para>
 		/// </summary>
 		/// <param name="minimum">The minimum date constraint (inclusive).</param>
 		/// <param name="maximum">The maximum date constraint (inclusive).</param>
 		public DateTimeRangeAttribute(string minimum, string maximum)
-			: base(ErrorMessageAccessor)
+			: base(errorMessageAccessor: null)
 		{
-			if (DateTime.TryParse(minimum, out var parsedMinimum))
-			{
-				_minimum = parsedMinimum;
-			}
-
-			if (DateTime.TryParse(maximum, out var parsedMaximum))
-			{
-				_maximum = parsedMaximum;
-			}
+			_minimumStringValue = minimum;
+			_maximumStringValue = maximum;
 		}
-
-		private static string ErrorMessageAccessor() => "The field {0} must be between {1} and {2}.";
 
 		/// <summary>
 		///     Override of <see cref="ValidationAttribute.FormatErrorMessage" />
@@ -52,55 +47,94 @@ namespace Rhinobyte.DataAnnotations
 		/// <param name="name">The user-visible name to include in the formatted message.</param>
 		/// <returns>A localized string describing the minimum and maximum values</returns>
 		/// <remarks>This override exists to provide a formatted message describing the minimum and maximum values</remarks>
-		/// <exception cref="InvalidOperationException"> is thrown if the current attribute's minimum or maximum are not set.</exception>
-		public override string FormatErrorMessage(string name)
+		/// <exception cref="FormatException">Thrown if the current attribute's minimum/maximum string parameters cannot be parsed.</exception>
+		/// <exception cref="InvalidOperationException">Thrown if the current attribute's minimum or maximum are not set or are invalid.</exception>
+		public override string FormatErrorMessage(string? name)
 		{
-			if (_minimum == null || _maximum == null || _minimum > _maximum)
-			{
-				throw new InvalidOperationException($@"[DateTimeRange] attribute minimum/maximum are missing or invalid. [FieldName: ""{name}""]");
-			}
+			ParseRangeValuesIfNecessary(name);
 
-			return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, _minimum, _maximum);
+			return string.Format(CultureInfo.CurrentCulture, "The field {0} must be between {1} and {2}.", name, _minimum, _maximum);
 		}
 
 		/// <summary>
-		///		Returns true if the <paramref name="value"/> falls between minimum and maximum, inclusive.
+		///		Returns <see cref="ValidationResult.Success"/> if the <paramref name="value"/> falls between minimum and maximum, inclusive.
+		///		Returns a <see cref="ValidationResult"/> with a descriptive non-null error message, otherwise.
 		/// </summary>
 		/// <remarks>
 		///		<para>
-		///			Returns true for null values. Use the <see cref="RequiredAttribute"/> to assert a value is not empty.
+		///			Returns <see cref="ValidationResult.Success"/> for null values. Use the <see cref="RequiredAttribute"/> to assert a value is not empty.
 		///		</para>
 		///		<para>
-		///			Returns false if the minimum or maximum are not set. This is done so that the
-		///			<see cref="FormatErrorMessage"/> override can throw an exception containing the field name.
+		///			Throws an exception if the required minimum and maximum values are missing or invalid.
 		///		</para>
 		/// </remarks>
+		/// <exception cref="FormatException">Thrown if the current attribute's minimum/maximum string parameters cannot be parsed.</exception>
 		/// <exception cref="InvalidCastException">Thrown if the <paramref name="value"/> cannot be cast to a <see cref="DateTime"/>.</exception>
-		public override bool IsValid(object? value)
+		/// <exception cref="InvalidOperationException">Thrown if the current attribute's minimum or maximum are not set or are invalid.</exception>
+		protected override ValidationResult IsValid(object value, ValidationContext validationContext)
 		{
-			if (_minimum == null || _maximum == null || _minimum > _maximum)
-			{
-				// Return false so we can let the FormatErrorMessage() override throw an exception
-				// that includes the field name.
-				return false;
-			}
+			ParseRangeValuesIfNecessary(validationContext?.DisplayName);
 
 			// Automatically pass if value is null or empty. RequiredAttribute should be used to assert a value is not empty.
 			if (value == null)
 			{
-				return true;
+				return ValidationResult.Success;
 			}
 
 			try
 			{
 				var dateTimeValue = (DateTime)value;
-				return _minimum <= dateTimeValue && dateTimeValue <= _maximum;
+				if (_minimum <= dateTimeValue && dateTimeValue <= _maximum)
+				{
+					return ValidationResult.Success;
+				}
+
+				string[]? memberNames = validationContext?.MemberName is { } memberName
+					? new[] { memberName }
+					: null;
+				return new ValidationResult(FormatErrorMessage(validationContext?.DisplayName), memberNames);
 			}
 			catch (InvalidCastException exc)
 			{
-				var castException = new InvalidCastException("The [DateTimeRange] attribute must be used on a DateTime member", exc);
-				castException.Data["value"] = value;
+				var castException = new InvalidCastException($@"The [DateTimeRange] attribute must be used on a DateTime member. [MemberName: ""{validationContext?.DisplayName}""]", exc);
+				castException.Data["ValidationValue"] = value;
 				throw castException;
+			}
+		}
+
+		protected void ParseRangeValuesIfNecessary(string? displayName)
+		{
+			if (_minimum != null && _maximum != null)
+			{
+				if (_minimum > _maximum)
+				{
+					throw new InvalidOperationException($@"[DateTimeRange] attribute minimum must be less than or equal to the maximum. [MemberName: ""{displayName}""]");
+				}
+
+				return;
+			}
+
+			if (string.IsNullOrEmpty(_minimumStringValue) || string.IsNullOrEmpty(_maximumStringValue))
+			{
+				throw new InvalidOperationException($@"[DateTimeRange] attribute minimum/maximum are required. [MemberName: ""{displayName}""]");
+			}
+
+			try
+			{
+				_minimum = DateTime.Parse(_minimumStringValue);
+				_maximum = DateTime.Parse(_maximumStringValue);
+
+				if (_minimum > _maximum)
+				{
+					throw new InvalidOperationException($@"[DateTimeRange] attribute minimum must be less than or equal to the maximum. [MemberName: ""{displayName}""]");
+				}
+			}
+			catch (FormatException formatException)
+			{
+				var wrappedFormatException = new FormatException($@"The [DateTimeRange] attribute minimum/maximum parameters must be valid datetime strings. [MemberName: ""{displayName}""]", formatException);
+				wrappedFormatException.Data[nameof(_maximumStringValue)] = _maximumStringValue;
+				wrappedFormatException.Data[nameof(_minimumStringValue)] = _minimumStringValue;
+				throw wrappedFormatException;
 			}
 		}
 	}

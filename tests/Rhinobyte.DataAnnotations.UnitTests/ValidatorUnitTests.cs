@@ -337,7 +337,7 @@ namespace Rhinobyte.DataAnnotations.UnitTests
 			Invoking(() => Validator.TryValidateObject(modelToValidate, validationContext, validationResults, true))
 				.Should()
 				.Throw<InvalidCastException>()
-				.WithMessage("The [*] attribute must be used on a DateTime member");
+				.WithMessage("The [*] attribute must be used on a DateTime member. [MemberName: *]");
 		}
 
 		public class DateTimeRangeAttributeModel
