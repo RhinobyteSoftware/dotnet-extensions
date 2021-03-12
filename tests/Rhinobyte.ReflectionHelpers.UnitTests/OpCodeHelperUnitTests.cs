@@ -13,16 +13,6 @@ namespace Rhinobyte.ReflectionHelpers.UnitTests
 		private static readonly FieldInfo[] OpcodeStaticFields = typeof(OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static);
 
 		[TestMethod]
-		public void DescriptionLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
-		{
-			foreach (var opcodeField in OpcodeStaticFields)
-			{
-				var opcode = (OpCode)opcodeField.GetValue(null)!;
-				OpCodeHelper.DescriptionLookup.ContainsKey(opcode.Value).Should().BeTrue();
-			}
-		}
-
-		[TestMethod]
 		public void LocalVariableOpcodeValues_should_match_the_values_found_using_reflection()
 		{
 			var variableOpcodes = new List<OpCode>();
@@ -41,12 +31,32 @@ namespace Rhinobyte.ReflectionHelpers.UnitTests
 		}
 
 		[TestMethod]
+		public void LongDescriptionLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
+		{
+			foreach (var opcodeField in OpcodeStaticFields)
+			{
+				var opcode = (OpCode)opcodeField.GetValue(null)!;
+				OpCodeHelper.LongDescriptionLookup.ContainsKey(opcode.Value).Should().BeTrue();
+			}
+		}
+
+		[TestMethod]
 		public void NameLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
 		{
 			foreach (var opcodeField in OpcodeStaticFields)
 			{
 				var opcode = (OpCode)opcodeField.GetValue(null)!;
 				OpCodeHelper.NameLookup[opcode.Value].Should().Be(opcodeField.Name);
+			}
+		}
+
+		[TestMethod]
+		public void ShortDescriptionLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
+		{
+			foreach (var opcodeField in OpcodeStaticFields)
+			{
+				var opcode = (OpCode)opcodeField.GetValue(null)!;
+				OpCodeHelper.ShortDescriptionLookup.ContainsKey(opcode.Value).Should().BeTrue();
 			}
 		}
 

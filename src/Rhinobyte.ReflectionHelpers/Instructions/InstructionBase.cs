@@ -52,7 +52,7 @@ $@"{ToString()}
 
 		public override string ToString()
 		{
-			if (OpCodeHelper.DescriptionLookup.TryGetValue(OpCode.Value, out var description))
+			if (OpCodeHelper.ShortDescriptionLookup.TryGetValue(OpCode.Value, out var description))
 			{
 				return $"({Index}) {description}";
 			}
