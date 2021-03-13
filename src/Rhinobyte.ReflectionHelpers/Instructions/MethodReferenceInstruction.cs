@@ -24,14 +24,14 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		{
 			if (MethodReference == null)
 			{
-				return $"{base.ToString()}  [MethodReference: null]";
+				return $"{base.ToString()}  [Missing MethodReference]";
 			}
 
 			var methodName = MethodReference.DeclaringType == null
 				? $"{MethodReference.Name} (UnknownType)"
 				: $"{MethodReference.DeclaringType.Name}.{MethodReference.Name}";
 
-			return $"{base.ToString()}  [MethodReference: {methodName}]";
+			return $"{base.ToString()}  [{methodName}]";
 		}
 	}
 }

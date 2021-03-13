@@ -25,6 +25,6 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		public int TargetOffset { get; }
 
 		public override string ToString()
-			=> $"{base.ToString()}  [TargetInstruction: {TargetInstruction.Index}]  [TargetOffset: {TargetOffset}]";
+			=> $"{base.ToString()}  [TargetInstruction: {TargetInstruction.Index}]";
 	}
 }

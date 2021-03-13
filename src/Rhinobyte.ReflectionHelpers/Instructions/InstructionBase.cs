@@ -45,11 +45,6 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		/// </summary>
 		public virtual int Size { get; }
 
-		public virtual string FullDescription() =>
-$@"{ToString()}
-[{GetType().Name}   Offset: {Offset}   Size: {Size}]
-[OpCode: {OpCodeHelper.NameLookup[OpCode.Value]} ({OpCode.Value})   OperandType: {OpCode.OperandType}   OpCodeType: {OpCode.OpCodeType}   Size: {OpCode.Size}   StackBehaviourPop: {OpCode.StackBehaviourPop}   StackBehaviourPush: {OpCode.StackBehaviourPush}]";
-
 		public override string ToString()
 		{
 			if (OpCodeHelper.ShortDescriptionLookup.TryGetValue(OpCode.Value, out var description))

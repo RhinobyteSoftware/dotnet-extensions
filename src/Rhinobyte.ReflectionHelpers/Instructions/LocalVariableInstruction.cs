@@ -23,10 +23,14 @@ namespace Rhinobyte.ReflectionHelpers.Instructions
 		{
 			if (LocalVariable == null)
 			{
-				return $"{base.ToString()}  [LocalVariable: null]";
+				return $"{base.ToString()} [Missing LocalVariableInfo]";
 			}
 
-			return $"{base.ToString()}  [LocalVariable: Index {LocalVariable.LocalIndex} ({LocalVariable.LocalType?.Name ?? "UnknownType"})]";
+			var indexString = OpCodeHelper.GetOperandSize(OpCode.OperandType) == 0
+				? string.Empty
+				: $"  (Index {LocalVariable.LocalIndex})";
+
+			return $"{base.ToString()}{indexString}  [Of type {LocalVariable.LocalType?.Name ?? "UnknownType"}]";
 		}
 	}
 }
