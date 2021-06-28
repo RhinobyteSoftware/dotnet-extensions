@@ -3,7 +3,41 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
         <IsPackable>true</IsPackable>
+
+        <!-- VERSION VALUES -->
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+        <InformationalVersion>1.0.0</InformationalVersion>
+        <PackageVersion>1.0.0</PackageVersion>
+        <Version>1.0.0</Version>
+
+        <AssemblyName>Rhinobyte.ReflectionHelpers</AssemblyName>
+        <Authors>Ryan Thomas</Authors>
+        <Company>Rhinobyte Software</Company>
+        <Copyright>Copyright © Ryan Thomas $([System.DateTime]::Now.ToString("yyyy"))</Copyright>
+        <Description>Provides support for parsing method body bytes into structured IL (Intermediate Language) representation as well as an assortment of other reflection related extension methods.</Description>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <IncludeSymbols>true</IncludeSymbols>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <PackageId>Rhinobyte.ReflectionHelpers</PackageId>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageTags>reflection IL parsing</PackageTags>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/RhinobyteSoftware/ReflectionHelpers</RepositoryUrl>
+        <RootNamespace>Rhinobyte.ReflectionHelpers</RootNamespace>
+        <Summary>Provides method body IL parsing and assorted reflection extensions</Summary>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Title>Rhinobyte.ReflectionHelpers</Title>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    </ItemGroup>
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
