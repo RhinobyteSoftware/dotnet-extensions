@@ -1,0 +1,8 @@
+# Reference: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+
+
+# /tests/ specific overrides
+[*.{cs,csx}]
+
+# Rule: (CA1707) Identifiers should not contain underscores - Reason: Common pattern for unit test method names
+dotnet_diagnostic.CA1707.severity    = none

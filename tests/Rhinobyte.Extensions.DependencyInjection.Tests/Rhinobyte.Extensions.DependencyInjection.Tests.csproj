@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Rhinobyte.Extensions.DependencyInjection\Rhinobyte.Extensions.DependencyInjection.csproj" />
+        <ProjectReference Include="..\ExampleIgnoredAttributeAssembly\ExampleIgnoredAttributeAssembly.csproj" />
+    </ItemGroup>
+
+</Project>
