@@ -2,7 +2,7 @@
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
-	[AttributeUsage(AttributeTargets.Constructor)]
+	[AttributeUsage(AttributeTargets.Constructor, Inherited = false)]
 	public class DependencyInjectionConstructorAttribute : Attribute
 	{
 	}

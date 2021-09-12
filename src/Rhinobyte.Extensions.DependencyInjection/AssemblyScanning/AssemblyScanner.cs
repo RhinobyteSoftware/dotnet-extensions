@@ -203,7 +203,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 			var newScanResult = new AssemblyScanResult();
 
-			var duplicateIncludeExcludeTypes = new List<Type>();
+			var duplicateIncludeExcludeTypes = new List<string>();
 
 			foreach (var explicitlyIncludedType in _includedTypes)
 			{
@@ -217,7 +217,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 					if (includeExcludeConflictResolutionStrategy == IncludeExcludeConflictResolutionStrategy.ThrowException)
 					{
-						duplicateIncludeExcludeTypes.Add(explicitlyIncludedType);
+						duplicateIncludeExcludeTypes.Add(explicitlyIncludedType.FullName ?? explicitlyIncludedType.ToString());
 						continue;
 					}
 				}
@@ -226,7 +226,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			}
 
 			if (duplicateIncludeExcludeTypes.Count > 0)
-				throw new InvalidOperationException($"{nameof(ScanAssemblies)} cannot complete because the following types exist in both the explicit include and explicit exclude collections:{Environment.NewLine}  {string.Join(", ", duplicateIncludeExcludeTypes.Select(type => type.FullName))}");
+				throw new InvalidOperationException($"{nameof(ScanAssemblies)} cannot complete because the following types exist in both the explicit include and explicit exclude collections:{Environment.NewLine}  {string.Join(", ", duplicateIncludeExcludeTypes)}");
 
 			foreach (var assemblyInclude in _assembliesToScan)
 			{
@@ -253,6 +253,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 				foreach (var discoveredType in discoveredTypes)
 				{
+					if (discoveredType.IsDefined(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), true))
+						continue;
+
 					if (_excludedTypes.Contains(discoveredType))
 					{
 						newScanResult.IgnoredTypes.Add(discoveredType);

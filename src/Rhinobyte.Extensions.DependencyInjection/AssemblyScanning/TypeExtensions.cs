@@ -11,5 +11,13 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 			return type.IsGenericTypeDefinition || type.ContainsGenericParameters;
 		}
+
+		public static bool IsValueTypeOrString(this Type type)
+		{
+			if (type is null)
+				return false;
+
+			return type.IsValueType || type == typeof(string);
+		}
 	}
 }
