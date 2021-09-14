@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
 	public interface IServiceRegistrationConvention
 	{
-		void HandleType(Type discoveredType, IAssemblyScanResult scanResult, IServiceCollection serviceCollection);
+		bool HandleType(Type discoveredType, IAssemblyScanResult scanResult, ServiceRegistrationCache serviceCollection);
 	}
 }

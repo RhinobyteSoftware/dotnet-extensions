@@ -50,7 +50,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				throw;
 			}
 #else
-				return (TImplementationType)_explicitConstructorToUse.Invoke(BindingFlags.DoNotWrapExceptions, binder: null, parameters: parameterValues, culture: null);
+			return (TImplementationType)_explicitConstructorToUse.Invoke(BindingFlags.DoNotWrapExceptions, binder: null, parameters: parameterValues, culture: null);
 #endif
 		}
 	}

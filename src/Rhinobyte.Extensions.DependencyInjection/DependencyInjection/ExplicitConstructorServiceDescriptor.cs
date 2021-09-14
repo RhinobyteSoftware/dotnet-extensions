@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
-	public class ExplicitConstructorServiceDescriptor<TImplementationType> : ExplicitConstructorServiceDescriptor
+	public class ExplicitConstructorServiceDescriptor<TImplementationType> : ExplicitConstructorServiceDescriptor, ICustomServiceDescriptor
 		where TImplementationType : class
 	{
 		public ExplicitConstructorServiceDescriptor(
@@ -54,8 +54,8 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		/// <param name="implementationType">The implementation type returned by the factory</param>
 		/// <remarks>
 		/// We have to make the factory actually be of type Func&lt;IServiceProvider, TImplementationType&gt; or else the Microsoft.Extension.DependencyInjection
-		/// library will throw in certain cases. This happens because calls to the internal only ServiceDescriptor.GetImplementationType() method assumes the
-		/// factory will have an explicitly typed return type argument, despite the constructor signature excepting the generic object return type for the function.
+		/// library will behave unexpectly in certain cases. This happens because calls to the internal only ServiceDescriptor.GetImplementationType() method
+		/// implicitly assumes the factory will have an explicitly typed return type argument when it can in fact return object.
 		/// <seealso href="https://github.com/dotnet/runtime/blob/v5.0.9/src/libraries/Microsoft.Extensions.DependencyInjection.Abstractions/src/ServiceDescriptor.cs#L137" />
 		/// <seealso href="https://github.com/dotnet/extensions/blob/v3.1.19/src/DependencyInjection/DI.Abstractions/src/ServiceDescriptor.cs#L140"/>
 		/// </remarks>
@@ -66,6 +66,8 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			var factoryInstance = (IExplicitConstructorFactory)factoryConstructor.Invoke(new object[] { explicitConstructorToUse });
 			return factoryInstance.Factory;
 		}
+
+		public Type GetImplementationType() => OriginalImplementationType;
 
 		public static ConstructorInfo? SelectCustomConstructor(Type implementationType, ConstructorSelectionType constructorSelectionType)
 		{
