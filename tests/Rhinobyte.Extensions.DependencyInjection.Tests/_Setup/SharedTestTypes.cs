@@ -1,4 +1,8 @@
-﻿namespace Rhinobyte.Extensions.DependencyInjection.Tests
+﻿using ExampleLibrary1;
+
+#pragma warning disable CA1801 // Review unused parameters
+#pragma warning disable IDE0060 // Remove unused parameter
+namespace Rhinobyte.Extensions.DependencyInjection.Tests
 {
 	public class ClassWithAmbiguousConstructorDependencies
 	{
@@ -96,16 +100,13 @@
 
 	public interface IDependency5 { }
 
-	public interface ISomethingOptions
-	{
-		string? Something { get; }
-		string? SomethingElse { get; }
-	}
+	public interface IDependencyPart1 { }
 
-	public class SomethingOptions : ISomethingOptions
+	public interface IDependencyPart2 { }
+
+	public class SomethingThatImplementsTwoInterfaces : IDependencyPart1, IDependencyPart2
 	{
-		public string? Something { get; set; }
-		public string? SomethingElse { get; set; }
+
 	}
 
 	public class SubclassWithNoConstructorSelectionAttribute : ClassWithConstructorSelectionAttributeTwoConstructors
@@ -117,3 +118,5 @@
 		}
 	}
 }
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore CA1801 // Review unused parameters

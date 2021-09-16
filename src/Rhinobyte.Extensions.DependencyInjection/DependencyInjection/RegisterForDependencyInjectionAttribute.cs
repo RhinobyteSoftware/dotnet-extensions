@@ -3,7 +3,7 @@ using System;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
-	[AttributeUsage(AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
 	public class RegisterForDependencyInjectionAttribute : Attribute
 	{
 		public RegisterForDependencyInjectionAttribute(Type implementationType)

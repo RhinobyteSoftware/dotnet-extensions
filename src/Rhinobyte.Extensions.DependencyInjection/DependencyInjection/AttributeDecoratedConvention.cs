@@ -1,18 +1,41 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Reflection;
 
-namespace Rhinobyte.Extensions.DependencyInjection.DependencyInjection
+namespace Rhinobyte.Extensions.DependencyInjection
 {
 	public class AttributeDecoratedConvention : ServiceRegistrationConventionBase
 	{
+		public AttributeDecoratedConvention(
+			ConstructorSelectionType defaultConstructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly,
+			ServiceLifetime defaultLifetime = ServiceLifetime.Scoped,
+			ServiceRegistrationOverwriteBehavior defaultOverwriteBehavior = ServiceRegistrationOverwriteBehavior.TryAdd,
+			bool skipAlreadyRegistered = true,
+			bool skipDuplicates = true,
+			bool skipImplementationTypesAlreadyInUse = true)
+			: base(defaultConstructorSelectionType, defaultLifetime, defaultOverwriteBehavior, skipDuplicates, skipImplementationTypesAlreadyInUse)
+		{
+			SkipAlreadyRegistered = skipAlreadyRegistered;
+		}
+
+		/// <summary>
+		/// When true the <see cref="GetServiceRegistrationParameters(Type, IAssemblyScanResult, ServiceRegistrationCache)"/> method will short circuit and return null
+		/// if the service collection contains any items where the <see cref="ServiceDescriptor.ServiceType"/> matches the discovered type
+		/// <para>
+		/// This happens before any other checks regardless of other values such as the <see cref="ServiceRegistrationOverwriteBehavior"/>
+		/// </para>
+		/// </summary>
+		public bool SkipAlreadyRegistered { get; protected set; }
+
+
 #pragma warning disable CA1062 // Validate arguments of public methods
 		public override ServiceRegistrationParameters? GetServiceRegistrationParameters(
 			Type discoveredType,
 			IAssemblyScanResult scanResult,
 			ServiceRegistrationCache serviceRegistrationCache)
 		{
-			if (serviceRegistrationCache.HasAnyByServiceType(discoveredType))
-				return null; // Already registered
+			if (SkipAlreadyRegistered && serviceRegistrationCache.HasAnyByServiceType(discoveredType))
+				return null;
 
 			var registrationAttribute = discoveredType.GetCustomAttribute<RegisterForDependencyInjectionAttribute>(false);
 			if (registrationAttribute == null)

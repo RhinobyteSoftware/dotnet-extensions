@@ -14,22 +14,32 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	{
 		public ServiceRegistrationParameters(
 			ServiceDescriptor serviceDescriptor,
-			ServiceRegistrationOverwriteBehavior? overwriteBehavior = null)
+			ServiceRegistrationOverwriteBehavior? overwriteBehavior = null,
+			bool? skipDuplicates = null,
+			bool? skipImplementationTypesAlreadyInUse = null)
 		{
 			ServiceDescriptor = serviceDescriptor ?? throw new ArgumentNullException(nameof(serviceDescriptor));
 			OverwriteBehavior = overwriteBehavior;
+			SkipDuplicates = skipDuplicates;
+			SkipImplementationTypesAlreadyInUse = skipImplementationTypesAlreadyInUse;
 		}
 
 		public ServiceRegistrationParameters(
 			IEnumerable<ServiceDescriptor> serviceDescriptors,
-			ServiceRegistrationOverwriteBehavior? overwriteBehavior = null)
+			ServiceRegistrationOverwriteBehavior? overwriteBehavior = null,
+			bool? skipDuplicates = null,
+			bool? skipImplementationTypesAlreadyInUse = null)
 		{
 			ServiceDescriptors = serviceDescriptors ?? throw new ArgumentNullException(nameof(serviceDescriptors));
 			OverwriteBehavior = overwriteBehavior;
+			SkipDuplicates = skipDuplicates;
+			SkipImplementationTypesAlreadyInUse = skipImplementationTypesAlreadyInUse;
 		}
 
 		public ServiceRegistrationOverwriteBehavior? OverwriteBehavior { get; }
 		public ServiceDescriptor? ServiceDescriptor { get; }
 		public IEnumerable<ServiceDescriptor>? ServiceDescriptors { get; }
+		public bool? SkipDuplicates { get; }
+		public bool? SkipImplementationTypesAlreadyInUse { get; }
 	}
 }

@@ -21,16 +21,33 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			SkipImplementationTypesAlreadyInUse = skipImplementationTypesAlreadyInUse;
 		}
 
-
 		public ConstructorSelectionType DefaultConstructorSelectionType { get; protected set; } = ConstructorSelectionType.DefaultBehaviorOnly;
 
 		public ServiceLifetime DefaultLifetime { get; protected set; } = ServiceLifetime.Scoped;
 
 		public ServiceRegistrationOverwriteBehavior DefaultOverwriteBehavior { get; protected set; } = ServiceRegistrationOverwriteBehavior.TryAdd;
 
+		/// <summary>
+		/// When true, the <see cref="ServiceDescriptor"/>s will not be added if the service collection already has one or more desriptors with the same value for
+		/// both <see cref="ServiceDescriptor.ServiceType"/> and <see cref="ServiceDescriptorExtensions.TryGetImplementationType(ServiceDescriptor)"/>
+		/// <para>
+		/// Subclasses can supersede this value for an individual item by using a non-null <see cref="ServiceRegistrationParameters.SkipDuplicates"/>
+		/// property
+		/// </para>
+		/// </summary>
+		public bool SkipDuplicates { get; protected set; }
+
+		/// <summary>
+		/// When true, the <see cref="ServiceDescriptor"/>s will not be added if the service collection already has one or more desriptors with the same value for
+		/// <see cref="ServiceDescriptorExtensions.TryGetImplementationType(ServiceDescriptor)"/>
+		/// <para>
+		/// Subclasses can supersede this value for an individual item by using a non-null <see cref="ServiceRegistrationParameters.SkipImplementationTypesAlreadyInUse"/>
+		/// property and a non null parameter for the <see cref="BuildServiceDescriptor(Type, Type, ServiceRegistrationCache, ConstructorSelectionType?, ServiceLifetime?, bool?)"/>
+		/// method
+		/// </para>
+		/// </summary>
 		public bool SkipImplementationTypesAlreadyInUse { get; protected set; } = true;
 
-		public bool SkipDuplicates { get; protected set; }
 
 #pragma warning disable CA1062 // Validate arguments of public methods
 		protected ServiceDescriptor? BuildServiceDescriptor(
@@ -38,9 +55,11 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			Type implementationType,
 			ServiceRegistrationCache serviceRegistrationCache,
 			ConstructorSelectionType? constructorSelectionType = null,
-			ServiceLifetime? lifetime = null)
+			ServiceLifetime? lifetime = null,
+			bool? skipImplementationTypesAlreadyInUse = null)
 		{
-			if (SkipImplementationTypesAlreadyInUse && serviceRegistrationCache.HasAnyByImplemenationType(implementationType))
+			var skipByImplementationType = skipImplementationTypesAlreadyInUse ?? SkipImplementationTypesAlreadyInUse;
+			if (skipByImplementationType && serviceRegistrationCache.HasAnyByImplemenationType(implementationType))
 				return null;
 
 			var constructorSelectionTypeToUse = constructorSelectionType ?? DefaultConstructorSelectionType;
@@ -78,35 +97,51 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				return false;
 
 			var overwriteBehaviorToUse = serviceRegistrationParameters.OverwriteBehavior ?? DefaultOverwriteBehavior;
+			var skipDuplicates = serviceRegistrationParameters.SkipDuplicates ?? SkipDuplicates;
+			var skipImplementationTypesAlreadyInUse = serviceRegistrationParameters.SkipImplementationTypesAlreadyInUse ?? SkipImplementationTypesAlreadyInUse;
 
 			if (serviceRegistrationParameters.ServiceDescriptor != null)
-				return TryRegister(overwriteBehaviorToUse, serviceRegistrationParameters.ServiceDescriptor, serviceRegistrationCache);
+				return TryRegister(overwriteBehaviorToUse, serviceRegistrationParameters.ServiceDescriptor, serviceRegistrationCache, skipDuplicates, skipImplementationTypesAlreadyInUse);
 
 			if (serviceRegistrationParameters.ServiceDescriptors == null)
 				return false;
 
-			return TryRegisterMultiple(discoveredType, overwriteBehaviorToUse, serviceRegistrationParameters.ServiceDescriptors, serviceRegistrationCache);
+			return TryRegisterMultiple(
+				discoveredType,
+				overwriteBehaviorToUse,
+				serviceRegistrationParameters.ServiceDescriptors,
+				serviceRegistrationCache,
+				skipDuplicates,
+				skipImplementationTypesAlreadyInUse
+			);
 		}
 
-#pragma warning disable CA1062 // Validate arguments of public methods
-		protected bool TryRegister(
-		   ServiceRegistrationOverwriteBehavior overwriteBehavior,
-		   ServiceDescriptor serviceDescriptor,
-		   ServiceRegistrationCache serviceRegistrationCache)
+		public static bool TryRegister(
+			ServiceRegistrationOverwriteBehavior overwriteBehavior,
+			ServiceDescriptor serviceDescriptor,
+			ServiceRegistrationCache serviceRegistrationCache,
+			bool skipDuplicates,
+			bool skipImplementationTypesAlreadyInUse)
 		{
+			_ = serviceDescriptor ?? throw new ArgumentNullException(nameof(serviceDescriptor));
+			_ = serviceRegistrationCache ?? throw new ArgumentNullException(nameof(serviceRegistrationCache));
+
 			var implementationType = serviceDescriptor.TryGetImplementationType();
 			if (implementationType is null)
 				throw new ArgumentException($"{nameof(ServiceDescriptorExtensions.TryGetImplementationType)} returned null");
 
 			var isTryAdd = overwriteBehavior == ServiceRegistrationOverwriteBehavior.TryAdd;
-			var byServiceType = isTryAdd || SkipDuplicates
+			var byServiceType = isTryAdd || skipDuplicates
 				? serviceRegistrationCache.GetByServiceType(serviceDescriptor.ServiceType)
 				: null;
 
 			if (isTryAdd && byServiceType?.Count > 0)
 				return true; // Treat it has handled, no need to call the TryAdd extension method which would iterate over all the service descriptors
 
-			if (SkipDuplicates && byServiceType != null)
+			if (skipImplementationTypesAlreadyInUse && serviceRegistrationCache.HasAnyByImplemenationType(implementationType))
+				return false;
+
+			if (skipDuplicates && byServiceType != null)
 			{
 				foreach (var existingDescriptor in byServiceType)
 				{
@@ -114,9 +149,6 @@ namespace Rhinobyte.Extensions.DependencyInjection
 						return false;
 				}
 			}
-
-			if (SkipImplementationTypesAlreadyInUse && serviceRegistrationCache.HasAnyByImplemenationType(implementationType))
-				return false;
 
 			switch (overwriteBehavior)
 			{
@@ -139,15 +171,19 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 			return true;
 		}
-#pragma warning restore CA1062 // Validate arguments of public methods
 
-#pragma warning disable CA1062 // Validate arguments of public methods
-		protected bool TryRegisterMultiple(
+		public static bool TryRegisterMultiple(
 			Type discoveredType,
 			ServiceRegistrationOverwriteBehavior overwriteBehavior,
 			IEnumerable<ServiceDescriptor> serviceDescriptors,
-			ServiceRegistrationCache serviceRegistrationCache)
+			ServiceRegistrationCache serviceRegistrationCache,
+			bool skipDuplicates,
+			bool skipImplementationTypesAlreadyInUse)
 		{
+			_ = discoveredType ?? throw new ArgumentNullException(nameof(discoveredType));
+			_ = serviceDescriptors ?? throw new ArgumentNullException(nameof(serviceDescriptors));
+			_ = serviceRegistrationCache ?? throw new ArgumentNullException(nameof(serviceRegistrationCache));
+
 			var serviceDescriptorsToAdd = new List<ServiceDescriptor>();
 			var skipTryAddCount = 0;
 			var totalCount = 0;
@@ -163,7 +199,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 				++totalCount;
 
-				var byServiceType = isTryAdd || SkipDuplicates
+				var byServiceType = isTryAdd || skipDuplicates
 					? serviceRegistrationCache.GetByServiceType(serviceDescriptor.ServiceType)
 					: null;
 
@@ -173,7 +209,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 					continue; // Treat it has handled, no need to call the TryAdd extension method which would iterate over all the service descriptors
 				}
 
-				if (SkipDuplicates && byServiceType != null)
+				if (skipImplementationTypesAlreadyInUse && serviceRegistrationCache.HasAnyByImplemenationType(implementationType))
+					continue;
+
+				if (skipDuplicates && byServiceType != null)
 				{
 					var isDuplicate = false;
 					foreach (var existingDescriptor in byServiceType)
@@ -188,9 +227,6 @@ namespace Rhinobyte.Extensions.DependencyInjection
 					if (isDuplicate)
 						continue;
 				}
-
-				if (SkipImplementationTypesAlreadyInUse && serviceRegistrationCache.HasAnyByImplemenationType(implementationType))
-					continue;
 
 				serviceDescriptorsToAdd.Add(serviceDescriptor);
 
@@ -224,7 +260,6 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 			return true;
 		}
-#pragma warning restore CA1062 // Validate arguments of public methods
 
 	}
 }

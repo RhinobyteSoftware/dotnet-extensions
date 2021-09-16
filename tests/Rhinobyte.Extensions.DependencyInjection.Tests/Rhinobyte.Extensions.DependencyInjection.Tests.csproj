@@ -7,6 +7,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Rhinobyte.Extensions.DependencyInjection\Rhinobyte.Extensions.DependencyInjection.csproj" />
         <ProjectReference Include="..\ExampleIgnoredAttributeAssembly\ExampleIgnoredAttributeAssembly.csproj" />
+        <ProjectReference Include="..\ExampleLibrary1\ExampleLibrary1.csproj" />
     </ItemGroup>
 
 </Project>

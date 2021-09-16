@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -12,6 +13,34 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 	{
 		/******     TEST METHODS     ****************************
 		 ********************************************************/
+		[TestMethod]
+		public void Internal_OOTB_GetImplementationType_method_returns_the_expected_result_for_an_ExplicitConstructorServiceDescriptor()
+		{
+			var serviceType = typeof(ClassWithAmbiguousConstructorDependenciesDecorated);
+
+			var constructorInfo = ExplicitConstructorServiceDescriptor
+				.SelectCustomConstructor(serviceType, ConstructorSelectionType.AttributeThenDefaultBehavior);
+			constructorInfo.Should().NotBeNull();
+
+			var explicitConstructorServiceDescriptor = new ExplicitConstructorServiceDescriptor(serviceType, serviceType, constructorInfo!, ServiceLifetime.Scoped);
+
+			var internalGetImplementationTypeMethod = typeof(ServiceDescriptor).GetMethod("GetImplementationType", BindingFlags.Instance | BindingFlags.NonPublic);
+			internalGetImplementationTypeMethod.Should().NotBeNull();
+			var implementationType = internalGetImplementationTypeMethod!.Invoke(explicitConstructorServiceDescriptor, null);
+			implementationType.Should().NotBeNull();
+			implementationType.Should().Be(typeof(object));
+
+
+			var explicitConstructorServiceDescriptor2 = new ExplicitConstructorServiceDescriptor<ClassWithAmbiguousConstructorDependenciesDecorated>(
+				serviceType,
+				constructorInfo!,
+				ServiceLifetime.Scoped
+			);
+			implementationType = internalGetImplementationTypeMethod!.Invoke(explicitConstructorServiceDescriptor2, null);
+			implementationType.Should().NotBeNull();
+			implementationType.Should().Be(serviceType);
+		}
+
 		[TestMethod]
 		public void SelectCustomConstructor_returns_the_expected_result_for_AttributeThenDefaultBehavior_selection_type()
 		{

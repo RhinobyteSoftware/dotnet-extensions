@@ -5,6 +5,10 @@ using System.Reflection;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// Default <see cref="IAssemblyScanner"/> implementation.
+	/// <para>Allows configuration of assemblies, excluded types, included types, and filters used to product an <see cref="IAssemblyScanResult"/></para>
+	/// </summary>
 	public class AssemblyScanner : IAssemblyScanner
 	{
 		private readonly HashSet<AssemblyInclude> _assembliesToScan = new HashSet<AssemblyInclude>();
@@ -71,6 +75,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return this;
 		}
 
+		public AssemblyScanner AddAssemblyFilter(Func<AssemblyInclude, IAssemblyScanner, IAssemblyScanResult, bool> filter)
+			=> AddAssemblyFilter(new LambdaAssemblyFilter(filter));
+
 		public AssemblyScanner AddForType(Type typeInAssembly, bool areNonExportedTypesIncluded = false)
 			=> Add(typeInAssembly?.Assembly!, areNonExportedTypesIncluded);
 
@@ -88,6 +95,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 			return this;
 		}
+
+		public AssemblyScanner AddTypeFilter(Func<AssemblyInclude, Type, IAssemblyScanner, IAssemblyScanResult, bool> filter)
+			=> AddTypeFilter(new LamdaTypeFilter(filter));
 
 		public AssemblyInclude? FindAssemblyInclude(Assembly assemblyToLookFor)
 		{
@@ -195,7 +205,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return this;
 		}
 
-		public AssemblyScanResult ScanAssemblies(
+		public IAssemblyScanResult ScanAssemblies(
 			IncludeExcludeConflictResolutionStrategy includeExcludeConflictResolutionStrategy = IncludeExcludeConflictResolutionStrategy.PrioritizeExcludes)
 		{
 			if (_currentScanResult != null)
@@ -253,7 +263,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 				foreach (var discoveredType in discoveredTypes)
 				{
-					if (discoveredType.IsDefined(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), true))
+					if (discoveredType.IsCompilerGenerated())
 						continue;
 
 					if (_excludedTypes.Contains(discoveredType))

@@ -12,11 +12,14 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 		{
 			// Even though I divide the files into subfolder for slightly easier organization I want them all to use the same Rhinobyte.Extensions.DependencyInjection
 			// root namespace. Verify that I didn't forget to adjust it if I add new types to one of the subfolders.
-			var libraryTypes = typeof(Rhinobyte.Extensions.DependencyInjection.TypeExtensions).Assembly.GetExportedTypes();
+			var libraryTypes = typeof(Rhinobyte.Extensions.DependencyInjection.TypeExtensions).Assembly.GetTypes();
 
 			var invalidTypes = new List<string>();
 			foreach (var libraryType in libraryTypes)
 			{
+				if (libraryType.IsCompilerGenerated())
+					continue;
+
 				var typeNamespace = libraryType?.FullName?.Substring(0, libraryType.FullName.LastIndexOf('.'));
 				if (libraryType?.FullName != null && typeNamespace != "Rhinobyte.Extensions.DependencyInjection")
 					invalidTypes.Add(libraryType.FullName);

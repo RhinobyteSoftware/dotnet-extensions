@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// Concrete implementation of <see cref="IAssemblyScanResult"/>.
+	/// <para>Implements the various collections using <see cref="HashSet{T}"/></para>
+	/// </summary>
 	public class AssemblyScanResult : IAssemblyScanResult
 	{
 		public HashSet<Type> AllDiscoveredTypes { get; } = new HashSet<Type>();

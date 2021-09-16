@@ -2,21 +2,25 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
-	public class ExplicitConstructorServiceDescriptor<TImplementationType> : ExplicitConstructorServiceDescriptor, ICustomServiceDescriptor
+	public class ExplicitConstructorServiceDescriptor<TImplementationType> : ServiceDescriptor, ICustomServiceDescriptor
 		where TImplementationType : class
 	{
 		public ExplicitConstructorServiceDescriptor(
 			Type serviceType,
 			ConstructorInfo explicitConstructorToUse,
 			ServiceLifetime serviceLifetime)
-			: base(serviceType, typeof(TImplementationType), new ExplicitConstructorFactory<TImplementationType>(explicitConstructorToUse).CallConstructor, serviceLifetime)
+			: base(serviceType, new ExplicitConstructorFactory<TImplementationType>(explicitConstructorToUse).FactoryMethod, serviceLifetime)
 		{
+			OriginalImplementationType = typeof(TImplementationType);
 		}
+
+		public Type OriginalImplementationType { get; }
+
+		public Type GetImplementationType() => OriginalImplementationType;
 	}
 
 	public class ExplicitConstructorServiceDescriptor : ServiceDescriptor
@@ -30,42 +34,12 @@ namespace Rhinobyte.Extensions.DependencyInjection
 #endif
 			ConstructorInfo explicitConstructorToUse,
 			ServiceLifetime serviceLifetime)
-			: base(serviceType, CreateConstructorFactory(explicitConstructorToUse, implementationType), serviceLifetime)
-		{
-			OriginalImplementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
-		}
-
-		protected ExplicitConstructorServiceDescriptor(
-			Type serviceType,
-			Type implementationType,
-			Func<IServiceProvider, object> constructorFactory,
-			ServiceLifetime serviceLifetime)
-			: base(serviceType, constructorFactory, serviceLifetime)
+			: base(serviceType, new ExplicitConstructorFactory(explicitConstructorToUse).CallConstructor, serviceLifetime)
 		{
 			OriginalImplementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
 		}
 
 		public Type OriginalImplementationType { get; }
-
-		/// <summary>
-		/// Uses reflection to create the factory function with a generic argument return type of <paramref name="implementationType"/>
-		/// </summary>
-		/// <param name="explicitConstructorToUse">The explicit constructor to use for the service provider factory</param>
-		/// <param name="implementationType">The implementation type returned by the factory</param>
-		/// <remarks>
-		/// We have to make the factory actually be of type Func&lt;IServiceProvider, TImplementationType&gt; or else the Microsoft.Extension.DependencyInjection
-		/// library will behave unexpectly in certain cases. This happens because calls to the internal only ServiceDescriptor.GetImplementationType() method
-		/// implicitly assumes the factory will have an explicitly typed return type argument when it can in fact return object.
-		/// <seealso href="https://github.com/dotnet/runtime/blob/v5.0.9/src/libraries/Microsoft.Extensions.DependencyInjection.Abstractions/src/ServiceDescriptor.cs#L137" />
-		/// <seealso href="https://github.com/dotnet/extensions/blob/v3.1.19/src/DependencyInjection/DI.Abstractions/src/ServiceDescriptor.cs#L140"/>
-		/// </remarks>
-		public static Func<IServiceProvider, object> CreateConstructorFactory(ConstructorInfo explicitConstructorToUse, Type implementationType)
-		{
-			var factoryClosedType = typeof(ExplicitConstructorFactory<>).MakeGenericType(implementationType);
-			var factoryConstructor = factoryClosedType.GetConstructors(BindingFlags.Public).Single();
-			var factoryInstance = (IExplicitConstructorFactory)factoryConstructor.Invoke(new object[] { explicitConstructorToUse });
-			return factoryInstance.Factory;
-		}
 
 		public Type GetImplementationType() => OriginalImplementationType;
 

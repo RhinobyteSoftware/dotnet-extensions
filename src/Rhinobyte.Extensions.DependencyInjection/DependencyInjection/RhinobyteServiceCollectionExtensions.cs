@@ -92,6 +92,34 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		public static IServiceCollection RegisterAttributeDecoratedTypes(
+			this IServiceCollection serviceCollection,
+			IAssemblyScanner scanner)
+		{
+			_ = scanner ?? throw new ArgumentNullException(nameof(scanner));
+			return RegisterAttributeDecoratedTypes(serviceCollection, scanner.ScanAssemblies());
+		}
+
+		public static IServiceCollection RegisterAttributeDecoratedTypes(
+			this IServiceCollection serviceCollection,
+			IAssemblyScanResult scanResult)
+			=> RegisterTypes(serviceCollection, scanResult, new AttributeDecoratedConvention());
+
+		public static IServiceCollection RegisterInterfaceImplementations(
+			this IServiceCollection serviceCollection,
+			IAssemblyScanner scanner,
+			InterfaceImplementationResolutionStrategy resolutionStrategy)
+		{
+			_ = scanner ?? throw new ArgumentNullException(nameof(scanner));
+			return RegisterInterfaceImplementations(serviceCollection, scanner.ScanAssemblies(), resolutionStrategy);
+		}
+
+		public static IServiceCollection RegisterInterfaceImplementations(
+			this IServiceCollection serviceCollection,
+			IAssemblyScanResult scanResult,
+			InterfaceImplementationResolutionStrategy resolutionStrategy)
+			=> RegisterTypes(serviceCollection, scanResult, new InterfaceImplementationsConvention(resolutionStrategy: resolutionStrategy));
+
 		public static IServiceCollection RegisterTypes(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanner scanner,
@@ -125,16 +153,18 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		public static IServiceCollection RegisterTypes(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanner scanner,
-			IEnumerable<IServiceRegistrationConvention> serviceRegistrationConventions)
+			IEnumerable<IServiceRegistrationConvention> serviceRegistrationConventions,
+			bool tryAllConventions = false)
 		{
 			_ = scanner ?? throw new ArgumentNullException(nameof(scanner));
-			return RegisterTypes(serviceCollection, scanner.ScanAssemblies(), serviceRegistrationConventions);
+			return RegisterTypes(serviceCollection, scanner.ScanAssemblies(), serviceRegistrationConventions, tryAllConventions);
 		}
 
 		public static IServiceCollection RegisterTypes(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanResult scanResult,
-			IEnumerable<IServiceRegistrationConvention> serviceRegistrationConventions)
+			IEnumerable<IServiceRegistrationConvention> serviceRegistrationConventions,
+			bool tryAllConventions = false)
 		{
 			_ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 			_ = scanResult ?? throw new ArgumentNullException(nameof(scanResult));
@@ -150,7 +180,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			{
 				foreach (var convention in serviceRegistrationConventions)
 				{
-					if (convention.HandleType(discoveredType, scanResult, serviceRegistrationCache))
+					if (convention.HandleType(discoveredType, scanResult, serviceRegistrationCache) && !tryAllConventions)
 						break;
 				}
 			}

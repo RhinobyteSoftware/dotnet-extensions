@@ -6,5 +6,6 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 	[TestClass]
 	public class RhinobyteServiceCollectionExtensionsTests
 	{
+
 	}
 }

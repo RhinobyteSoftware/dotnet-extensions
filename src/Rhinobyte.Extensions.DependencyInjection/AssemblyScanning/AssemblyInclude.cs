@@ -3,8 +3,16 @@ using System.Reflection;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// Representation of an assembly to include during assembly scanning.
+	/// </summary>
 	public struct AssemblyInclude
 	{
+		/// <summary>
+		/// Construct an AssemblyInclude instance
+		/// </summary>
+		/// <param name="assemblyToInclude">The assembly to be included in the scan operation</param>
+		/// <param name="areNonExportedTypesIncluded">When true non-exported types will be included in the scan</param>
 		public AssemblyInclude(
 			Assembly assemblyToInclude,
 			bool areNonExportedTypesIncluded = false)
@@ -13,7 +21,15 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			AreNonExportedTypesIncluded = areNonExportedTypesIncluded;
 		}
 
+		/// <summary>
+		/// When true, non exported types will be included in the type scan.
+		/// <para>Defaults to false</para>
+		/// </summary>
 		public bool AreNonExportedTypesIncluded { get; set; }
+
+		/// <summary>
+		/// The <see cref="Assembly"/> to include in the scan operation
+		/// </summary>
 		public Assembly AssemblyToInclude { get; }
 
 

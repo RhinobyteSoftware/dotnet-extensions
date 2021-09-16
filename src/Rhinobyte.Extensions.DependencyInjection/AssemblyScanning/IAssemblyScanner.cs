@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// IAssemblyScanner type representing collections of configured assemblies, exclude/include types, and filters used to perform a scan
+	/// and produce an <see cref="IAssemblyScanResult"/>
+	/// </summary>
 	public interface IAssemblyScanner
 	{
 		IReadOnlyCollection<AssemblyInclude> AssembliesToScan { get; }
@@ -11,7 +15,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		IReadOnlyCollection<IScannedAssemblyFilter> ScannedAssemblyFilters { get; }
 		IReadOnlyCollection<IScannedTypeFilter> ScannedTypeFilters { get; }
 
-		AssemblyScanResult ScanAssemblies(
+		IAssemblyScanResult ScanAssemblies(
 			IncludeExcludeConflictResolutionStrategy includeExcludeConflictResolutionStrategy = IncludeExcludeConflictResolutionStrategy.PrioritizeExcludes
 		);
 	}

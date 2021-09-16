@@ -1,5 +1,10 @@
-﻿namespace Rhinobyte.Extensions.DependencyInjection
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// The constructor selection strategy to use when registering types against an <see cref="IServiceCollection"/>
+	/// </summary>
 	public enum ConstructorSelectionType
 	{
 		DefaultBehaviorOnly = 0,
