@@ -21,7 +21,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 					continue;
 
 				var typeNamespace = libraryType?.FullName?.Substring(0, libraryType.FullName.LastIndexOf('.'));
-				if (libraryType?.FullName != null && typeNamespace != "Rhinobyte.Extensions.DependencyInjection")
+				if (libraryType?.FullName != null && typeNamespace != "Rhinobyte.Extensions.DependencyInjection" && typeNamespace?.StartsWith("Coverlet.Core.Instrumentation") != true)
 					invalidTypes.Add(libraryType.FullName);
 			}
 

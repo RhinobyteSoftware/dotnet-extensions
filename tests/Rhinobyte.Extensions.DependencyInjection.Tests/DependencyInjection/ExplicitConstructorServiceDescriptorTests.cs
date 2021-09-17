@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using ExampleLibrary1;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -28,7 +29,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 			internalGetImplementationTypeMethod.Should().NotBeNull();
 			var implementationType = internalGetImplementationTypeMethod!.Invoke(explicitConstructorServiceDescriptor, null);
 			implementationType.Should().NotBeNull();
-			implementationType.Should().Be(typeof(object));
+			implementationType.Should().Be(typeof(object)); // For the non-generic version the implementation factory type will be Func<IServiceProvider, object>
 
 
 			var explicitConstructorServiceDescriptor2 = new ExplicitConstructorServiceDescriptor<ClassWithAmbiguousConstructorDependenciesDecorated>(
@@ -208,6 +209,37 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 			TestSelectCustomConstructorBehavior<SubclassWithNoConstructorSelectionAttribute>(constructorSelectionTypeToTest, ExpectedConstructorResult.Null);
 		}
 
+		[TestMethod]
+		public void ServiceProvider_resolves_the_type_by_calling_the_provided_constructor()
+		{
+			var serviceCollection = new ServiceCollection().AddExampleLibrary1();
+
+			var ambiguousServiceDescriptor = ServiceDescriptor.Scoped<IExplicitConstructorTestService, ExplicitConstructorTestService>();
+			serviceCollection.Add(ambiguousServiceDescriptor);
+
+			using (var baselineServiceProvider = serviceCollection.BuildServiceProvider())
+			{
+				Invoking(() => baselineServiceProvider.GetRequiredService<IExplicitConstructorTestService>())
+					.Should()
+					.Throw<InvalidOperationException>()
+					.WithMessage("Unable to activate type *. The following constructors are ambiguous:*");
+			}
+
+			serviceCollection.Remove(ambiguousServiceDescriptor);
+
+			var constructorToUse = ExplicitConstructorServiceDescriptor
+				.SelectCustomConstructor(typeof(ExplicitConstructorTestService), ConstructorSelectionType.AttributeThenDefaultBehavior);
+			constructorToUse.Should().NotBeNull();
+
+			serviceCollection.Add(ExplicitConstructorServiceDescriptor.CreateScoped<IExplicitConstructorTestService, ExplicitConstructorTestService>(constructorToUse!));
+			using var serviceProvider2 = serviceCollection.BuildServiceProvider();
+
+			var resolvedService = serviceProvider2.GetRequiredService<IExplicitConstructorTestService>();
+			resolvedService.Should().NotBeNull();
+			resolvedService.Should().BeOfType<ExplicitConstructorTestService>();
+			resolvedService.WasConstructorOneCalled.Should().BeFalse();
+			resolvedService.WasConstructorTwoCalled.Should().BeTrue();
+		}
 
 
 
@@ -218,6 +250,31 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 			Null = 0,
 			AttributeDecorated = 1,
 			MostParameters = 2
+		}
+
+		public interface IExplicitConstructorTestService
+		{
+			bool WasConstructorOneCalled { get; }
+			bool WasConstructorTwoCalled { get; }
+		}
+
+		public class ExplicitConstructorTestService : IExplicitConstructorTestService
+		{
+			// Constructor1
+			public ExplicitConstructorTestService(ISomethingOptions somethingOptions)
+			{
+				WasConstructorOneCalled = true;
+			}
+
+			// Constructor2
+			[DependencyInjectionConstructor]
+			public ExplicitConstructorTestService(IManuallyConfiguredType manuallyConfiguredType)
+			{
+				WasConstructorTwoCalled = true;
+			}
+
+			public bool WasConstructorOneCalled { get; }
+			public bool WasConstructorTwoCalled { get; }
 		}
 
 		public static void TestSelectCustomConstructorBehavior<TTestType>(ConstructorSelectionType constructorSelectionTypeToTest, ExpectedConstructorResult expectedResult)

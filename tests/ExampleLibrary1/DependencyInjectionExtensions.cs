@@ -32,6 +32,6 @@ namespace ExampleLibrary1
 		}
 
 		public static IServiceCollection AddExampleLibrary1(this IServiceCollection services)
-			=> AddExampleLibrary1(services, new AssemblyScanner().AddExampleLibrary1());
+			=> AddExampleLibrary1(services, AssemblyScanner.CreateDefault().AddExampleLibrary1());
 	}
 }

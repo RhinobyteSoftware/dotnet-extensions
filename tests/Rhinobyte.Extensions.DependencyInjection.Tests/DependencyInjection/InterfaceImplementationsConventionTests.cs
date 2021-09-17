@@ -14,7 +14,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 		[TestMethod]
 		public void HandleType_ignores_already_registered_types()
 		{
-			var scanResult = new AssemblyScanner()
+			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ScanAssemblies();
 
@@ -33,7 +33,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 		[TestMethod]
 		public void HandleType_ignores_interfaces_with_no_implementation_type()
 		{
-			var scanResult = new AssemblyScanner()
+			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ScanAssemblies();
 
@@ -48,7 +48,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 		[TestMethod]
 		public void HandleType_works_as_expected_for_the_AllImplementations_strategy()
 		{
-			var scanResult = new AssemblyScanner()
+			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ScanAssemblies();
 
@@ -68,7 +68,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 		[TestMethod]
 		public void HandleType_works_as_expected_for_the_DefaultConventionOnly_strategy()
 		{
-			var scanResult = new AssemblyScanner()
+			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ScanAssemblies();
 
@@ -89,7 +89,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 		[TestMethod]
 		public void HandleType_works_as_expected_for_the_DefaultConventionOrAll_strategy()
 		{
-			var scanResult = new AssemblyScanner()
+			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ScanAssemblies();
 
@@ -115,7 +115,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 		[TestMethod]
 		public void HandleType_works_as_expected_for_the_DefaultConventionOrSingleImplementationOnly_strategy()
 		{
-			var scanResult = new AssemblyScanner()
+			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ScanAssemblies();
 
@@ -135,7 +135,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 				.Should().BeFalse();
 			serviceRegistrationCache.Count.Should().Be(0);
 
-			var scanResult2 = new AssemblyScanner()
+			var scanResult2 = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ExcludeType<ExampleLibrary1.NoDefaultConventionClass2>()
 				.ScanAssemblies();
@@ -151,7 +151,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 		[TestMethod]
 		public void HandleType_works_as_expected_for_the_SingleImplementationOnly_strategy()
 		{
-			var scanResult = new AssemblyScanner()
+			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ScanAssemblies();
 
@@ -170,7 +170,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 			serviceRegistrationCache.Count.Should().Be(0);
 
 			// Single implementation should be used
-			var scanResult2 = new AssemblyScanner()
+			var scanResult2 = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ExcludeType<ExampleLibrary1.NoDefaultConventionClass2>()
 				.ScanAssemblies();

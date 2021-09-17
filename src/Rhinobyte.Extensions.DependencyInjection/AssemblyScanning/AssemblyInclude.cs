@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Rhinobyte.Extensions.DependencyInjection
@@ -6,6 +7,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// <summary>
 	/// Representation of an assembly to include during assembly scanning.
 	/// </summary>
+	[DebuggerDisplay("Assembly = {AssemblyToInclude},  AreNonExportedTypesIncluded = {AreNonExportedTypesIncluded}")]
 	public struct AssemblyInclude
 	{
 		/// <summary>

@@ -16,7 +16,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 		[TestMethod]
 		public void HandleType_behaves_as_expected_when_try_all_conventions_is_false()
 		{
-			var scanResult = new AssemblyScanner()
+			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ScanAssemblies();
 
@@ -44,7 +44,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 		[TestMethod]
 		public void HandleType_behaves_as_expected_when_try_all_conventions_is_true()
 		{
-			var scanResult = new AssemblyScanner()
+			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ScanAssemblies();
 
@@ -74,7 +74,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 		[TestMethod]
 		public void HandleType_ignores_already_registered_types_when_value_is_true()
 		{
-			var scanResult = new AssemblyScanner()
+			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
 				.ScanAssemblies();
 

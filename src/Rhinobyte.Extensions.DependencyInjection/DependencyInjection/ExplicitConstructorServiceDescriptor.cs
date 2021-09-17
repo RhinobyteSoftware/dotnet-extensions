@@ -6,6 +6,9 @@ using System.Reflection;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// Custom <see cref="ServiceDescriptor"/> which accepts an explicit <see cref="ConstructorInfo"/> reference to use for the implementation type.
+	/// </summary>
 	public class ExplicitConstructorServiceDescriptor<TImplementationType> : ServiceDescriptor, ICustomServiceDescriptor
 		where TImplementationType : class
 	{
@@ -23,6 +26,13 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		public Type GetImplementationType() => OriginalImplementationType;
 	}
 
+	/// <summary>
+	/// Custom <see cref="ServiceDescriptor"/> which accepts an explicit <see cref="ConstructorInfo"/> reference to use for the implementation type.
+	/// <para>
+	/// This non-generic version is intended for use in registration scenarios where type discovery is performed at runtime. For design time registration use the
+	/// <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/> version.
+	/// </para>
+	/// </summary>
 	public class ExplicitConstructorServiceDescriptor : ServiceDescriptor
 	{
 		public ExplicitConstructorServiceDescriptor(
@@ -39,7 +49,53 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			OriginalImplementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
 		}
 
+		public static ExplicitConstructorServiceDescriptor<TImplementationType> CreateScoped<TServiceType, TImplementationType>(ConstructorInfo constructorInfo)
+			where TServiceType : class
+			where TImplementationType : class, TServiceType
+			=> new ExplicitConstructorServiceDescriptor<TImplementationType>(typeof(TServiceType), constructorInfo, ServiceLifetime.Scoped);
+
+		public static ServiceDescriptor CreateScoped<TServiceType, TImplementationType>(ConstructorSelectionType constructorSelectionType)
+			where TServiceType : class
+			where TImplementationType : class, TServiceType
+		{
+			var constructorInfo = SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
+			return constructorInfo == null
+				? ServiceDescriptor.Scoped<TServiceType, TImplementationType>()
+				: CreateScoped<TServiceType, TImplementationType>(constructorInfo);
+		}
+
+		public static ExplicitConstructorServiceDescriptor<TImplementationType> CreateSingleton<TServiceType, TImplementationType>(ConstructorInfo constructorInfo)
+			where TServiceType : class
+			where TImplementationType : class, TServiceType
+			=> new ExplicitConstructorServiceDescriptor<TImplementationType>(typeof(TServiceType), constructorInfo, ServiceLifetime.Singleton);
+
+		public static ServiceDescriptor CreateSingleton<TServiceType, TImplementationType>(ConstructorSelectionType constructorSelectionType)
+			where TServiceType : class
+			where TImplementationType : class, TServiceType
+		{
+			var constructorInfo = SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
+			return constructorInfo == null
+				? ServiceDescriptor.Singleton<TServiceType, TImplementationType>()
+				: CreateSingleton<TServiceType, TImplementationType>(constructorInfo);
+		}
+
+		public static ExplicitConstructorServiceDescriptor<TImplementationType> CreateTransient<TServiceType, TImplementationType>(ConstructorInfo constructorInfo)
+			where TServiceType : class
+			where TImplementationType : class, TServiceType
+			=> new ExplicitConstructorServiceDescriptor<TImplementationType>(typeof(TServiceType), constructorInfo, ServiceLifetime.Transient);
+
+		public static ServiceDescriptor CreateTransient<TServiceType, TImplementationType>(ConstructorSelectionType constructorSelectionType)
+			where TServiceType : class
+			where TImplementationType : class, TServiceType
+		{
+			var constructorInfo = SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
+			return constructorInfo == null
+				? ServiceDescriptor.Transient<TServiceType, TImplementationType>()
+				: CreateTransient<TServiceType, TImplementationType>(constructorInfo);
+		}
+
 		public Type OriginalImplementationType { get; }
+
 
 		public Type GetImplementationType() => OriginalImplementationType;
 

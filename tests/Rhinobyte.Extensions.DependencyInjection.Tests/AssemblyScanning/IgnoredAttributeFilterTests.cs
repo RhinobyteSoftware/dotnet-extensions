@@ -9,7 +9,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 		[TestMethod]
 		public void ShouldIgnoreAssembly_returns_the_expected_result()
 		{
-			var assemblyScanner = new AssemblyScanner();
+			var assemblyScanner = AssemblyScanner.CreateDefault();
 			var scanResult = new AssemblyScanResult();
 
 			var ignoredAttributeFilter = new IgnoredAttributeFilter();
@@ -28,7 +28,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 		[TestMethod]
 		public void ShouldIgnoreType_returns_the_expected_result()
 		{
-			var assemblyScanner = new AssemblyScanner();
+			var assemblyScanner = AssemblyScanner.CreateDefault();
 			var scanResult = new AssemblyScanResult();
 
 			var ignoredAttributeFilter = new IgnoredAttributeFilter();

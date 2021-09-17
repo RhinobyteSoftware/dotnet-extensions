@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace Rhinobyte.Extensions.DependencyInjection
@@ -15,14 +14,26 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		private AssemblyScanResult? _currentScanResult;
 		private readonly HashSet<Type> _excludedTypes = new HashSet<Type>();
 		private readonly HashSet<Type> _includedTypes = new HashSet<Type>();
-		private readonly HashSet<IScannedAssemblyFilter> _scannedAssemblyFilters = new HashSet<IScannedAssemblyFilter>();
-		private readonly HashSet<IScannedTypeFilter> _scannedTypeFilters = new HashSet<IScannedTypeFilter>();
+		private readonly HashSet<IScannedAssemblyFilter> _scannedAssemblyFilters;
+		private readonly HashSet<IScannedTypeFilter> _scannedTypeFilters;
+
+		protected AssemblyScanner()
+		{
+			_scannedAssemblyFilters = new HashSet<IScannedAssemblyFilter>();
+			_scannedTypeFilters = new HashSet<IScannedTypeFilter>();
+		}
 
 		/// <summary>
 		/// Constructs a new blank assembly scanner
 		/// <para>Use <see cref="CreateDefault"/> to construct an instance with the default filters included</para>
 		/// </summary>
-		public AssemblyScanner() { }
+		public AssemblyScanner(
+			HashSet<IScannedAssemblyFilter> scannedAssemblyFilters,
+			HashSet<IScannedTypeFilter> scannedTypeFilters)
+		{
+			_scannedAssemblyFilters = scannedAssemblyFilters ?? throw new ArgumentNullException(nameof(scannedAssemblyFilters));
+			_scannedTypeFilters = scannedTypeFilters ?? throw new ArgumentNullException(nameof(scannedTypeFilters));
+		}
 
 		/// <summary>
 		/// Constructs a new <see cref="AssemblyScanner"/> instance that is pre-configured with the following filters:

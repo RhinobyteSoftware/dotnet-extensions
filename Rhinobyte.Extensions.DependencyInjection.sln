@@ -29,7 +29,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.Depend
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleIgnoredAttributeAssembly", "tests\ExampleIgnoredAttributeAssembly\ExampleIgnoredAttributeAssembly.csproj", "{E6E61601-7C9F-4A53-9450-667C976A8895}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleLibrary1", "tests\ExampleLibrary1\ExampleLibrary1.csproj", "{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleLibrary1", "tests\ExampleLibrary1\ExampleLibrary1.csproj", "{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{78E08D53-09AA-43E7-9384-C7A6252AAA4A}"
+	ProjectSection(SolutionItems) = preProject
+		tools\create-code-coverage-report = tools\create-code-coverage-report
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +67,7 @@ Global
 		{234CB977-FD2B-4DCF-8A51-DB6CD44C80D7} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 		{E6E61601-7C9F-4A53-9450-667C976A8895} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
+		{78E08D53-09AA-43E7-9384-C7A6252AAA4A} = {2EA9106B-DA90-4935-85B8-4FE7CCA53A45}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A319B09C-E5BD-4E06-94C1-6D8666961326}
