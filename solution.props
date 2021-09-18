@@ -7,7 +7,7 @@
 
         <DefaultTargetFrameworks>netstandard2.0;netstandard2.1;net48;netcoreapp3.1;net5.0</DefaultTargetFrameworks>
         <InternalMsbuildMessageImportance>normal</InternalMsbuildMessageImportance>
-        <SolutionSummary>Extensions for the .NET dependency injection libraries providing assemgbly scanning, type discovery, and convention based auto-registration support.</SolutionSummary>
+        <SolutionSummary>Extension libraries for the .NET</SolutionSummary>
 
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <LangVersion>latest</LangVersion>
@@ -22,10 +22,16 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageIcon>Icon.png</PackageIcon>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageOutputPath>$(RepoRoot)build\$(Configuration)\</PackageOutputPath>
+        <PackageProjectUrl>https://github.com/RhinobyteSoftware/dotnet-extensions</PackageProjectUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/RhinobyteSoftware/DependencyInjectionExtensions</RepositoryUrl>
+        <RepositoryUrl>https://github.com/RhinobyteSoftware/dotnet-extensions</RepositoryUrl>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+        <!-- Subproject Package Versions -->
+        <ReflectionPackageVersion>1.0.0</ReflectionPackageVersion>
+        <ReflectionPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(ReflectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</ReflectionPackageConsumerDependencyVersion>
     </PropertyGroup>
 
     <Import Condition="Exists('$(RepoRoot)\development.props')" Project="$(RepoRoot)\development.props"/>
@@ -80,8 +86,10 @@ PackageVersion: $(PackageVersion)"  />
 &lt;Project&gt;
     &lt;PropertyGroup&gt;
         &lt;DevelopmentPackagesDirectory&gt;$(LocalPackagesPath)&lt;/DevelopmentPackagesDirectory&gt;
-        &lt;InternalMsbuildMessageImportance&gt;normal&lt;/InternalMsbuildMessageImportance&gt;
+        &lt;!--  low, normal, or high --&gt;
+        &lt;InternalMsbuildMessageImportance&gt;high&lt;/InternalMsbuildMessageImportance&gt;
         &lt;OutputToDevelopmentPackages&gt;false&lt;/OutputToDevelopmentPackages&gt;
+        &lt;UseProjectReferences&gt;true&lt;/UseProjectReferences&gt;
     &lt;/PropertyGroup&gt;
 &lt;/Project&gt;
             </DevelopmentPropsFileLines>
