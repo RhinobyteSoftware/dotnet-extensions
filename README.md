@@ -1,5 +1,13 @@
 
-# Rhinobyte.Validation
+# DEPRECATION MESSAGE
+
+[Deprecated] Will be renaming package to `Rhinobyte.Extensions.DataAnnotations`
+Moving repo/project to https://github.com/RhinobyteSoftware/dotnet-extensions
+
+I will be deleting this repo shortly as well as I don't believe many/anyone is using this package yet/repo for anything as of yet
+
+
+### Rhinobyte.Validation
 
 Helper libraries for validation.
 
