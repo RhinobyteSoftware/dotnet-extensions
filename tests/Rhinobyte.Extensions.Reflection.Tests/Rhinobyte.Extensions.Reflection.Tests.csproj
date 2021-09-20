@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Rhinobyte.Extensions.Reflection\Rhinobyte.Extensions.Reflection.csproj" />
+    </ItemGroup>
+</Project>

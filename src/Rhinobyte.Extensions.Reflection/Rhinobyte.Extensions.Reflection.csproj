@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
+        <IsPackable>true</IsPackable>
+
+        <!-- VERSION VALUES -->
+        <AssemblyVersion>$(ReflectionPackageVersion).0</AssemblyVersion>
+        <FileVersion>$(ReflectionPackageVersion).0</FileVersion>
+        <InformationalVersion>$(ReflectionPackageVersion)</InformationalVersion>
+        <PackageVersion>$(ReflectionPackageVersion)</PackageVersion>
+        <Version>$(ReflectionPackageVersion)</Version>
+
+        <PackageId>Rhinobyte.Extensions.Reflection</PackageId>
+        <AssemblyName>$(PackageId)</AssemblyName>
+        <RootNamespace>$(PackageId)</RootNamespace>
+        <Title>$(PackageId)</Title>
+        <PackageTags>reflection IL parsing</PackageTags>
+
+        <Summary>Extensions for .NET reflection including assembly scanning/type discovery extensions and support for parsing IL (intermediate-language) instructions</Summary>
+        <Description>$(Summary)
+
+Common Types/Extensions
+The Rhinobyte.Extensions.Reflection.MethodBaseExtensions.ParseInstructions extension method can be used to get a strongly typed collection of parsed IL instructions from the method body instance</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    </ItemGroup>
+
+</Project>

@@ -1,6 +1,7 @@
 
 # Rhinobyte.Extensions.DataAnnotations
 
+[![NuGet version (Rhinobyte.Extensions.DataAnnotations)](https://img.shields.io/nuget/v/Rhinobyte.Extensions.DataAnnotations.svg?style=flat)](https://www.nuget.org/packages/Rhinobyte.Extensions.DataAnnotations/)
 
 
 ## DateTime Validation Attributes

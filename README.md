@@ -18,7 +18,15 @@ It contains types to extend the behavior provided by the `System.ComponentModel.
 
 This library contains assembly scanning and convention based registration extensions for the out-of-the-box .NET dependency injection libraries.
 
-### Rhinobyte.Extensions.Reflection
+### [Rhinobyte.Extensions.Reflection](/src/Rhinobyte.Extensions.Reflection/README.md)
+
+[![NuGet version (Rhinobyte.Extensions.Reflection)](https://img.shields.io/nuget/v/Rhinobyte.Extensions.Reflection.svg?style=flat)](https://www.nuget.org/packages/Rhinobyte.Extensions.Reflection/)
+
+This library contains extensions for .Net reflection including assembly scanning/type discovery extensions and support for parsing IL (intermediate-language) instructions.
+
+## Contributing
+
+TODO
 
 ## License
 
