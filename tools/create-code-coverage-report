@@ -1,30 +1,39 @@
 #!/bin/sh
 
-echo 'Removing Old Test Results Folders...';
-rm -rf tests/Rhinobyte.Extensions.DependencyInjection.Tests/TestResults ;
-echo "";
+testProjectNames=("Rhinobyte.Extensions.DataAnnotations.UnitTests" "Rhinobyte.Extensions.DependencyInjection.Tests")
+arrayLength=${#testProjectNames[@]}
 
-dotnet test --framework net48 'tests\\Rhinobyte.Extensions.DependencyInjection.Tests\\Rhinobyte.Extensions.DependencyInjection.Tests.csproj' --collect:"XPlat Code Coverage" --results-directory:"tests\\Rhinobyte.Extensions.DependencyInjection.Tests\\TestResults\\net48"
-dotnet test --framework netcoreapp3.1 'tests\\Rhinobyte.Extensions.DependencyInjection.Tests\\Rhinobyte.Extensions.DependencyInjection.Tests.csproj' --collect:"XPlat Code Coverage" --results-directory:"tests\\Rhinobyte.Extensions.DependencyInjection.Tests\\TestResults\\netcoreapp3.1"
-dotnet test --framework net5.0 'tests\\Rhinobyte.Extensions.DependencyInjection.Tests\\Rhinobyte.Extensions.DependencyInjection.Tests.csproj' --collect:"XPlat Code Coverage" --results-directory:"tests\\Rhinobyte.Extensions.DependencyInjection.Tests\\TestResults\\net5.0"
-echo "";
+for (( testProjectIndex=0; testProjectIndex<${arrayLength}; testProjectIndex++ ));
+do
+	testProjectName="${testProjectNames[$testProjectIndex]}"
+	echo "$testProjectName"
 
-echo 'Generating the coverage reports...';
-echo '';
-for targetFrameworkFolder in tests/Rhinobyte.Extensions.DependencyInjection.Tests/TestResults/*/ ; do
-	targetFramework=$(basename $targetFrameworkFolder)
-	echo "Checking TargetFramwork:  $targetFramework"
-	for guidFolder in "$targetFrameworkFolder"*/ ; do
-		echo "Checking Guid Folder:  $guidFolder"
-		coverageFile="$guidFolder"'coverage.cobertura.xml';
-		guidValue=$(basename $guidFolder)
+	echo 'Removing Old Test Results Folders...';
+	rm -rf "tests/$testProjectName/TestResults";
+	echo "";
 
-		if [ -f $coverageFile ]; then
-			echo "Generating Report For $coverageFile...";
-			dotnet ~/.nuget/packages/reportgenerator/4.8.12/tools/net5.0/ReportGenerator.dll -reports:"$coverageFile" -targetdir:"TestResults\\CoverageReports\\$targetFramework\\$guidValue" -reporttypes:Html -assemblyfilters:"-ExampleLibrary*";
-		fi;
+	dotnet test --framework net48 "tests\\$testProjectName\\$testProjectName.csproj" --collect:"XPlat Code Coverage" --results-directory:"tests\\$testProjectName\\TestResults\\net48"
+	dotnet test --framework netcoreapp3.1 "tests\\$testProjectName\\$testProjectName.csproj" --collect:"XPlat Code Coverage" --results-directory:"tests\\$testProjectName\\TestResults\\netcoreapp3.1"
+	dotnet test --framework net5.0 "tests\\$testProjectName\\$testProjectName.csproj" --collect:"XPlat Code Coverage" --results-directory:"tests\\$testProjectName\\TestResults\\net5.0"
+	echo "";
+
+	echo 'Generating the coverage reports...';
+	echo '';
+	for targetFrameworkFolder in "tests/$testProjectName/TestResults/"*/ ; do
+		targetFramework=$(basename $targetFrameworkFolder)
+		echo "Checking TargetFramwork:  $targetFramework"
+		for guidFolder in "$targetFrameworkFolder"*/ ; do
+			echo "Checking Guid Folder:  $guidFolder"
+			coverageFile="$guidFolder"'coverage.cobertura.xml';
+			guidValue=$(basename $guidFolder)
+
+			if [ -f $coverageFile ]; then
+				echo "Generating Report For $coverageFile...";
+				dotnet ~/.nuget/packages/reportgenerator/4.8.12/tools/net5.0/ReportGenerator.dll -reports:"$coverageFile" -targetdir:"TestResults\\CoverageReports\\$testProjectName\\$targetFramework\\$guidValue" -reporttypes:Html -assemblyfilters:"-ExampleLibrary*";
+			fi;
+		done;
 	done;
-done;
+done
 
 echo '';
 echo '  DONE!!';
