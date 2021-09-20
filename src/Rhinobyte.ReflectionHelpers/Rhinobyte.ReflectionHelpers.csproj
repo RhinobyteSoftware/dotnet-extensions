@@ -5,11 +5,11 @@
         <IsPackable>true</IsPackable>
 
         <!-- VERSION VALUES -->
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-        <FileVersion>1.0.0.0</FileVersion>
-        <InformationalVersion>1.0.0</InformationalVersion>
-        <PackageVersion>1.0.0</PackageVersion>
-        <Version>1.0.0</Version>
+        <AssemblyVersion>1.0.1.0</AssemblyVersion>
+        <FileVersion>1.0.1.0</FileVersion>
+        <InformationalVersion>1.0.1</InformationalVersion>
+        <PackageVersion>1.0.1</PackageVersion>
+        <Version>1.0.1</Version>
 
         <AssemblyName>Rhinobyte.ReflectionHelpers</AssemblyName>
         <Authors>Ryan Thomas</Authors>
@@ -19,12 +19,13 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
         <NeutralLanguage>en-US</NeutralLanguage>
+        <PackageIcon>Icon.png</PackageIcon>
         <PackageId>Rhinobyte.ReflectionHelpers</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>reflection IL parsing</PackageTags>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/RhinobyteSoftware/ReflectionHelpers</RepositoryUrl>
+        <RepositoryUrl>https://github.com/RhinobyteSoftware/dotnet-extensions</RepositoryUrl>
         <RootNamespace>Rhinobyte.ReflectionHelpers</RootNamespace>
         <Summary>Provides method body IL parsing and assorted reflection extensions</Summary>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -33,6 +34,7 @@
 
     <ItemGroup>
         <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
+        <None Include="..\..\RhinobytePackageIcon.png" Pack="true" PackagePath="Icon.png" />
     </ItemGroup>
 
     <ItemGroup>
