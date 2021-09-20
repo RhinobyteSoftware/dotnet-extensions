@@ -23,6 +23,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{40E9ED1D
 		tests\directory.build.props = tests\directory.build.props
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.DataAnnotations", "src\Rhinobyte.Extensions.DataAnnotations\Rhinobyte.Extensions.DataAnnotations.csproj", "{28B1C78B-7143-46DA-B5E1-126213392446}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.DataAnnotations.UnitTests", "tests\Rhinobyte.Extensions.DataAnnotations.UnitTests\Rhinobyte.Extensions.DataAnnotations.UnitTests.csproj", "{C951D956-EDA2-408F-B211-C419EAA46151}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.DependencyInjection", "src\Rhinobyte.Extensions.DependencyInjection\Rhinobyte.Extensions.DependencyInjection.csproj", "{47351D78-A5B1-4E64-B490-6D15B5FC3556}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.DependencyInjection.Tests", "tests\Rhinobyte.Extensions.DependencyInjection.Tests\Rhinobyte.Extensions.DependencyInjection.Tests.csproj", "{234CB977-FD2B-4DCF-8A51-DB6CD44C80D7}"
@@ -58,6 +62,14 @@ Global
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28B1C78B-7143-46DA-B5E1-126213392446}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28B1C78B-7143-46DA-B5E1-126213392446}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28B1C78B-7143-46DA-B5E1-126213392446}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28B1C78B-7143-46DA-B5E1-126213392446}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C951D956-EDA2-408F-B211-C419EAA46151}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C951D956-EDA2-408F-B211-C419EAA46151}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C951D956-EDA2-408F-B211-C419EAA46151}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C951D956-EDA2-408F-B211-C419EAA46151}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +80,8 @@ Global
 		{E6E61601-7C9F-4A53-9450-667C976A8895} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 		{78E08D53-09AA-43E7-9384-C7A6252AAA4A} = {2EA9106B-DA90-4935-85B8-4FE7CCA53A45}
+		{28B1C78B-7143-46DA-B5E1-126213392446} = {BDE5D871-F9C3-405C-9E3F-FE5DE7B26FC6}
+		{C951D956-EDA2-408F-B211-C419EAA46151} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A319B09C-E5BD-4E06-94C1-6D8666961326}

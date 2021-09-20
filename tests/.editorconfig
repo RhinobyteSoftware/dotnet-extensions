@@ -4,8 +4,11 @@
 # /tests/ specific overrides
 [*.{cs,csx}]
 
-# Rule: (CA1707) Identifiers should not contain underscores - Reason: Common pattern for unit test method names
-dotnet_diagnostic.CA1707.severity    = none
-
 # Rule: (CA1034) Nested types should not be visible - Reason: Don't care about this in test projects
 dotnet_diagnostic.CA1034.severity    = none
+
+# Rule: (CA1062) Consider calling ConfigureAwait on the awaited task. Reason: Not a concern in tests
+dotnet_diagnostic.CA1062.severity    = none
+
+# Rule: (CA1707) Identifiers should not contain underscores - Reason: Common pattern for unit test method names
+dotnet_diagnostic.CA1707.severity    = none

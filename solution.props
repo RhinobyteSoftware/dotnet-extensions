@@ -18,6 +18,7 @@
         <Authors>Ryan Thomas</Authors>
         <Company>Rhinobyte Software</Company>
         <Copyright>Copyright © Ryan Thomas $([System.DateTime]::Now.ToString("yyyy"))</Copyright>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageIcon>Icon.png</PackageIcon>
@@ -30,6 +31,12 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
         <!-- Subproject Package Versions -->
+        <DataAnnotationsPackageVersion>1.0.0</DataAnnotationsPackageVersion>
+        <DataAnnotationsPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DataAnnotationsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DataAnnotationsPackageConsumerDependencyVersion>
+        
+        <DependencyInjectionPackageVersion>1.0.0</DependencyInjectionPackageVersion>
+        <DependencyInjectionPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DependencyInjectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DependencyInjectionPackageConsumerDependencyVersion>
+        
         <ReflectionPackageVersion>1.0.0</ReflectionPackageVersion>
         <ReflectionPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(ReflectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</ReflectionPackageConsumerDependencyVersion>
     </PropertyGroup>

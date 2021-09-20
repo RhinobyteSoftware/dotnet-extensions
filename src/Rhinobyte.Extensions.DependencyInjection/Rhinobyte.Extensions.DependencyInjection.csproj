@@ -5,23 +5,22 @@
         <IsPackable>true</IsPackable>
 
         <!-- VERSION VALUES -->
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-        <FileVersion>1.0.0.0</FileVersion>
-        <InformationalVersion>1.0.0</InformationalVersion>
-        <PackageVersion>1.0.0</PackageVersion>
-        <Version>1.0.0</Version>
+        <AssemblyVersion>$(DependencyInjectionPackageVersion).0</AssemblyVersion>
+        <FileVersion>$(DependencyInjectionPackageVersion).0</FileVersion>
+        <InformationalVersion>$(DependencyInjectionPackageVersion)</InformationalVersion>
+        <PackageVersion>$(DependencyInjectionPackageVersion)</PackageVersion>
+        <Version>$(DependencyInjectionPackageVersion)</Version>
 
-        <AssemblyName>Rhinobyte.Extensions.DependencyInjection</AssemblyName>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <PackageId>Rhinobyte.Extensions.DependencyInjection</PackageId>
-        <PackageTags>dependencyinjection </PackageTags>
-        <RootNamespace>Rhinobyte.Extensions.DependencyInjection</RootNamespace>
-        <Title>Rhinobyte.Extensions.DependencyInjection</Title>
+        <AssemblyName>$(PackageId)</AssemblyName>
+        <RootNamespace>$(PackageId)</RootNamespace>
+        <Title>$(PackageId)</Title>
+        <PackageTags>dependencyinjection ioc inversion-of-control</PackageTags>
 
-        <Summary>$(SolutionSummary)</Summary>
+        <Summary>Extensions for the .NET dependency injection libraries providing convention based auto-registration support</Summary>
         <Description>$(Summary)
 
-The AssemblyScanner type is used to configure assemblies to scan and to configure explicit type includes/excludes.
+The Rhinobyte.Extensions.Reflection.AssemblyScanner can be used to configure which assemblies to scan and which types to include/exclude.
 The IServiceCollection extension methods provide support for registering auto-discovered types and for extending registration to support constructor selection.
         </Description>
     </PropertyGroup>
