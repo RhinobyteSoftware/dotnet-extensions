@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rhinobyte.Extensions.Reflection.AssemblyScanning;
+using System;
 using System.Collections.Generic;
 
 namespace Rhinobyte.Extensions.DependencyInjection

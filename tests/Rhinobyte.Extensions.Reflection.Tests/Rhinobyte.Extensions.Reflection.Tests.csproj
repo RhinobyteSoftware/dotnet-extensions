@@ -2,5 +2,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Rhinobyte.Extensions.Reflection\Rhinobyte.Extensions.Reflection.csproj" />
+        <ProjectReference Include="..\ExampleIgnoredAttributeAssembly\ExampleIgnoredAttributeAssembly.csproj" />
+        <ProjectReference Include="..\ExampleLibrary1\ExampleLibrary1.csproj" />
     </ItemGroup>
 </Project>

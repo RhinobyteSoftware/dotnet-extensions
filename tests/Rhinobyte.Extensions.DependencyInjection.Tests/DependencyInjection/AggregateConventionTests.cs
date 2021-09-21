@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 using System;
 using System.Linq;
 using static FluentAssertions.FluentActions;

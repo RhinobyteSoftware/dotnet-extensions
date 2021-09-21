@@ -1,4 +1,4 @@
-﻿using Rhinobyte.Extensions.Reflection.Instructions;
+﻿using Rhinobyte.Extensions.Reflection.IntermediateLanguage;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -12,19 +12,6 @@ namespace Rhinobyte.Extensions.Reflection
 	/// </summary>
 	public static class MethodBaseExtensions
 	{
-		/// <summary>
-		/// Search the <paramref name="methodBase"/> body's intermediate language (IL) bytes for instruction references to all of the specified <paramref name="memberReferencesToLookFor"/>.
-		/// </summary>
-		/// <param name="methodBase">The <see cref="MethodBase"/> instance to search within</param>
-		/// <param name="memberReferencesToLookFor">The set of <see cref="MemberInfo"/> references to look for</param>
-		/// <returns><see cref="true"/> if at least one instruction reference to each of the search items is found, <see cref="false"/> otherwise</returns>
-		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferencesToLookFor"/> are null</exception>
-		public static bool ContainsReferencesToAll(this MethodBase methodBase, IEnumerable<MemberInfo> memberReferencesToLookFor)
-		{
-			_ = methodBase ?? throw new ArgumentNullException(nameof(methodBase));
-			_ = memberReferencesToLookFor ?? throw new ArgumentNullException(nameof(memberReferencesToLookFor));
-			return new MethodBodyParser(methodBase).ContainsReferencesToAll(memberReferencesToLookFor);
-		}
 
 		/// <summary>
 		/// Search the <paramref name="methodBase"/> body's intermediate language (IL) bytes for an instruction reference to the specified <paramref name="memberReferenceToLookFor"/>.
@@ -38,6 +25,20 @@ namespace Rhinobyte.Extensions.Reflection
 			_ = methodBase ?? throw new ArgumentNullException(nameof(methodBase));
 			_ = memberReferenceToLookFor ?? throw new ArgumentNullException(nameof(memberReferenceToLookFor));
 			return new MethodBodyParser(methodBase).ContainsReferenceTo(memberReferenceToLookFor);
+		}
+
+		/// <summary>
+		/// Search the <paramref name="methodBase"/> body's intermediate language (IL) bytes for instruction references to all of the specified <paramref name="memberReferencesToLookFor"/>.
+		/// </summary>
+		/// <param name="methodBase">The <see cref="MethodBase"/> instance to search within</param>
+		/// <param name="memberReferencesToLookFor">The set of <see cref="MemberInfo"/> references to look for</param>
+		/// <returns><see cref="true"/> if at least one instruction reference to each of the search items is found, <see cref="false"/> otherwise</returns>
+		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferencesToLookFor"/> are null</exception>
+		public static bool ContainsReferencesToAll(this MethodBase methodBase, IEnumerable<MemberInfo> memberReferencesToLookFor)
+		{
+			_ = methodBase ?? throw new ArgumentNullException(nameof(methodBase));
+			_ = memberReferencesToLookFor ?? throw new ArgumentNullException(nameof(memberReferencesToLookFor));
+			return new MethodBodyParser(methodBase).ContainsReferencesToAll(memberReferencesToLookFor);
 		}
 
 		/// <summary>
@@ -134,13 +135,13 @@ namespace Rhinobyte.Extensions.Reflection
 			{
 				stringBuilder.Append(" override");
 			}
-			else if (methodBase.IsVirtual)
-			{
-				stringBuilder.Append(" virtual");
-			}
 			else if (methodBase.IsAbstract)
 			{
 				stringBuilder.Append(" abstract");
+			}
+			else if (methodBase.IsVirtual)
+			{
+				stringBuilder.Append(" virtual");
 			}
 
 			if (methodBase.IsAsync())
@@ -166,6 +167,8 @@ namespace Rhinobyte.Extensions.Reflection
 				stringBuilder.Append(methodBase.DeclaringType.GetDisplayName(methodBase.DeclaringType.CustomAttributes, methodBase.DeclaringType.GetDeclaringMember(), genericConstraints, true, ref nullableAttributeIndex)).Append('.');
 			}
 
+			stringBuilder.Append(methodBase.Name);
+
 			var genericArguments = methodInfo?.GetGenericArguments();
 			if (genericArguments?.Length > 0)
 			{
@@ -183,15 +186,25 @@ namespace Rhinobyte.Extensions.Reflection
 						stringBuilder.Append(", ");
 					}
 
-					var constraints = genericArgument.GetGenericParameterConstraints();
-					if (constraints?.Length > 0)
+					try
 					{
-						genericConstraints.Add(TypeExtensions.BuildGenericConstraintDisplayValue(genericArgumentTypeName, constraints, useFullTypeName));
+						var constraints = genericArgument.GetGenericParameterConstraints();
+						if (constraints?.Length > 0)
+						{
+							genericConstraints.Add(TypeExtensions.BuildGenericConstraintDisplayValue(genericArgumentTypeName, constraints, useFullTypeName));
+						}
+					}
+					catch (Exception)
+					{
+						// GetGenericParameterConstraints() will throw for open generics even those IsGenericType will be true and IsGenericType can be false for some
+						// method argument types that can have constraints... *sigh*
 					}
 				}
+
+				stringBuilder.Append('>');
 			}
 
-			stringBuilder.Append(methodBase.Name).Append('(');
+			stringBuilder.Append('(');
 
 			var methodParameters = methodBase.GetParameters();
 			if (methodParameters.Length > 0)

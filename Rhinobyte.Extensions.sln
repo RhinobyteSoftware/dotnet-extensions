@@ -30,7 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{A72ED641
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.DataAnnotations", "src\Rhinobyte.Extensions.DataAnnotations\Rhinobyte.Extensions.DataAnnotations.csproj", "{28B1C78B-7143-46DA-B5E1-126213392446}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.DataAnnotations.UnitTests", "tests\Rhinobyte.Extensions.DataAnnotations.UnitTests\Rhinobyte.Extensions.DataAnnotations.UnitTests.csproj", "{C951D956-EDA2-408F-B211-C419EAA46151}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.DataAnnotations.Tests", "tests\Rhinobyte.Extensions.DataAnnotations.Tests\Rhinobyte.Extensions.DataAnnotations.Tests.csproj", "{C951D956-EDA2-408F-B211-C419EAA46151}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.DependencyInjection", "src\Rhinobyte.Extensions.DependencyInjection\Rhinobyte.Extensions.DependencyInjection.csproj", "{47351D78-A5B1-4E64-B490-6D15B5FC3556}"
 EndProject

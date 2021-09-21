@@ -1,4 +1,4 @@
-﻿using Rhinobyte.Extensions.DependencyInjection;
+﻿using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 
 [assembly: IgnoreAssemblyScanner]
 

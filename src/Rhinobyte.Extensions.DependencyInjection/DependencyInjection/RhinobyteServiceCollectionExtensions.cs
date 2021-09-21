@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

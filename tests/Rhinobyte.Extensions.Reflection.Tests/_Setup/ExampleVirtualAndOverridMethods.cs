@@ -1,4 +1,4 @@
-﻿namespace Rhinobyte.Extensions.Reflection.UnitTests.Setup
+﻿namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 {
 	public interface ISomething
 	{

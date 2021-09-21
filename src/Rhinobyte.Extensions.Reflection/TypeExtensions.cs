@@ -100,10 +100,45 @@ namespace Rhinobyte.Extensions.Reflection
 			if (type == typeof(string))
 				return "string";
 
+			if (type == typeof(object))
+				return "object";
+
 			if (type == typeof(System.ValueType))
 				return "struct";
 
 			return null;
+		}
+
+		public static MemberInfo? GetDeclaringMember(this Type? type)
+		{
+			if (type is null) return null;
+
+#if NETSTANDARD2_1
+			if (type.IsGenericMethodParameter)
+			{
+				return type.DeclaringMethod;
+			}
+
+			return type.DeclaringType;
+#else
+			try
+			{
+				var declaringMethod = type.DeclaringMethod;
+				if (declaringMethod != null)
+				{
+					return declaringMethod;
+				}
+			}
+			catch (Exception) { }
+
+			try
+			{
+				return type.DeclaringType;
+			}
+			catch (Exception) { }
+
+			return null;
+#endif
 		}
 
 		public static string GetDisplayName(
@@ -220,36 +255,12 @@ namespace Rhinobyte.Extensions.Reflection
 			return displayNameBuilder.ToString().Trim();
 		}
 
-		public static MemberInfo? GetDeclaringMember(this Type? type)
+		public static bool IsCompilerGenerated(this Type type)
 		{
-			if (type is null) return null;
+			if (type is null)
+				return false;
 
-#if NETSTANDARD2_1
-			if (type.IsGenericMethodParameter)
-			{
-				return type.DeclaringMethod;
-			}
-
-			return type.DeclaringType;
-#else
-			try
-			{
-				var declaringMethod = type.DeclaringMethod;
-				if (declaringMethod != null)
-				{
-					return declaringMethod;
-				}
-			}
-			catch (Exception) { }
-
-			try
-			{
-				return type.DeclaringType;
-			}
-			catch (Exception) { }
-
-			return null;
-#endif
+			return type.IsDefined(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false);
 		}
 
 		/// <summary>
@@ -284,7 +295,7 @@ namespace Rhinobyte.Extensions.Reflection
 				if (attributeArgument.ArgumentType == typeof(byte[]))
 				{
 					var args = (ReadOnlyCollection<CustomAttributeTypedArgument>)attributeArgument.Value!;
-					if (args.Count > 0 && args[nullableAttributeIndex].ArgumentType == typeof(byte))
+					if (args.Count > nullableAttributeIndex && args[nullableAttributeIndex].ArgumentType == typeof(byte))
 					{
 						return (byte)args[nullableAttributeIndex].Value! == 2;
 					}
@@ -336,6 +347,22 @@ namespace Rhinobyte.Extensions.Reflection
 
 			// Couldn't find a suitable attribute
 			return false;
+		}
+
+		public static bool IsOpenGeneric(this Type type)
+		{
+			if (type is null)
+				return false;
+
+			return type.IsGenericTypeDefinition || type.ContainsGenericParameters;
+		}
+
+		public static bool IsValueTypeOrString(this Type type)
+		{
+			if (type is null)
+				return false;
+
+			return type.IsValueType || type == typeof(string);
 		}
 	}
 }

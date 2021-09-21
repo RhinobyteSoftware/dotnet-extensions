@@ -1,20 +1,43 @@
 #!/bin/sh
 
-testProjectNames=("Rhinobyte.Extensions.DataAnnotations.UnitTests" "Rhinobyte.Extensions.DependencyInjection.Tests")
-arrayLength=${#testProjectNames[@]}
+allTestProjectNames=("Rhinobyte.Extensions.DataAnnotations.Tests" "Rhinobyte.Extensions.DependencyInjection.Tests" "Rhinobyte.Extensions.Reflection.Tests");
+allTestProjectsCount=${#allTestProjectNames[@]}
 
-for (( testProjectIndex=0; testProjectIndex<${arrayLength}; testProjectIndex++ ));
+testProjectNames=("Rhinobyte.Extensions.DataAnnotations.Tests" "Rhinobyte.Extensions.DependencyInjection.Tests" "Rhinobyte.Extensions.Reflection.Tests");
+#testProjectNames=("Rhinobyte.Extensions.Reflection.Tests");
+testProjectsCount=${#testProjectNames[@]}
+echo "Test Project Names:  ${testProjectNames[@]}"
+
+# Switch commented line to run coverage for all 3 target frameworks
+#targetFrameworkNames=("net48", "netcoreapp3.1", "net5.0");
+targetFrameworkNames=("net5.0")
+targetFrameworksCount=${#targetFrameworkNames[@]}
+echo "Target Frameworks:  ${targetFrameworkNames[@]}"
+
+# Change this to false to generate the report for all of the assemblies imported by a given test project
+# e.g. Rhinobyte.Extensions.DependencyInjection.Tests consumes both Rhinobyte.Extensions.DependencyInjection and Rhinobyte.Extensions.Reflection
+reportForIndividualProjectOnly=true
+echo "Report For Individual Project Only:  $reportForIndividualProjectOnly"
+
+
+for (( testProjectIndex=0; testProjectIndex<${testProjectsCount}; testProjectIndex++ ));
 do
 	testProjectName="${testProjectNames[$testProjectIndex]}"
-	echo "$testProjectName"
+	echo "";
+	echo "Running tests for:  $testProjectName";
 
 	echo 'Removing Old Test Results Folders...';
 	rm -rf "tests/$testProjectName/TestResults";
 	echo "";
 
-	dotnet test --framework net48 "tests\\$testProjectName\\$testProjectName.csproj" --collect:"XPlat Code Coverage" --results-directory:"tests\\$testProjectName\\TestResults\\net48"
-	dotnet test --framework netcoreapp3.1 "tests\\$testProjectName\\$testProjectName.csproj" --collect:"XPlat Code Coverage" --results-directory:"tests\\$testProjectName\\TestResults\\netcoreapp3.1"
-	dotnet test --framework net5.0 "tests\\$testProjectName\\$testProjectName.csproj" --collect:"XPlat Code Coverage" --results-directory:"tests\\$testProjectName\\TestResults\\net5.0"
+	for (( frameworkIndex=0; frameworkIndex<${targetFrameworksCount}; frameworkIndex++ ));
+	do
+		targetTestFramework="${targetFrameworkNames[$frameworkIndex]}"
+		echo "Running dotnet test for target framework:  $targetTestFramework  ($frameworkIndex)"
+		echo "dotnet test --framework \"$targetTestFramework\" \"tests\\$testProjectName\\$testProjectName.csproj\" --collect:\"XPlat Code Coverage\" --results-directory:\"tests\\$testProjectName\\TestResults\\$targetTestFramework\"";
+		dotnet test --framework "$targetTestFramework" "tests\\$testProjectName\\$testProjectName.csproj" --collect:"XPlat Code Coverage" --results-directory:"tests\\$testProjectName\\TestResults\\$targetTestFramework"
+		echo "";
+	done;
 	echo "";
 
 	echo 'Generating the coverage reports...';
@@ -29,11 +52,33 @@ do
 
 			if [ -f $coverageFile ]; then
 				echo "Generating Report For $coverageFile...";
-				dotnet ~/.nuget/packages/reportgenerator/4.8.12/tools/net5.0/ReportGenerator.dll -reports:"$coverageFile" -targetdir:"TestResults\\CoverageReports\\$testProjectName\\$targetFramework\\$guidValue" -reporttypes:Html -assemblyfilters:"-ExampleLibrary*";
+				assemblyFilters="-ExampleLibrary*";
+
+				if [ $reportForIndividualProjectOnly = "true" ]; then
+					for (( testProjectIndexTwo=0; testProjectIndexTwo<${allTestProjectsCount}; testProjectIndexTwo++ ));
+					do
+						projectNameToFilter="${allTestProjectNames[$testProjectIndexTwo]}"
+						if [ "$projectNameToFilter" = "$testProjectName" ]; then
+							continue;
+						fi;
+
+						projectNameToFilterTwo="${projectNameToFilter%.Tests}"
+						#echo "ProjectNameToFilter:  $projectNameToFilterTwo"
+
+						assemblyFilters="$assemblyFilters;-$projectNameToFilterTwo";
+					done;
+				fi;
+
+				echo "AssemblyFilters:  $assemblyFilters"
+
+				echo "dotnet ~/.nuget/packages/reportgenerator/4.8.12/tools/net5.0/ReportGenerator.dll -reports:\"$coverageFile\" -targetdir:\"TestResults\\CoverageReports\\$testProjectName\\$targetFramework\\$guidValue\" -reporttypes:Html -assemblyfilters:\"$assemblyFilters\" ";
+				dotnet ~/.nuget/packages/reportgenerator/4.8.12/tools/net5.0/ReportGenerator.dll -reports:"$coverageFile" -targetdir:"TestResults\\CoverageReports\\$testProjectName\\$targetFramework\\$guidValue" -reporttypes:Html -assemblyfilters:"$assemblyFilters";
 			fi;
 		done;
 	done;
-done
+
+	echo "";
+done;
 
 echo '';
 echo '  DONE!!';

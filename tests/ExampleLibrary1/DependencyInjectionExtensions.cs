@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Rhinobyte.Extensions.DependencyInjection;
+using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 using System;
 
 namespace ExampleLibrary1

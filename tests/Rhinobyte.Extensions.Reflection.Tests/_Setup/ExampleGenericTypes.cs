@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Rhinobyte.Extensions.Reflection.UnitTests.Setup
+namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 {
 	public struct GenericStruct<T>
 		where T : struct, IConvertible
