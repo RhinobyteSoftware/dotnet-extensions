@@ -32,7 +32,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 				return $"{base.ToString()}  [Parameter #{ParameterIndex}]  [ParameterReference: null]";
 			}
 
-			return $"{base.ToString()}  [Parameter #{ParameterIndex}]  [ParameterReference: {ParameterReference.ParameterType?.FullName ?? "(Unknown Parameter Type)"} {ParameterReference.Name}{(ParameterReference.IsOptional ? " (Optional)" : null)}]";
+			return $"{base.ToString()}  [Parameter #{ParameterIndex}]  [ParameterReference: {ParameterReference.ParameterType?.FullName ?? ParameterReference.ParameterType?.Name ?? "(Unknown Parameter Type)"} {ParameterReference.Name}{(ParameterReference.IsOptional ? " (Optional)" : null)}]";
 		}
 	}
 }

@@ -28,9 +28,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			_ilBytes = methodBody.GetILAsByteArray()
 				?? throw new ArgumentException($"{nameof(MethodBody)}.{nameof(MethodBody.GetILAsByteArray)}() returned null for the method: {method.Name}");
 
-#pragma warning disable CA2208 // Instantiate argument exceptions correctly
-			_module = method.Module ?? throw new ArgumentNullException($"{nameof(method)}.{nameof(method.Module)} is null");
-#pragma warning restore CA2208 // Instantiate argument exceptions correctly
+			_module = method.Module ?? throw new ArgumentException($"{nameof(method)}.{nameof(method.Module)} property is null");
 
 			_declaringTypeGenericArguments = method.DeclaringType?.GetGenericArguments();
 			_isStaticMethod = method.IsStatic;
@@ -233,9 +231,9 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					case OperandType.InlineBrTarget:
 					case OperandType.ShortInlineBrTarget:
 					{
-						// IMPORTANT: Call ReadByte() / ReadInt32() first to advance the _bytePosition before appending _bytePosition for the calculated target offset
+						// IMPORTANT: Call ReadSignedByte() / ReadInt32() first to advance the _bytePosition before appending _bytePosition for the calculated target offset
 						var targetOffset = currentOpcode.OperandType == OperandType.ShortInlineBrTarget
-							? ReadByte() + _bytePosition
+							? ReadSignedByte() + _bytePosition
 							: ReadInt32() + _bytePosition;
 
 						currentInstruction = new BranchTargetInstruction(instructionIndex, instructionOffset, currentOpcode, targetOffset);
@@ -514,6 +512,9 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			_bytePosition += 8;
 			return longValue;
 		}
+
+		internal sbyte ReadSignedByte()
+			=> (sbyte)ReadByte();
 
 		/// <summary>
 		/// Convenience method to read the next four bytes as a float value and to advance the _bytePosition

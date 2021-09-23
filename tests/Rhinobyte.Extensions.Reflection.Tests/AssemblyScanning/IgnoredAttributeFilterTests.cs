@@ -43,6 +43,8 @@ namespace Rhinobyte.Extensions.Reflection.Tests.AssemblyScanning
 			var ignoredDummyType = typeof(ExampleIgnoredAttributeAssembly.DummyClass);
 			var ignoredAssemblyInclude = new AssemblyInclude(ignoredDummyType.Assembly);
 			ignoredAttributeFilter.ShouldIgnoreType(ignoredAssemblyInclude, ignoredDummyType, assemblyScanner, scanResult).Should().BeTrue();
+
+			ignoredAttributeFilter.ShouldIgnoreType(thisAssemblyInclude, null!, assemblyScanner, scanResult).Should().BeTrue();
 		}
 	}
 }

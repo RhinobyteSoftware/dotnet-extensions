@@ -6,7 +6,7 @@ using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 using System;
 using static FluentAssertions.FluentActions;
 
-namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
+namespace Rhinobyte.Extensions.DependencyInjection.Tests
 {
 	[TestClass]
 	public class AttributeDecoratedConventionTests

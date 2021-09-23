@@ -6,12 +6,80 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using static FluentAssertions.FluentActions;
 
 namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 {
 	[TestClass]
 	public class MethodBodyParserUnitTests
 	{
+		/******     TEST METHODS     ****************************
+		 ********************************************************/
+
+		[TestMethod]
+		public void Constructor_throws_argument_exceptions_for_required_parameter_members()
+		{
+			Invoking(() => new MethodBodyParser(null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*method*");
+
+			var mockMethodBase = new MockMethodBase("MockMethod");
+			Invoking(() => new MethodBodyParser(mockMethodBase))
+				.Should()
+				.Throw<ArgumentException>()
+				.WithMessage("*.GetMethodBody() returned null for the method:*");
+
+			mockMethodBase.SetMethodBody(new MockMethodBody());
+			Invoking(() => new MethodBodyParser(mockMethodBase))
+				.Should()
+				.Throw<ArgumentException>()
+				.WithMessage("MethodBody.GetILAsByteArray() returned null for the method:*");
+
+			var actualMethod = typeof(ExampleMethods).GetMethod("AddTwoValues", BindingFlags.Public | BindingFlags.Static);
+			mockMethodBase.SetMethodBody(actualMethod!.GetMethodBody());
+			Invoking(() => new MethodBodyParser(mockMethodBase))
+				.Should()
+				.Throw<ArgumentException>()
+				.WithMessage("*.Module property is null");
+
+			mockMethodBase = new MockMethodBase(null, "MockMethodNullDeclaringType");
+			mockMethodBase.SetMethodBody(actualMethod.GetMethodBody());
+			mockMethodBase.SetModule(actualMethod.Module);
+			mockMethodBase.DeclaringType.Should().BeNull();
+
+			// Should be able handle the null DeclaringType without throwing
+			var methodBodyParser = new MethodBodyParser(mockMethodBase);
+			methodBodyParser.Should().NotBeNull();
+		}
+
+		[TestMethod]
+		public void ContainsReferencesToAll_doesnt_blow_up1()
+		{
+			var methodReferencesToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).ToList();
+
+			var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
+			methodBodyParser.ContainsReferencesToAll(methodReferencesToSearchFor).Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void ContainsReferenceTo_doesnt_blow_up1()
+		{
+			var methodReferenceToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).First(method => method.Name == "WriteLine");
+
+			var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
+			methodBodyParser.ContainsReferenceTo(methodReferenceToSearchFor).Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void ContainsReferenceToAny_doesnt_blow_up1()
+		{
+			var methodReferencesToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).ToList();
+
+			var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
+			methodBodyParser.ContainsReferenceToAny(methodReferencesToSearchFor).Should().BeFalse();
+		}
+
 		[TestMethod]
 		public void ParseInstructions_handles_instance_method_parameters_correctly()
 		{
@@ -815,6 +883,134 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 (290) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
 (291) RETURN");
 			}
+		}
+
+		[TestMethod]
+		public void ParseInstructions_returns_the_expected_result5()
+		{
+			var testMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.MethodWithGotoLabels), BindingFlags.Public | BindingFlags.Instance);
+			testMethodInfo.Should().NotBeNull();
+
+			var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
+			instructions.Count.Should().Be(46);
+
+			var instructionDescription = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+			instructionDescription.Should().Be(
+@"(0) NO-OP
+(1) LOAD INT LITERAL (0)
+(2) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
+(3) NO-OP
+(4) LOAD STRING  [String Value: First Label]
+(5) CALL METHOD  [Console.WriteLine]
+(6) NO-OP
+(7) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(8) LOAD INT LITERAL (1)
+(9) ADD
+(10) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
+(11) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(12) LOAD INT LITERAL (3)
+(13) COMPARE (LessThan)
+(14) SET LOCAL VARIABLE (Index 1)  [Of type Boolean]
+(15) LOAD LOCAL VARIABLE (Index 1)  [Of type Boolean]
+(16) BRANCH WHEN FALSE (Short Form)  [TargetInstruction: 18]
+(17) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 3]
+(18) NO-OP
+(19) LOAD STRING  [String Value: Second Label]
+(20) CALL METHOD  [Console.WriteLine]
+(21) NO-OP
+(22) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(23) LOAD INT LITERAL (1)
+(24) ADD
+(25) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
+(26) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(27) LOAD INT LITERAL (6)
+(28) COMPARE (LessThan)
+(29) SET LOCAL VARIABLE (Index 2)  [Of type Boolean]
+(30) LOAD LOCAL VARIABLE (Index 2)  [Of type Boolean]
+(31) BRANCH WHEN FALSE (Short Form)  [TargetInstruction: 33]
+(32) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 3]
+(33) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(34) LOAD INT VALUE (Int8)  [SByte Value: 9]
+(35) COMPARE (LessThan)
+(36) SET LOCAL VARIABLE (Index 3)  [Of type Boolean]
+(37) LOAD LOCAL VARIABLE (Index 3)  [Of type Boolean]
+(38) BRANCH WHEN FALSE (Short Form)  [TargetInstruction: 40]
+(39) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 18]
+(40) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 41]
+(41) NO-OP
+(42) LOAD STRING  [String Value: Last Label]
+(43) CALL METHOD  [Console.WriteLine]
+(44) NO-OP
+(45) RETURN");
+		}
+
+		[TestMethod]
+		public void ParseInstructions_returns_the_expected_result6()
+		{
+			_dynamicJumpTableMethod.Should().NotBeNull();
+			var instructions = new MethodBodyParser(_dynamicJumpTableMethod).ParseInstructions();
+			instructions.Count.Should().Be(15);
+
+			var instructionsDescription = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+			instructionsDescription.Should().Be(
+@"(0) LOAD ARGUMENT (Index 0)  [Parameter #0]  [ParameterReference: System.Int32 ]
+(1) SWITCH  [TargetInstructions: 3, 5, 7, 9, 11]  [TargetOffsets: 28, 35, 42, 49, 56]
+(2) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 13]
+(3) LOAD STRING  [String Value: are no bananas]
+(4) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 14]
+(5) LOAD STRING  [String Value: is one banana]
+(6) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 14]
+(7) LOAD STRING  [String Value: are two bananas]
+(8) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 14]
+(9) LOAD STRING  [String Value: are three bananas]
+(10) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 14]
+(11) LOAD STRING  [String Value: are four bananas]
+(12) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 14]
+(13) LOAD STRING  [String Value: are many bananas]
+(14) RETURN");
+		}
+
+		[TestMethod]
+		public void ParseInstructions_returns_the_expected_result7()
+		{
+			var methodToParse = typeof(NativeInteropExampleMethods).GetMethod(nameof(NativeInteropExampleMethods.MethodThatUsesNativeInteropCall), BindingFlags.Public | BindingFlags.Static);
+			methodToParse.Should().NotBeNull();
+
+			var instructions = new MethodBodyParser(methodToParse!).ParseInstructions();
+			instructions.Count.Should().Be(23);
+		}
+
+		[TestMethod]
+		public void ParseInstructions_returns_the_expected_result8()
+		{
+			var methodToParse = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues_Of_7_And_14_Using_Delegate_Function), BindingFlags.Public | BindingFlags.Static);
+			methodToParse.Should().NotBeNull();
+
+			var instructions = new MethodBodyParser(methodToParse!).ParseInstructions();
+			instructions.Count.Should().Be(13);
+		}
+
+		[TestMethod]
+		public void ParseInstructions_returns_the_expected_result9()
+		{
+			var dynamicType = DynamicTypeBuilder.BuildTypeWithInlineSignatureMethod();
+			var dynamicMethod = dynamicType!.GetMethod("InlineSignatureMethod", BindingFlags.Public | BindingFlags.Static);
+
+			var instructions = new MethodBodyParser(dynamicMethod!).ParseInstructions();
+			instructions.Count.Should().Be(2);
+			instructions.Any(instruction => instruction is SignatureInstruction).Should().BeTrue();
+		}
+
+		/******     TEST SETUP     *****************************
+		 *******************************************************/
+		private static Type _dynamicTypeWithJumpTableMethod = null!; // Nullability hacks, InitializeTestClass will always set these
+		private static MethodInfo _dynamicJumpTableMethod = null!;
+
+		[ClassInitialize]
+		public static void InitializeTestClass(TestContext testContext)
+		{
+			_dynamicTypeWithJumpTableMethod = DynamicTypeBuilder.BuildTypeWithJumpTableMethod()!;
+			_dynamicJumpTableMethod = _dynamicTypeWithJumpTableMethod!.GetMethod("JumpTableMethod", BindingFlags.Public | BindingFlags.Static)!;
 		}
 	}
 }

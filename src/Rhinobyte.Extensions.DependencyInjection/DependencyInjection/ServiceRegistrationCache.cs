@@ -74,19 +74,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 		public bool Contains(ServiceDescriptor item) => _serviceCollection.Contains(item);
 
-		public void CopyTo(ServiceDescriptor[] array, int arrayStartIndex)
-		{
-			if (array is not null)
-			{
-				for (var arrayIndex = arrayStartIndex; arrayIndex < array.Length; ++arrayIndex)
-				{
-					var serviceDescriptor = array[arrayIndex];
-					AddLookupItems(serviceDescriptor);
-				}
-			}
-
-			_serviceCollection.CopyTo(array!, arrayStartIndex);
-		}
+		public void CopyTo(ServiceDescriptor[] array, int arrayStartIndex) => _serviceCollection.CopyTo(array, arrayStartIndex);
 
 		public IEnumerator<ServiceDescriptor> GetEnumerator() => _serviceCollection.GetEnumerator();
 

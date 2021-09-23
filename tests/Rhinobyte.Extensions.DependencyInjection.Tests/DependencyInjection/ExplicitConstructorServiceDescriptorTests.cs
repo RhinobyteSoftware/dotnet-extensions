@@ -8,13 +8,56 @@ using System.Linq;
 using System.Reflection;
 using static FluentAssertions.FluentActions;
 
-namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
+namespace Rhinobyte.Extensions.DependencyInjection.Tests
 {
 	[TestClass]
 	public class ExplicitConstructorServiceDescriptorTests
 	{
 		/******     TEST METHODS     ****************************
 		 ********************************************************/
+		[TestMethod]
+		public void Constructor_sets_the_implementation_type()
+		{
+			var constructorToUse = typeof(SomethingOptions).GetConstructors(BindingFlags.Public | BindingFlags.Instance).First();
+			var explicitConstructorServiceDescriptor1 = new ExplicitConstructorServiceDescriptor(typeof(ISomethingOptions), typeof(SomethingOptions), constructorToUse, ServiceLifetime.Scoped);
+			explicitConstructorServiceDescriptor1.OriginalImplementationType.Should().Be(typeof(SomethingOptions));
+			explicitConstructorServiceDescriptor1.GetImplementationType().Should().Be(typeof(SomethingOptions));
+
+			var explicitConstructorServiceDescriptor2 = new ExplicitConstructorServiceDescriptor<SomethingOptions>(typeof(ISomethingOptions), constructorToUse, ServiceLifetime.Scoped);
+			explicitConstructorServiceDescriptor2.OriginalImplementationType.Should().Be(typeof(SomethingOptions));
+			explicitConstructorServiceDescriptor2.GetImplementationType().Should().Be(typeof(SomethingOptions));
+		}
+
+		[TestMethod]
+		public void CreateScoped_succeeds_with_the_correct_service_lifetime()
+		{
+			var descriptor = ExplicitConstructorServiceDescriptor
+				.CreateScoped<ClassWithConstructorSelectionAttributeThreeConstructors, ClassWithConstructorSelectionAttributeThreeConstructors>(ConstructorSelectionType.AttributeThenDefaultBehavior);
+
+			descriptor.Should().NotBeNull().And.BeOfType<ExplicitConstructorServiceDescriptor<ClassWithConstructorSelectionAttributeThreeConstructors>>();
+			descriptor.Lifetime.Should().Be(ServiceLifetime.Scoped);
+		}
+
+		[TestMethod]
+		public void CreateSingleton_succeeds_with_the_correct_service_lifetime()
+		{
+			var descriptor = ExplicitConstructorServiceDescriptor
+				.CreateSingleton<ClassWithConstructorSelectionAttributeThreeConstructors, ClassWithConstructorSelectionAttributeThreeConstructors>(ConstructorSelectionType.AttributeThenDefaultBehavior);
+
+			descriptor.Should().NotBeNull().And.BeOfType<ExplicitConstructorServiceDescriptor<ClassWithConstructorSelectionAttributeThreeConstructors>>();
+			descriptor.Lifetime.Should().Be(ServiceLifetime.Singleton);
+		}
+
+		[TestMethod]
+		public void CreateTransient_succeeds_with_the_correct_service_lifetime()
+		{
+			var descriptor = ExplicitConstructorServiceDescriptor
+				.CreateTransient<ClassWithConstructorSelectionAttributeThreeConstructors, ClassWithConstructorSelectionAttributeThreeConstructors>(ConstructorSelectionType.AttributeThenDefaultBehavior);
+
+			descriptor.Should().NotBeNull().And.BeOfType<ExplicitConstructorServiceDescriptor<ClassWithConstructorSelectionAttributeThreeConstructors>>();
+			descriptor.Lifetime.Should().Be(ServiceLifetime.Transient);
+		}
+
 		[TestMethod]
 		public void Internal_OOTB_GetImplementationType_method_returns_the_expected_result_for_an_ExplicitConstructorServiceDescriptor()
 		{

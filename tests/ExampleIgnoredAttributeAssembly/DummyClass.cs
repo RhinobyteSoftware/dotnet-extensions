@@ -6,6 +6,6 @@ namespace ExampleIgnoredAttributeAssembly
 {
 	[IgnoreAssemblyScanner]
 	public class DummyClass
-    {
-    }
+	{
+	}
 }

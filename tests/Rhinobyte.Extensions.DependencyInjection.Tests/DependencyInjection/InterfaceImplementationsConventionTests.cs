@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 using System.Linq;
 
-namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
+namespace Rhinobyte.Extensions.DependencyInjection.Tests
 {
 	[TestClass]
 	public class InterfaceImplementationsConventionTests

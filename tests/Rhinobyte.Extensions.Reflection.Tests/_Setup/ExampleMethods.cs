@@ -135,6 +135,34 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 			return stringValue2;
 		}
 
+		public void MethodWithGotoLabels()
+		{
+			var count = 0;
+
+		FirstLabel:
+			Console.WriteLine("First Label");
+
+			++count;
+
+			if (count < 3)
+				goto FirstLabel;
+
+			SecondLabel:
+			Console.WriteLine("Second Label");
+
+			++count;
+			if (count < 6)
+				goto FirstLabel;
+			else if (count < 9)
+				goto SecondLabel;
+			else
+				goto LastLabel;
+
+
+			LastLabel:
+			Console.WriteLine("Last Label");
+		}
+
 		public static int OverloadedMethod(int value)
 		{
 			return value;

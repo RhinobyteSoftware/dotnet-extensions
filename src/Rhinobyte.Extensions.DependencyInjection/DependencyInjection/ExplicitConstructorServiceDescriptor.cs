@@ -34,7 +34,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/> version.
 	/// </para>
 	/// </summary>
-	public class ExplicitConstructorServiceDescriptor : ServiceDescriptor
+	public class ExplicitConstructorServiceDescriptor : ServiceDescriptor, ICustomServiceDescriptor
 	{
 		public ExplicitConstructorServiceDescriptor(
 			Type serviceType,

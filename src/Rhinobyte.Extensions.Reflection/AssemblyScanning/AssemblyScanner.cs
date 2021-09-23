@@ -11,12 +11,13 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 	public class AssemblyScanner : IAssemblyScanner
 	{
 		private readonly HashSet<AssemblyInclude> _assembliesToScan = new HashSet<AssemblyInclude>();
+		private IncludeExcludeConflictResolutionStrategy _currentIncludeExcludeConflictResolutionStrategy;
 		private AssemblyScanResult? _currentScanResult;
 		private readonly HashSet<Type> _excludedTypes = new HashSet<Type>();
 		private readonly HashSet<Type> _includedTypes = new HashSet<Type>();
 		private readonly HashSet<IScannedAssemblyFilter> _scannedAssemblyFilters;
 		private readonly HashSet<IScannedTypeFilter> _scannedTypeFilters;
-
+		 
 		protected AssemblyScanner()
 		{
 			_scannedAssemblyFilters = new HashSet<IScannedAssemblyFilter>();
@@ -108,7 +109,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 		}
 
 		public AssemblyScanner AddTypeFilter(Func<AssemblyInclude, Type, IAssemblyScanner, IAssemblyScanResult, bool> filter)
-			=> AddTypeFilter(new LamdaTypeFilter(filter));
+			=> AddTypeFilter(new LambdaTypeFilter(filter));
 
 		public AssemblyInclude? FindAssemblyInclude(Assembly assemblyToLookFor)
 		{
@@ -219,7 +220,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 		public IAssemblyScanResult ScanAssemblies(
 			IncludeExcludeConflictResolutionStrategy includeExcludeConflictResolutionStrategy = IncludeExcludeConflictResolutionStrategy.PrioritizeExcludes)
 		{
-			if (_currentScanResult != null)
+			if (_currentScanResult != null && _currentIncludeExcludeConflictResolutionStrategy == includeExcludeConflictResolutionStrategy)
 				return _currentScanResult;
 
 			var newScanResult = new AssemblyScanResult();
@@ -303,7 +304,9 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 				}
 			}
 
+			_currentIncludeExcludeConflictResolutionStrategy = includeExcludeConflictResolutionStrategy;
 			_currentScanResult = newScanResult;
+
 			return _currentScanResult;
 		}
 

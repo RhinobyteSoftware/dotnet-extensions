@@ -395,7 +395,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 			method3!.GetSignature().Should().Be("public ValueTuple<ISomeOpenGenericType<TOne, TTwo>, object> MethodWithGenericResult4<ISomeOpenGenericType<TOne, TTwo>, object>(ISomeOpenGenericType<TOne, TTwo> paramOne, object paramTwo)");
 			method3!.GetSignature(true).Should().Be("public ValueTuple<ExampleLibrary1.ISomeOpenGenericType<TOne, TTwo>, object> ExampleLibrary1.ClassWithGenericMethod.MethodWithGenericResult4<ExampleLibrary1.ISomeOpenGenericType<TOne, TTwo>, object>(ExampleLibrary1.ISomeOpenGenericType<TOne, TTwo> paramOne, object paramTwo)");
 
-			var method4 = genericMethodToTest2!.MakeGenericMethod(typeof(ExampleLibrary1.ISomeOpenGenericType<string,string>), typeof(object));
+			var method4 = genericMethodToTest2!.MakeGenericMethod(typeof(ExampleLibrary1.ISomeOpenGenericType<string, string>), typeof(object));
 			method4!.GetSignature().Should().Be("public ValueTuple<ISomeOpenGenericType<string, string>, object> MethodWithGenericResult4<ISomeOpenGenericType<string, string>, object>(ISomeOpenGenericType<string, string> paramOne, object paramTwo)");
 			method4!.GetSignature(true).Should().Be("public System.ValueTuple<ExampleLibrary1.ISomeOpenGenericType<string, string>, object> ExampleLibrary1.ClassWithGenericMethod.MethodWithGenericResult4<ExampleLibrary1.ISomeOpenGenericType<string, string>, object>(ExampleLibrary1.ISomeOpenGenericType<string, string> paramOne, object paramTwo)");
 

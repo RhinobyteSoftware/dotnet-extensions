@@ -2,16 +2,22 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static FluentAssertions.FluentActions;
 
 namespace Rhinobyte.Extensions.Reflection.Tests.AssemblyScanning
 {
 	[TestClass]
 	public class AssemblyIncludeTests
 	{
+		[TestMethod]
+		public void Constructor_throws_ArgumentNullException_for_a_null_assembly_argument()
+		{
+			Invoking(() => new AssemblyInclude(null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*assemblyToInclude*");
+		}
+
 		[TestMethod]
 		public void Equals_returns_the_expected_result()
 		{

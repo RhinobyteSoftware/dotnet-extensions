@@ -6,7 +6,7 @@ using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 using System;
 using System.Linq;
 
-namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
+namespace Rhinobyte.Extensions.DependencyInjection.Tests
 {
 	[TestClass]
 	public class ServiceRegistrationConventionBaseTests
@@ -242,7 +242,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests.DependencyInjection
 			ServiceRegistrationConventionBase
 				.TryRegisterMultiple(existingDescriptor.ServiceType, ServiceRegistrationOverwriteBehavior.TryAdd, serviceDescriptors, serviceRegistrationCache, true, skipImplementationTypesAlreadyInUse)
 				.Should().BeTrue();
-			serviceRegistrationCache.Count.Should().Be(1); 
+			serviceRegistrationCache.Count.Should().Be(1);
 			serviceRegistrationCache.Should().Contain(existingDescriptor);
 			serviceRegistrationCache.Should().NotContain(newDescriptor);
 
