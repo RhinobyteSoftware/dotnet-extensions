@@ -5,13 +5,23 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections;
+using System.Linq;
 using static FluentAssertions.FluentActions;
 
 namespace Rhinobyte.Extensions.DependencyInjection.Tests
 {
 	[TestClass]
-	public class ServiceRegistrationCacheExtensions
+	public class ServiceRegistrationCacheTests
 	{
+		[TestMethod]
+		public void Add_passes_null_through_to_underlying_collection()
+		{
+			var serviceCollection = new ServiceCollection();
+			var serviceRegistrationCache = new ServiceRegistrationCache(serviceCollection);
+			serviceRegistrationCache.Add(null!);
+			serviceCollection.First().Should().BeNull();
+		}
+
 		[TestMethod]
 		public void Constructor_throws_ArgumentNullException_for_null_service_collection_argument()
 		{
@@ -156,5 +166,19 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 
 			serviceRegistrationCache.GetByServiceType(typeof(ISomethingService))!.Count.Should().Be(3);
 		}
+
+		[TestMethod]
+		public void Remove_passes_null_through_to_underlying_collection()
+		{
+			var serviceCollection = new ServiceCollection();
+			var serviceRegistrationCache = new ServiceRegistrationCache(serviceCollection);
+			serviceRegistrationCache.Add(null!);
+			serviceCollection.First().Should().BeNull();
+
+			serviceRegistrationCache.Remove(null!);
+			serviceCollection.Should().BeEmpty();
+		}
+
+
 	}
 }

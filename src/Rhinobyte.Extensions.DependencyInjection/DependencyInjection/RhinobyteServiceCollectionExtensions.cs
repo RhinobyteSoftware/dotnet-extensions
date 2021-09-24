@@ -148,7 +148,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			foreach (var discoveredType in scanResult.AllDiscoveredTypes)
 				serviceRegistrationConvention.HandleType(discoveredType, scanResult, serviceRegistrationCache);
 
-			return serviceCollection;
+			return serviceRegistrationCache;
 		}
 
 		public static IServiceCollection RegisterTypes(
@@ -186,7 +186,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				}
 			}
 
-			return serviceCollection;
+			return serviceRegistrationCache;
 		}
 
 		public static IServiceCollection TryAddScopedWithConstructorSelection<TServiceType, TImplementationType>(

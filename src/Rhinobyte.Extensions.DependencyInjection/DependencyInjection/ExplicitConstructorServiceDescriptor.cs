@@ -2,7 +2,6 @@
 using Rhinobyte.Extensions.Reflection;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Rhinobyte.Extensions.DependencyInjection
@@ -27,27 +26,38 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		public Type GetImplementationType() => OriginalImplementationType;
 	}
 
-	/// <summary>
-	/// Custom <see cref="ServiceDescriptor"/> which accepts an explicit <see cref="ConstructorInfo"/> reference to use for the implementation type.
-	/// <para>
-	/// This non-generic version is intended for use in registration scenarios where type discovery is performed at runtime. For design time registration use the
-	/// <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/> version.
-	/// </para>
-	/// </summary>
-	public class ExplicitConstructorServiceDescriptor : ServiceDescriptor, ICustomServiceDescriptor
+	public static class ExplicitConstructorServiceDescriptor
 	{
-		public ExplicitConstructorServiceDescriptor(
-			Type serviceType,
-#if NET5_0_OR_GREATER
-			[DynamicallyAccessedMembersAttribute(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicConstructors)] Type implementationType,
-#else
-			Type implementationType,
-#endif
-			ConstructorInfo explicitConstructorToUse,
-			ServiceLifetime serviceLifetime)
-			: base(serviceType, new ExplicitConstructorFactory(explicitConstructorToUse).CallConstructor, serviceLifetime)
+		/// <summary>
+		/// Uses reflection to create the service descriptor/factory function with a generic argument return type of <paramref name="implementationType"/>
+		/// </summary>
+		/// <param name="serviceType">The <see cref="ServiceDescriptor.ServiceType"/> value</param>
+		/// <param name="implementationType">The implementation type returned by the factory</param>
+		/// <param name="explicitConstructorToUse">The explicit constructor to use for the service provider factory</param>
+		/// <param name="serviceLifetime">The <see cref="ServiceDescriptor.Lifetime"/> value</param>
+		/// <remarks>
+		/// We want to make the factory actually be of type Func&lt;IServiceProvider, TImplementationType&gt; or else the Microsoft.Extension.DependencyInjection
+		/// library will behave unexpectly in certain cases.
+		/// <para>
+		/// This happens because calls to the internal only ServiceDescriptor.GetImplementationType() method
+		/// implicitly assumes the factory will have an explicitly typed return type argument when it can in fact return object.
+		/// </para>
+		/// <para><seealso href="https://github.com/dotnet/runtime/blob/v5.0.9/src/libraries/Microsoft.Extensions.DependencyInjection.Abstractions/src/ServiceDescriptor.cs#L137" /></para>
+		/// <para><seealso href="https://github.com/dotnet/extensions/blob/v3.1.19/src/DependencyInjection/DI.Abstractions/src/ServiceDescriptor.cs#L140"/></para>
+		/// </remarks>
+		public static ServiceDescriptor Create(Type serviceType, Type implementationType, ConstructorInfo explicitConstructorToUse, ServiceLifetime serviceLifetime)
 		{
-			OriginalImplementationType = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
+			_ = serviceType ?? throw new ArgumentNullException(nameof(serviceType));
+			_ = implementationType ?? throw new ArgumentNullException(nameof(implementationType));
+			_ = explicitConstructorToUse ?? throw new ArgumentNullException(nameof(explicitConstructorToUse));
+
+			if (explicitConstructorToUse.DeclaringType != implementationType)
+				throw new ArgumentException($"{nameof(explicitConstructorToUse)}.{nameof(explicitConstructorToUse.DeclaringType)} of {explicitConstructorToUse.DeclaringType} does not match the implementation type {implementationType}");
+
+			var descriptorType = typeof(ExplicitConstructorServiceDescriptor<>).MakeGenericType(implementationType);
+			var descriptorConstructor = descriptorType.GetConstructors(BindingFlags.Public | BindingFlags.Instance)[0];
+			var descriptorInstance = (ServiceDescriptor)descriptorConstructor.Invoke(new object[] { serviceType, explicitConstructorToUse, serviceLifetime });
+			return descriptorInstance;
 		}
 
 		public static ExplicitConstructorServiceDescriptor<TImplementationType> CreateScoped<TServiceType, TImplementationType>(ConstructorInfo constructorInfo)
@@ -94,11 +104,6 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				? ServiceDescriptor.Transient<TServiceType, TImplementationType>()
 				: CreateTransient<TServiceType, TImplementationType>(constructorInfo);
 		}
-
-		public Type OriginalImplementationType { get; }
-
-
-		public Type GetImplementationType() => OriginalImplementationType;
 
 		public static ConstructorInfo? SelectCustomConstructor(Type implementationType, ConstructorSelectionType constructorSelectionType)
 		{

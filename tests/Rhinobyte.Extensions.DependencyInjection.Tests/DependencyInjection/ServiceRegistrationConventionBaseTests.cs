@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 using System;
 using System.Linq;
+using static FluentAssertions.FluentActions;
 
 namespace Rhinobyte.Extensions.DependencyInjection.Tests
 {
@@ -13,6 +14,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 	{
 		/******     TEST METHODS     ****************************
 		 ********************************************************/
+		[TestMethod]
 		public void BuildServiceDescriptor_returns_the_expected_result()
 		{
 			var lifetime = ServiceLifetime.Singleton;
@@ -22,29 +24,92 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 
 			// DefaultBehavior should return a plain ServiceDescriptor
 			systemUnderTest.BuildServiceDescriptor(testType, testType, serviceRegistrationCache, ConstructorSelectionType.DefaultBehaviorOnly, lifetime)
-				.Should().NotBeNull().And.NotBeAssignableTo<ExplicitConstructorServiceDescriptor>();
+				.Should().NotBeNull()
+				.And.BeOfType<ServiceDescriptor>()
+				.And.NotBeAssignableTo<ExplicitConstructorServiceDescriptor<ClassWithAmbiguousConstructorDependenciesDecorated>>();
+
+			systemUnderTest.BuildServiceDescriptor(typeof(ClassWithConstructorSelectionAttributeTwoConstructors), typeof(ClassWithConstructorSelectionAttributeTwoConstructors), serviceRegistrationCache, ConstructorSelectionType.AttributeThenDefaultBehavior, lifetime)
+				.Should().NotBeNull()
+				.And.BeOfType<ServiceDescriptor>()
+				.And.NotBeAssignableTo<ExplicitConstructorServiceDescriptor<ClassWithConstructorSelectionAttributeTwoConstructors>>()
+				.And.Match<ServiceDescriptor>(descriptor => descriptor.Lifetime == lifetime);
 
 			// The rest should return an ExplicitConstructorServiceDescriptor for this test type
 			systemUnderTest.BuildServiceDescriptor(testType, testType, serviceRegistrationCache, ConstructorSelectionType.AttributeThenDefaultBehavior, lifetime)
-				.Should().NotBeNull().And.BeAssignableTo<ExplicitConstructorServiceDescriptor>();
+				.Should().NotBeNull()
+				.And.BeOfType<ExplicitConstructorServiceDescriptor<ClassWithAmbiguousConstructorDependenciesDecorated>>()
+				.And.Match<ServiceDescriptor>(descriptor => descriptor.Lifetime == lifetime);
 
 			systemUnderTest.BuildServiceDescriptor(testType, testType, serviceRegistrationCache, ConstructorSelectionType.AttributeThenMostParametersOnly, lifetime)
-				.Should().NotBeNull().And.BeAssignableTo<ExplicitConstructorServiceDescriptor>();
+				.Should().NotBeNull()
+				.And.BeOfType<ExplicitConstructorServiceDescriptor<ClassWithAmbiguousConstructorDependenciesDecorated>>()
+				.And.Match<ServiceDescriptor>(descriptor => descriptor.Lifetime == lifetime);
 
 			systemUnderTest.BuildServiceDescriptor(testType, testType, serviceRegistrationCache, ConstructorSelectionType.AttributeThenMostParametersWhenAmbiguous, lifetime)
-				.Should().NotBeNull().And.BeAssignableTo<ExplicitConstructorServiceDescriptor>();
+				.Should().NotBeNull()
+				.And.BeOfType<ExplicitConstructorServiceDescriptor<ClassWithAmbiguousConstructorDependenciesDecorated>>()
+				.And.Match<ServiceDescriptor>(descriptor => descriptor.Lifetime == lifetime);
 
 			systemUnderTest.BuildServiceDescriptor(testType, testType, serviceRegistrationCache, ConstructorSelectionType.MostParametersOnly, lifetime)
-				.Should().NotBeNull().And.BeAssignableTo<ExplicitConstructorServiceDescriptor>();
+				.Should().NotBeNull()
+				.And.BeOfType<ExplicitConstructorServiceDescriptor<ClassWithAmbiguousConstructorDependenciesDecorated>>()
+				.And.Match<ServiceDescriptor>(descriptor => descriptor.Lifetime == lifetime);
 
 			systemUnderTest.BuildServiceDescriptor(testType, testType, serviceRegistrationCache, ConstructorSelectionType.MostParametersWhenAmbiguous, lifetime)
-				.Should().NotBeNull().And.BeAssignableTo<ExplicitConstructorServiceDescriptor>();
+				.Should().NotBeNull()
+				.And.BeOfType<ExplicitConstructorServiceDescriptor<ClassWithAmbiguousConstructorDependenciesDecorated>>()
+				.And.Match<ServiceDescriptor>(descriptor => descriptor.Lifetime == lifetime);
 
 			// Should return null when set to skip implementation types already in use
 			serviceRegistrationCache.AddTransient<ClassWithAmbiguousConstructorDependenciesDecorated>();
 			systemUnderTest = new ServiceRegistrationConventionBaseSubclass(skipImplementationTypesAlreadyInUse: true);
 			systemUnderTest.BuildServiceDescriptor(testType, testType, serviceRegistrationCache, ConstructorSelectionType.MostParametersWhenAmbiguous, lifetime)
 				.Should().BeNull();
+		}
+
+		[TestMethod]
+		public void HandleType_throws_ArgumentNullException_for_null_arguments_that_are_required()
+		{
+			var discoveredType = typeof(ISomethingOptions);
+			var scanResult = new AssemblyScanResult();
+			var serviceRegistrationCache = new ServiceRegistrationCache(new ServiceCollection());
+
+			var systemUnderTest = new ServiceRegistrationConventionBaseSubclass();
+
+			Invoking(() => systemUnderTest.HandleType(discoveredType: null!, scanResult, serviceRegistrationCache))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*discoveredType*");
+
+			Invoking(() => systemUnderTest.HandleType(discoveredType, scanResult: null!, serviceRegistrationCache))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*scanResult*");
+
+			Invoking(() => systemUnderTest.HandleType(discoveredType, scanResult, serviceRegistrationCache: null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*serviceRegistrationCache*");
+		}
+
+		[TestMethod]
+		public void ServiceRegistrationParameters_values_supercede_property_values()
+		{
+			var scanResult = new AssemblyScanResult();
+			var serviceRegistrationCache = new ServiceRegistrationCache(new ServiceCollection());
+			serviceRegistrationCache.AddScoped<SomethingOptions>();
+
+			var systemUnderTest = new ServiceRegistrationConventionBaseSubclass();
+			systemUnderTest.SetMockServiceRegistrationParameters(new ServiceRegistrationParameters(ServiceDescriptor.Scoped<ISomethingOptions, SomethingOptions>()));
+
+			// Should not register because the SkipAlreadyInUseImplementationType value is true
+			systemUnderTest.HandleType(typeof(ISomethingOptions), scanResult, serviceRegistrationCache).Should().BeFalse();
+			serviceRegistrationCache.Count.Should().Be(1);
+
+			// Setting skipImplementationTypesAlreadyInUse to false on the params should supercede the property value
+			systemUnderTest.SetMockServiceRegistrationParameters(new ServiceRegistrationParameters(ServiceDescriptor.Scoped<ISomethingOptions, SomethingOptions>(), skipImplementationTypesAlreadyInUse: false));
+			systemUnderTest.HandleType(typeof(ISomethingOptions), scanResult, serviceRegistrationCache).Should().BeTrue();
+			serviceRegistrationCache.Count.Should().Be(2);
 		}
 
 		[TestMethod]
@@ -106,6 +171,23 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 			tryRegisterResult.Should().BeTrue();
 			serviceCollection.Count.Should().Be(1);
 			serviceCollection.Should().NotContain(serviceDescriptor2);
+		}
+
+		[TestMethod]
+		public void TryRegister_throws_ArgumentNullExceptions_for_null_arguments_that_are_required()
+		{
+			var serviceDescriptor = ServiceDescriptor.Scoped<ISomethingOptions, SomethingOptions>();
+			var serviceRegistrationCache = new ServiceRegistrationCache(new ServiceCollection());
+
+			Invoking(() => ServiceRegistrationConventionBase.TryRegister(ServiceRegistrationOverwriteBehavior.TryAdd, serviceDescriptor: null!, serviceRegistrationCache, true, true))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*serviceDescriptor*");
+
+			Invoking(() => ServiceRegistrationConventionBase.TryRegister(ServiceRegistrationOverwriteBehavior.TryAdd, serviceDescriptor, serviceRegistrationCache: null!, true, true))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*serviceRegistrationCache*");
 		}
 
 		[TestMethod]
@@ -297,6 +379,29 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 		}
 
 		[TestMethod]
+		public void TryRegisterMultiple_throws_ArgumentNullExceptions_for_null_arguments_that_are_required()
+		{
+			var discoveredType = typeof(ISomethingOptions);
+			var serviceDescriptors = new[] { ServiceDescriptor.Scoped<ISomethingOptions, SomethingOptions>() };
+			var serviceRegistrationCache = new ServiceRegistrationCache(new ServiceCollection());
+
+			Invoking(() => ServiceRegistrationConventionBase.TryRegisterMultiple(discoveredType: null!, ServiceRegistrationOverwriteBehavior.TryAdd, serviceDescriptors, serviceRegistrationCache, true, true))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*discoveredType*");
+
+			Invoking(() => ServiceRegistrationConventionBase.TryRegisterMultiple(discoveredType, ServiceRegistrationOverwriteBehavior.TryAdd, serviceDescriptors: null!, serviceRegistrationCache, true, true))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*serviceDescriptors*");
+
+			Invoking(() => ServiceRegistrationConventionBase.TryRegisterMultiple(discoveredType, ServiceRegistrationOverwriteBehavior.TryAdd, serviceDescriptors, serviceRegistrationCache: null!, true, true))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*serviceRegistrationCache*");
+		}
+
+		[TestMethod]
 		public void TryRegisterMultiple_works_correctly_when_skip_implementation_types_already_in_use_is_true()
 		{
 			var skipDuplicates = true;
@@ -345,6 +450,9 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 		 *******************************************************/
 		public class ServiceRegistrationConventionBaseSubclass : ServiceRegistrationConventionBase
 		{
+			private ServiceRegistrationParameters? _mockServiceRegistrationParameters;
+			private bool _useMockServiceRegistrationParameters;
+
 			public ServiceRegistrationConventionBaseSubclass(
 				ConstructorSelectionType defaultConstructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly,
 				ServiceLifetime defaultLifetime = ServiceLifetime.Scoped,
@@ -354,6 +462,8 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 				: base(defaultConstructorSelectionType, defaultLifetime, defaultOverwriteBehavior, skipDuplicates, skipImplementationTypesAlreadyInUse)
 			{
 			}
+
+			public bool WasGetServiceRegistrationParametersCalled { get; private set; }
 
 			public new ServiceDescriptor? BuildServiceDescriptor(
 				Type discoveredServiceType,
@@ -368,7 +478,20 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 				System.Type discoveredType,
 				IAssemblyScanResult scanResult,
 				ServiceRegistrationCache serviceRegistrationCache)
-				=> throw new System.NotImplementedException();
+			{
+				WasGetServiceRegistrationParametersCalled = true;
+
+				if (_useMockServiceRegistrationParameters)
+					return _mockServiceRegistrationParameters;
+
+				throw new System.NotImplementedException();
+			}
+
+			public void SetMockServiceRegistrationParameters(ServiceRegistrationParameters? serviceRegistrationParameters)
+			{
+				_mockServiceRegistrationParameters = serviceRegistrationParameters;
+				_useMockServiceRegistrationParameters = true;
+			}
 		}
 	}
 }

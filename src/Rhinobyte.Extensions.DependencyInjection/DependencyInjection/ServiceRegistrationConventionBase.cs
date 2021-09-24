@@ -70,7 +70,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				var explicitConstructor = ExplicitConstructorServiceDescriptor.SelectCustomConstructor(implementationType, constructorSelectionTypeToUse);
 				if (explicitConstructor != null)
 				{
-					return new ExplicitConstructorServiceDescriptor(discoveredServiceType, implementationType, explicitConstructor, serviceLifetimeToUse);
+					return ExplicitConstructorServiceDescriptor.Create(discoveredServiceType, implementationType, explicitConstructor, serviceLifetimeToUse);
 				}
 			}
 

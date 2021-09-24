@@ -28,7 +28,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 		public void TryGetImplementationType_returns_the_expected_result_for_custom_descriptors()
 		{
 			var constructorToUse = typeof(SomethingOptions).GetConstructors(BindingFlags.Public | BindingFlags.Instance).First();
-			ServiceDescriptor serviceDescriptor = new ExplicitConstructorServiceDescriptor(typeof(ISomethingOptions), typeof(SomethingOptions), constructorToUse, ServiceLifetime.Scoped);
+			var serviceDescriptor = ExplicitConstructorServiceDescriptor.Create(typeof(ISomethingOptions), typeof(SomethingOptions), constructorToUse, ServiceLifetime.Scoped);
 			serviceDescriptor.TryGetImplementationType().Should().Be<SomethingOptions>();
 
 			serviceDescriptor = new ExplicitConstructorServiceDescriptor<SomethingOptions>(typeof(ISomethingOptions), constructorToUse, ServiceLifetime.Scoped);

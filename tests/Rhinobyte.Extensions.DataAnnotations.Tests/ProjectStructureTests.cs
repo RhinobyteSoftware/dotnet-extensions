@@ -2,19 +2,24 @@
 using Rhinobyte.Extensions.Reflection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
-namespace Rhinobyte.Extensions.DependencyInjection.Tests
+namespace Rhinobyte.Extensions.DataAnnotations.Tests
 {
 	[TestClass]
 	public class ProjectStructureTests
 	{
 		[TestMethod]
-		public void Library_types_all_use_the_root_namespace()
+		public void Library_types_all_match_one_of_the_valid_namespaces()
 		{
 			// Even though I divide the files into subfolder for slightly easier organization I want them all to use the same Rhinobyte.Extensions.DependencyInjection
 			// root namespace. Verify that I didn't forget to adjust it if I add new types to one of the subfolders.
-			var libraryTypes = typeof(Rhinobyte.Extensions.DependencyInjection.RhinobyteServiceCollectionExtensions).Assembly.GetTypes();
+			var libraryTypes = typeof(Rhinobyte.Extensions.DataAnnotations.DateTimeRangeAttribute).Assembly.GetTypes();
+			var validNamespaces = new[]
+			{
+				"Rhinobyte.Extensions.DataAnnotations",
+			};
 
 			var invalidTypes = new List<string>();
 			foreach (var libraryType in libraryTypes)
@@ -22,9 +27,19 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 				if (libraryType.IsCompilerGenerated())
 					continue;
 
-				var typeNamespace = libraryType?.FullName?.Substring(0, libraryType.FullName.LastIndexOf('.'));
-				if (libraryType?.FullName != null && typeNamespace != "Rhinobyte.Extensions.DependencyInjection" && typeNamespace?.StartsWith("Coverlet.Core.Instrumentation") != true)
-					invalidTypes.Add(libraryType.FullName);
+
+				var fullTypeName = libraryType?.FullName;
+				if (fullTypeName == null)
+					continue;
+
+				var lastDotIndex = fullTypeName.LastIndexOf('.');
+				if (lastDotIndex == -1)
+					continue;
+
+				var typeNamespace = fullTypeName.Substring(0, lastDotIndex);
+
+				if (!validNamespaces.Contains(typeNamespace) && typeNamespace?.StartsWith("Coverlet.Core.Instrumentation") != true)
+					invalidTypes.Add(fullTypeName);
 			}
 
 			if (invalidTypes.Count > 0)

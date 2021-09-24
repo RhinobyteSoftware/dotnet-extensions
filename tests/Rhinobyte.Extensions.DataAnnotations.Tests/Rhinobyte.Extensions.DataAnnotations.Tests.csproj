@@ -2,6 +2,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Rhinobyte.Extensions.DataAnnotations\Rhinobyte.Extensions.DataAnnotations.csproj" />
+        <ProjectReference Include="..\..\src\Rhinobyte.Extensions.Reflection\Rhinobyte.Extensions.Reflection.csproj" />
     </ItemGroup>
 
 </Project>

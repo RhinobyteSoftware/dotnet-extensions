@@ -9,6 +9,8 @@ namespace Rhinobyte.Extensions.DataAnnotations.Tests
 	[TestClass]
 	public class DateRangeAttributeUnitTests
 	{
+		/******     TEST METHODS     ****************************
+		 ********************************************************/
 		[DataTestMethod]
 		[DataRow("SomeProperty", "1900-01-01", "1999-12-31 23:59:59")]
 		[DataRow("DateEntered", "1900-01-01", "2079-06-06 23:59:00")]
@@ -127,6 +129,72 @@ namespace Rhinobyte.Extensions.DataAnnotations.Tests
 				.Should()
 				.Throw<InvalidOperationException>()
 				.WithMessage(@"[DateTimeRange] attribute minimum/maximum are required. [MemberName: """"]");
+		}
+
+		[DataTestMethod]
+		[DataRow("1900-01-01 00:00:00", true)]
+		[DataRow("1900-01-01 23:59:59", true)]
+		[DataRow("1950-06-06 13:00:00", true)]
+		[DataRow("1999-12-31 00:00:00", true)]
+		[DataRow("1999-12-31 23:59:59", true)]
+		[DataRow("0001-01-01", false)]
+		[DataRow("1899-12-31 23:59:59", false)]
+		[DataRow("2000-01-01", false)]
+		[DataRow("9999-12-31", false)]
+		public void IsValid_returns_the_expected_result_when_attribute_is_constructed_using_the_protected_constructor_with_DateTime_arguments(string value, bool expectedResult)
+		{
+			var dateTimeValue = DateTime.Parse(value);
+
+			var minimum = DateTime.Parse("1900-01-01");
+			var maximum = DateTime.Parse("1999-12-31 23:59:59");
+			var dateTimeRangeAttribute = new DateTimeRangeAttributeSubclass(minimum, maximum);
+
+			dateTimeRangeAttribute.IsValid(dateTimeValue).Should().Be(expectedResult);
+		}
+
+		[TestMethod]
+		public void ParseRangeValuesIfNecessary_does_not_throw_when_minimum_is_equal_to_the_maximum()
+		{
+			var dateTimeRangeAttribute = new DateTimeRangeAttributeSubclass("1900-01-01", "1900-01-01");
+			Invoking(() => dateTimeRangeAttribute.ParseRangeValuesIfNecessary("MockDisplayName"))
+				.Should()
+				.NotThrow();
+		}
+
+		[TestMethod]
+		public void ParseRangeValuesIfNecessary_does_not_throw_when_minimum_is_less_than_maximum()
+		{
+			var dateTimeRangeAttribute = new DateTimeRangeAttributeSubclass("1900-01-01", "1999-12-31 23:59:59");
+			Invoking(() => dateTimeRangeAttribute.ParseRangeValuesIfNecessary("MockDisplayName"))
+				.Should()
+				.NotThrow();
+		}
+
+		[TestMethod]
+		public void ParseRangeValuesIfNecessary_throws_InvalidOperationException_if_minimum_is_greater_than_maximum()
+		{
+			var minimum = DateTime.Parse("1900-01-01");
+			var maximum = DateTime.Parse("1999-12-31 23:59:59");
+			var dateTimeRangeAttribute = new DateTimeRangeAttributeSubclass(maximum, minimum); // flip them so min > max
+			Invoking(() => dateTimeRangeAttribute.ParseRangeValuesIfNecessary("MockDisplayName"))
+				.Should()
+				.Throw<InvalidOperationException>()
+				.WithMessage("[DateTimeRange] attribute minimum must be less than or equal to the maximum.*");
+		}
+
+
+		/******     TEST SETUP     *****************************
+		 *******************************************************/
+		public class DateTimeRangeAttributeSubclass : DateTimeRangeAttribute
+		{
+			public DateTimeRangeAttributeSubclass(DateTime minimum, DateTime maximum)
+				: base(minimum, maximum) { }
+
+			public DateTimeRangeAttributeSubclass(string minimum, string maximum)
+				: base(minimum, maximum) { }
+
+			public new void ParseRangeValuesIfNecessary(string? displayName)
+				=> base.ParseRangeValuesIfNecessary(displayName);
 		}
 	}
 }

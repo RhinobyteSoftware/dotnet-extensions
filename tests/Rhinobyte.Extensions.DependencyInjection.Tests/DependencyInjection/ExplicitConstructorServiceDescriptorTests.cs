@@ -19,13 +19,51 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 		public void Constructor_sets_the_implementation_type()
 		{
 			var constructorToUse = typeof(SomethingOptions).GetConstructors(BindingFlags.Public | BindingFlags.Instance).First();
-			var explicitConstructorServiceDescriptor1 = new ExplicitConstructorServiceDescriptor(typeof(ISomethingOptions), typeof(SomethingOptions), constructorToUse, ServiceLifetime.Scoped);
+			var explicitConstructorServiceDescriptor1 = (ExplicitConstructorServiceDescriptor<SomethingOptions>)ExplicitConstructorServiceDescriptor
+				.Create(typeof(ISomethingOptions), typeof(SomethingOptions), constructorToUse, ServiceLifetime.Scoped);
+
 			explicitConstructorServiceDescriptor1.OriginalImplementationType.Should().Be(typeof(SomethingOptions));
 			explicitConstructorServiceDescriptor1.GetImplementationType().Should().Be(typeof(SomethingOptions));
 
 			var explicitConstructorServiceDescriptor2 = new ExplicitConstructorServiceDescriptor<SomethingOptions>(typeof(ISomethingOptions), constructorToUse, ServiceLifetime.Scoped);
 			explicitConstructorServiceDescriptor2.OriginalImplementationType.Should().Be(typeof(SomethingOptions));
 			explicitConstructorServiceDescriptor2.GetImplementationType().Should().Be(typeof(SomethingOptions));
+		}
+
+		[TestMethod]
+		public void Create_method_throws_ArgumentExceptions_if_the_constructor_and_implementation_type_dont_match()
+		{
+			var serviceType = typeof(ISomethingService);
+			var implementationType = typeof(SomethingService);
+			var badConstructor = typeof(AlternateSomethingService).GetConstructors(BindingFlags.Public | BindingFlags.Instance).First();
+
+			Invoking(() => ExplicitConstructorServiceDescriptor.Create(serviceType, implementationType, badConstructor, ServiceLifetime.Transient))
+				.Should()
+				.Throw<ArgumentException>()
+				.WithMessage("explicitConstructorToUse.DeclaringType of * does not match the implementation type *");
+		}
+
+		[TestMethod]
+		public void Create_method_throws_ArgumentNullExceptions_for_null_arguments_that_are_required()
+		{
+			var serviceType = typeof(ISomethingService);
+			var implementationType = typeof(SomethingService);
+			var constructorToUse = implementationType.GetConstructors(BindingFlags.Public | BindingFlags.Instance).First();
+
+			Invoking(() => ExplicitConstructorServiceDescriptor.Create(serviceType: null!, implementationType: implementationType, constructorToUse, ServiceLifetime.Transient))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*serviceType*");
+
+			Invoking(() => ExplicitConstructorServiceDescriptor.Create(serviceType: serviceType, implementationType: null!, constructorToUse, ServiceLifetime.Transient))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*implementationType*");
+
+			Invoking(() => ExplicitConstructorServiceDescriptor.Create(serviceType: serviceType, implementationType: implementationType, explicitConstructorToUse: null!, ServiceLifetime.Transient))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*explicitConstructorToUse*");
 		}
 
 		[TestMethod]
@@ -67,14 +105,12 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 				.SelectCustomConstructor(serviceType, ConstructorSelectionType.AttributeThenDefaultBehavior);
 			constructorInfo.Should().NotBeNull();
 
-			var explicitConstructorServiceDescriptor = new ExplicitConstructorServiceDescriptor(serviceType, serviceType, constructorInfo!, ServiceLifetime.Scoped);
-
+			var explicitConstructorServiceDescriptor = ExplicitConstructorServiceDescriptor.Create(serviceType, serviceType, constructorInfo!, ServiceLifetime.Scoped);
 			var internalGetImplementationTypeMethod = typeof(ServiceDescriptor).GetMethod("GetImplementationType", BindingFlags.Instance | BindingFlags.NonPublic);
 			internalGetImplementationTypeMethod.Should().NotBeNull();
 			var implementationType = internalGetImplementationTypeMethod!.Invoke(explicitConstructorServiceDescriptor, null);
 			implementationType.Should().NotBeNull();
-			implementationType.Should().Be(typeof(object)); // For the non-generic version the implementation factory type will be Func<IServiceProvider, object>
-
+			implementationType.Should().Be(serviceType);
 
 			var explicitConstructorServiceDescriptor2 = new ExplicitConstructorServiceDescriptor<ClassWithAmbiguousConstructorDependenciesDecorated>(
 				serviceType,

@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhinobyte.Extensions.Reflection.AssemblyScanning;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Rhinobyte.Extensions.DependencyInjection.Tests
@@ -13,7 +14,31 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 		/******     TEST METHODS     ****************************
 		 ********************************************************/
 		[TestMethod]
-		public void HandleType_ignores_already_registered_types()
+		public void HandleType_does_not_ignores_already_registered_types_when_the_SkipAlreadyRegistered_property_is_false()
+		{
+			var scanResult = AssemblyScanner.CreateDefault()
+				.AddExampleLibrary1()
+				.ScanAssemblies();
+
+			var serviceRegistrationCache = new ServiceRegistrationCache(new ServiceCollection())
+			{
+				ServiceDescriptor.Singleton<ISomethingOptions>(new SomethingOptions())
+			};
+
+			var systemUnderTest = new InterfaceImplementationsConvention(
+				defaultOverwriteBehavior: ServiceRegistrationOverwriteBehavior.Add,
+				skipAlreadyRegistered: false,
+				skipDuplicates: false,
+				skipImplementationTypesAlreadyInUse: false
+			);
+
+			systemUnderTest.HandleType(typeof(ISomethingOptions), scanResult, serviceRegistrationCache)
+				.Should().BeTrue();
+			serviceRegistrationCache.Count.Should().Be(2);
+		}
+
+		[TestMethod]
+		public void HandleType_ignores_already_registered_types_when_the_SkipAlreadyRegistered_property_is_true()
 		{
 			var scanResult = AssemblyScanner.CreateDefault()
 				.AddExampleLibrary1()
@@ -29,6 +54,38 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 			systemUnderTest.HandleType(typeof(ISomethingOptions), scanResult, serviceRegistrationCache)
 				.Should().BeFalse();
 			serviceRegistrationCache.Count.Should().Be(1);
+		}
+
+		[TestMethod]
+		public void HandleType_ignores_in_use_implementation_types_when_the_SkipAlreadyInUseImplementationType_property_is_true()
+		{
+			var scanResult = AssemblyScanner.CreateDefault()
+				.AddExampleLibrary1()
+				.ScanAssemblies();
+
+			var serviceCollection = new ServiceCollection()
+				.AddScoped<SomethingService>()
+				.AddScoped<AlternateSomethingService>()
+				.AddScoped<SomethingService3>();
+
+			var serviceRegistrationCache = new ServiceRegistrationCache(serviceCollection);
+
+#if NET5_0_OR_GREATER
+			var allResolutionStrategies = System.Enum.GetValues<InterfaceImplementationResolutionStrategy>();
+#else
+			var allResolutionStrategies = System.Enum.GetValues(typeof(InterfaceImplementationResolutionStrategy)).Cast<InterfaceImplementationResolutionStrategy>().ToArray();
+#endif
+			foreach (var resolutionStrategy in allResolutionStrategies)
+			{
+				var systemUnderTest = new InterfaceImplementationsConvention(
+					resolutionStrategy: resolutionStrategy,
+					skipImplementationTypesAlreadyInUse: true
+				);
+
+				systemUnderTest.HandleType(typeof(ISomethingService), scanResult, serviceRegistrationCache)
+					.Should().BeFalse();
+				serviceRegistrationCache.Count.Should().Be(3);
+			}
 		}
 
 		[TestMethod]

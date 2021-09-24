@@ -30,11 +30,14 @@ namespace ExampleLibrary1
 			ITypeWithRegisterAttribute? typeWithRegisterAttribute = null)
 		{
 			SomethingOptions = somethingOptions;
+			TypeWithRegisterAttribute = typeWithRegisterAttribute;
 			ConstructorUsedIndex = 4;
 		}
 
 		public int ConstructorUsedIndex { get; }
 
 		public ISomethingOptions? SomethingOptions { get; }
+
+		public ITypeWithRegisterAttribute? TypeWithRegisterAttribute { get; }
 	}
 }
