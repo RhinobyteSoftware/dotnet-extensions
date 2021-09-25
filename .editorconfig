@@ -13,6 +13,10 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 charset = utf-8-bom
 
+# Markdown files
+[*.md]
+indent_style = space
+
 # Xml project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
 indent_style = space
