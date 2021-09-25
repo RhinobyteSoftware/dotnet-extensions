@@ -1,10 +1,8 @@
 # Rhinobyte.Extensions.Reflection
 
-This repo contains the code to build the `Rhinobyte.Extensions.Reflection` library for .Net
-
-## Nuget Package
-
 [![NuGet version (Rhinobyte.Extensions.Reflection)](https://img.shields.io/nuget/v/Rhinobyte.Extensions.Reflection.svg?style=flat)](https://www.nuget.org/packages/Rhinobyte.Extensions.Reflection/)
+
+This library contains extensions for .Net reflection including assembly scanning/type discovery extensions and support for parsing IL (intermediate-language) instructions.
 
 
 ## Assembly Scanning Extensions
@@ -34,7 +32,7 @@ Type information convenience methods such as `type.IsCompilerGenerated()` and `t
 ## Usage Examples
 
 #### Assembly Scanner Example Usage:
-```
+```cs
 using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 using System.Reflection;
 
@@ -91,12 +89,111 @@ public namespace ExampleLibrary
 }
 ```
 
-#### IL Method Body Parsing Example Usage:
 
-```
+#### IL Method Body Parsing Example Usage:
+```cs
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhinobyte.Extensions.Reflection;
+using Rhinobyte.Extensions.Reflection.AssemblyScanning;
 using Rhinobyte.Extensions.Reflection.IntermediateLanguage;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
+
+namespace Something.SomeLegacyWinFormsApp.UnitTests
+{
+    [TestMethod]
+    public class LegacyProjectTests
+    {
+        [TestMethod]
+        public void Form_types_that_use_embedded_resources_can_resolve_the_resources_successfully()
+        {
+            var scanResult = AssemblyScanner.CreateDefault()
+                .AddForType<Something.SomeLegacyWinFormsApp.Program>()
+                .ScanAssemblies();
+
+            var failedResources = new List<string>();
+            foreach (var discoveredType in scanResult.ConcreteTypes)
+            {
+                if (!typeof(System.Windows.Forms.Form).IsAssignableFrom(discoveredType))
+                    continue;
+                
+                var initializeComponentMethod = discoveredType.GetMethod("InitializeComponent", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                initializeComponentMethod.Should().NotBeNull();
+
+                initializeComponentMethodInstructions = initializeComponentMethod!.ParseInstructions();
+                ComponentResourceManager? resourceManager = null;
+                foreach (var ilInstruction in initializeComponentMethodInstructions)
+                {
+                    if (ilInstruction is not MethodReferenceInstruction methodReferenceInstruction)
+                        continue;
+
+                    if (!methodReferenceInstruction.MethodReference.DeclaringType.Name.Contains("ResourceManager")
+                        || methodReferenceInstruction.MethodReference.Name != nameof(ComponentResourceManager.GetObject))
+                        continue;
+
+                    // Get the string instruction that serves as the parameter for the resources.GetObject(resourceName) call
+                    var resourceNameInstruction = (StringInstruction)methodReferenceInstruction.PreviousInstruction!;
+                    
+                    if (resourceManager is null)
+                        resourceManager = new ComponentResourceManager(discoveredType);
+
+                    try
+                    {
+                        object resource = resourceManager.GetObject(resourceNameInstruction.Value);
+                        resource.Should().NotBeNull();
+                    }
+                    catch (Exception)
+                    {
+                        failedResources.Add($"{discoveredType.FullName}.resource -> {resourceName}");
+                    }
+                }
+            }
+
+            if (failedResources.Count > 0)
+                Assert.Fail($"The following resources we're not found. Make sure the resource file/item exists and that the Form namespace matches the .resx file/folder structure:{Environment.NewLine}{string.Join(Environment.NewLine, failedResources)}");
+        }
+    }
+}
 ```
+
+#### Misc Extension Examples
+```cs
+using FluentAssertions;
+using Rhinobyte.Extensions.Reflection;
+using System.Reflection;
+
+namespace SomeNamespace
+{
+    [TestClass]
+    public class ExtensionExamples
+    {
+        [TestMethod]
+        public void GetSignature_example_test()
+        {
+            var tryGetSomethingMethod = typeof(SomeClass<>).GetMethods().FirstOrDefault(method => method.Name == "TryGetSomething");
+
+            // .ToString() vs .GetSignature() extension method
+            tryGetSomethingMethod.ToString().Should().Be(
+            "System.Nullable`1[T] TryGetSomething()");
+
+            tryGetSomethingMethod.GetSignature().Should().Be(
+            "public T? TryGetSomething()");
+
+            tryGetSomethingMethod.GetSignature(useFullTypeName: true).Should().Be(
+            "public T? SomeNamespace.GenericStruct<T>.TryGetSomething() where T : System.IConvertible, struct");
+        }
+    }
+
+    public struct GenericStruct<T>
+        where T : struct, IConvertible
+    {
+        public T? TryGetSomething() { /** code **/ }
+    }
+}
+```
+
 

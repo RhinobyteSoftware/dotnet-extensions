@@ -2,6 +2,7 @@
 
 # Rhinobyte.Extensions
 
+This repo contains the code to build the Rhinobyte extension libraries for .NET
 
 ## Libraries/Projects
 
@@ -11,7 +12,7 @@
 
 This library contains types to extend the behavior provided by the `System.ComponentModel.DataAnnotations` types.
 
-### Rhinobyte.Extensions.DependencyInjection
+### [Rhinobyte.Extensions.DependencyInjection](/src/Rhinobyte.Extensions.DependencyInjection/README.md)
 
 [![NuGet version (Rhinobyte.Extensions.DependencyInjection)](https://img.shields.io/nuget/v/Rhinobyte.Extensions.DependencyInjection.svg?style=flat)](https://www.nuget.org/packages/Rhinobyte.Extensions.DependencyInjection/)
 
@@ -25,7 +26,11 @@ This library contains extensions for .Net reflection including assembly scanning
 
 ## Contributing
 
-TODO
+Filing issues for problems encountered is greatly appreciated and contribution via PRs is welcomed.
+
+Code changes that modify a library's public API signature will require a new major version number. For any such changes, please create an issue for discussion first and include the label `api-suggestion`. Please do not submit pull requests that include style changes.
+
+Maintaining a very high percentage of test coverage over these libraries will be an important requirement when reviewing pull requests. The `tools/create-code-coverage-report` shell script can be run to execute the tests with code coverage enabled and to generate an html version of the coverage results report. When making a code contribution please ensure you update all existing tests as necessary and add new test cases to cover new code.
 
 ## License
 

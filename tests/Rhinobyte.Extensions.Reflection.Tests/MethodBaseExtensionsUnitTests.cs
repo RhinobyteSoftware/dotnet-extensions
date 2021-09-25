@@ -320,6 +320,8 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 				.FirstOrDefault(methodInfo => methodInfo.Name == "TryGetSomething");
 			genericMethodToTest1.Should().NotBeNull();
 
+			genericMethodToTest1!.ToString().Should().Be("System.Nullable`1[T] TryGetSomething()");
+
 			genericMethodToTest1!.GetSignature().Should().Be("public T? TryGetSomething()");
 			genericMethodToTest1!.GetSignature(true).Should().Be("public T? Rhinobyte.Extensions.Reflection.Tests.Setup.GenericStruct<T>.TryGetSomething() where T : System.IConvertible, struct");
 		}
