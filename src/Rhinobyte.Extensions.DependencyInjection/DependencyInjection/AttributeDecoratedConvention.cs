@@ -49,7 +49,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			if (!discoveredType.IsAssignableFrom(implementationType) || !implementationType.IsClass || implementationType.IsAbstract)
 				throw new InvalidOperationException($"{discoveredType.FullName} is decorated with a {nameof(RegisterForDependencyInjectionAttribute)} with an invalid implementationType of {implementationType.FullName}");
 
-			var serviceDescriptor = BuildServiceDescriptor(discoveredType, implementationType, serviceRegistrationCache, registrationAttribute.ConstructorSelectionType, registrationAttribute.ServiceLifetime);
+			var serviceDescriptor = BuildServiceDescriptor(discoveredType, implementationType, serviceRegistrationCache, constructorSelectionType: registrationAttribute.ConstructorSelectionType, lifetime: registrationAttribute.ServiceLifetime);
 			if (serviceDescriptor == null)
 				return null;
 
