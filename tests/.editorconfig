@@ -27,3 +27,6 @@ dotnet_diagnostic.CA1711.severity    = none
 
 # Rule: (CA1707) Identifiers should not contain underscores - Reason: Common pattern for unit test method names
 dotnet_diagnostic.CA1707.severity    = none
+
+# Rule: (CA2007) Call ConfigureAwait - Reason: Don't care about this in tests
+dotnet_diagnostic.CA2007.severity    = none

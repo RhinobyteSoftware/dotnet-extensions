@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		development.props = development.props
+		global.json = global.json
 		README.md = README.md
 		solution.props = solution.props
 	EndProjectSection
@@ -39,6 +40,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.Reflection", "src\Rhinobyte.Extensions.Reflection\Rhinobyte.Extensions.Reflection.csproj", "{E706AF13-E77B-451E-B96D-E0D027A23B0F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.Reflection.Tests", "tests\Rhinobyte.Extensions.Reflection.Tests\Rhinobyte.Extensions.Reflection.Tests.csproj", "{1FCF049D-29EB-4E60-83CC-946C3C3A8E44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhinobyte.Extensions.SolutionIntegrationTests", "tests\Rhinobyte.Extensions.SolutionIntegrationTests\Rhinobyte.Extensions.SolutionIntegrationTests.csproj", "{01A7860D-5999-4C55-80D8-70688758673E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleIgnoredAttributeAssembly", "tests\ExampleIgnoredAttributeAssembly\ExampleIgnoredAttributeAssembly.csproj", "{E6E61601-7C9F-4A53-9450-667C976A8895}"
 EndProject
@@ -82,6 +85,10 @@ Global
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01A7860D-5999-4C55-80D8-70688758673E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01A7860D-5999-4C55-80D8-70688758673E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01A7860D-5999-4C55-80D8-70688758673E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01A7860D-5999-4C55-80D8-70688758673E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +102,7 @@ Global
 		{1FCF049D-29EB-4E60-83CC-946C3C3A8E44} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 		{E6E61601-7C9F-4A53-9450-667C976A8895} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
+		{01A7860D-5999-4C55-80D8-70688758673E} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A319B09C-E5BD-4E06-94C1-6D8666961326}
