@@ -49,7 +49,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 			var implementationTypes = new List<Type>();
 			var defaultConventionImplementationTypes = new List<Type>();
-			var defaultConventionClassName = discoveredType.Name?.StartsWith("I") == true
+			var defaultConventionClassName = discoveredType.Name?.StartsWith("I", StringComparison.Ordinal) == true
 				? discoveredType.Name.Substring(1)
 				: null;
 

@@ -31,10 +31,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 
 
-		public void Add(ServiceDescriptor serviceDescriptorItem)
+		public void Add(ServiceDescriptor item)
 		{
-			AddLookupItems(serviceDescriptorItem);
-			_serviceCollection.Add(serviceDescriptorItem);
+			AddLookupItems(item);
+			_serviceCollection.Add(item);
 		}
 
 		private void AddLookupItems(ServiceDescriptor serviceDescriptor)
@@ -74,7 +74,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 		public bool Contains(ServiceDescriptor item) => _serviceCollection.Contains(item);
 
+#pragma warning disable CA1725 // Parameter names should match base declaration
 		public void CopyTo(ServiceDescriptor[] array, int arrayStartIndex) => _serviceCollection.CopyTo(array, arrayStartIndex);
+#pragma warning restore CA1725 // Parameter names should match base declaration
 
 		public IEnumerator<ServiceDescriptor> GetEnumerator() => _serviceCollection.GetEnumerator();
 
@@ -128,16 +130,16 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 		public int IndexOf(ServiceDescriptor item) => _serviceCollection.IndexOf(item);
 
-		public void Insert(int index, ServiceDescriptor serviceDescriptorItem)
+		public void Insert(int index, ServiceDescriptor item)
 		{
-			AddLookupItems(serviceDescriptorItem);
-			_serviceCollection.Insert(index, serviceDescriptorItem);
+			AddLookupItems(item);
+			_serviceCollection.Insert(index, item);
 		}
 
-		public bool Remove(ServiceDescriptor serviceDescriptorItem)
+		public bool Remove(ServiceDescriptor item)
 		{
-			RemoveLookupItems(serviceDescriptorItem);
-			return _serviceCollection.Remove(serviceDescriptorItem);
+			RemoveLookupItems(item);
+			return _serviceCollection.Remove(item);
 		}
 
 		public void RemoveAt(int index)

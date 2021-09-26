@@ -9,11 +9,11 @@
         <InternalMsbuildMessageImportance>normal</InternalMsbuildMessageImportance>
         <SolutionSummary>Extension libraries for the .NET</SolutionSummary>
 
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
-        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
         <!-- Common Package/Project Property Values -->

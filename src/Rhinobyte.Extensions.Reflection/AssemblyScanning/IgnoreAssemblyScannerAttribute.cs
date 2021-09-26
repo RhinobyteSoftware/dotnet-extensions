@@ -8,7 +8,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 	/// <para>The <see cref="AssemblyScanner.CreateDefault"/> call will automatically include the <see cref="IgnoredAttributeFilter"/> in both the <see cref="AssemblyScanner.ScannedAssemblyFilters"/> and <see cref="AssemblyScanner.ScannedTypeFilters"/> collections.</para>
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Interface, Inherited = false)]
-	public class IgnoreAssemblyScannerAttribute : Attribute
+	public sealed class IgnoreAssemblyScannerAttribute : Attribute
 	{
 	}
 }

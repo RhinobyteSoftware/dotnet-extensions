@@ -11,7 +11,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// </para>
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-	public class RegisterForDependencyInjectionAttribute : Attribute
+	public sealed class RegisterForDependencyInjectionAttribute : Attribute
 	{
 		public RegisterForDependencyInjectionAttribute(Type implementationType)
 		{
@@ -19,7 +19,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		}
 
 		public ConstructorSelectionType? ConstructorSelectionType { get; set; }
-		public Type ImplementationType { get; set; }
+		public Type ImplementationType { get; }
 		public ServiceLifetime? ServiceLifetime { get; set; }
 		public ServiceRegistrationOverwriteBehavior? ServiceRegistrationOverwriteBehavior { get; set; }
 	}

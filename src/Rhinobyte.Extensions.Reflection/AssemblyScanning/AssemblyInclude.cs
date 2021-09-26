@@ -8,7 +8,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 	/// Representation of an assembly to include during assembly scanning.
 	/// </summary>
 	[DebuggerDisplay("Assembly = {AssemblyToInclude},  AreNonExportedTypesIncluded = {AreNonExportedTypesIncluded}")]
-	public struct AssemblyInclude
+	public struct AssemblyInclude : IEquatable<AssemblyInclude>
 	{
 		/// <summary>
 		/// Construct an AssemblyInclude instance
@@ -34,9 +34,11 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 		/// </summary>
 		public Assembly AssemblyToInclude { get; }
 
-
 		public override bool Equals(object? obj)
 			=> obj is AssemblyInclude otherAssemblyInclude && otherAssemblyInclude.AssemblyToInclude == this.AssemblyToInclude;
+
+		public bool Equals(AssemblyInclude other) =>
+			other.AssemblyToInclude == this.AssemblyToInclude;
 
 		public override int GetHashCode()
 			=> AssemblyToInclude.GetHashCode();

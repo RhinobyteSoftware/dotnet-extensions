@@ -185,9 +185,11 @@ namespace Rhinobyte.Extensions.DataAnnotations.Tests
 
 		/******     TEST SETUP     *****************************
 		 *******************************************************/
-		public class DateTimeRangeAttributeSubclass : DateTimeRangeAttribute
+		public sealed class DateTimeRangeAttributeSubclass : DateTimeRangeAttribute
 		{
+#pragma warning disable CA1019 // Define accessors for attribute arguments
 			public DateTimeRangeAttributeSubclass(DateTime minimum, DateTime maximum)
+#pragma warning restore CA1019 // Define accessors for attribute arguments
 				: base(minimum, maximum) { }
 
 			public DateTimeRangeAttributeSubclass(string minimum, string maximum)

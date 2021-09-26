@@ -4,11 +4,26 @@
 # /tests/ specific overrides
 [*.{cs,csx}]
 
+# Rule: (CA1014) Mark assemblies with CLSCompliant - Reason: Don't care for non published test/example projects
+dotnet_diagnostic.CA1014.severity    = none
+
+# Rule: (CA1024) Use properties where approprate - Reason: Dummy/example test types don't need to confirm to this rule
+dotnet_diagnostic.CA1024.severity    = none
+
 # Rule: (CA1034) Nested types should not be visible - Reason: Don't care about this in test projects
 dotnet_diagnostic.CA1034.severity    = none
 
+# Rule: (CA1040) Avoid empty interfaces - Reason: Dummy types in test projects / example libraries
+dotnet_diagnostic.CA1040.severity    = none
+
 # Rule: (CA1062) Consider calling ConfigureAwait on the awaited task. Reason: Not a concern in tests
 dotnet_diagnostic.CA1062.severity    = none
+
+# Rule: (CA1310) Specify StringComparison for correctness. Reason: Not a concern in tests
+dotnet_diagnostic.CA1310.severity    = none
+
+# Rule: (CA1711) Identifiers should not have incorrect suffix - Reason: Dummy/example type names used to describe their test purpose
+dotnet_diagnostic.CA1711.severity    = none
 
 # Rule: (CA1707) Identifiers should not contain underscores - Reason: Common pattern for unit test method names
 dotnet_diagnostic.CA1707.severity    = none

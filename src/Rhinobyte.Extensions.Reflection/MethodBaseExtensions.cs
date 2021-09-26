@@ -295,9 +295,7 @@ namespace Rhinobyte.Extensions.Reflection
 		/// </remarks>
 		/// <param name="methodBase">The <see cref="MethodBase"/> instance to check</param>
 		/// <exception cref="ArgumentNullException">Thrown if the <paramref name="methodBase"/> argument is null</exception>
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
 		public static bool IsAsync(this MethodBase methodBase)
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
 		{
 			_ = methodBase ?? throw new ArgumentNullException(nameof(methodBase));
 			return methodBase.IsDefined(typeof(AsyncStateMachineAttribute), true);

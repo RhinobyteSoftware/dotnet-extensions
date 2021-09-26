@@ -172,7 +172,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 			public bool ReturnValue { get; set; }
 			public bool WasHandleTypeCalled { get; private set; }
 
-			public bool HandleType(Type discoveredType, IAssemblyScanResult scanResult, ServiceRegistrationCache serviceCollection)
+			public bool HandleType(Type discoveredType, IAssemblyScanResult scanResult, ServiceRegistrationCache serviceRegistrationCache)
 			{
 				WasHandleTypeCalled = true;
 				return ReturnValue;

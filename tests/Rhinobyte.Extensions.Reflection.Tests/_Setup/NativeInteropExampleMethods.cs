@@ -103,10 +103,12 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 		/// <param name="isWow64Process">Result will be true if the process is running in the Wow64 emulator (e.g. 32bit process) or false if it is not running in the emulator (e.g. 64 bit process)</param>
 		/// <returns>true if the call succeeded, false if the call failed</returns>
 		[DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+		[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool IsWow64Process([In] SafeProcessHandle processHandle, [Out, MarshalAs(UnmanagedType.Bool)] out bool isWow64Process);
 
 		[DllImport("kernel32.dll", SetLastError = true)]
+		[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 		public static extern SafeProcessHandle OpenProcess([In] ProcessAccessFlags desiredAccess, [In] bool inheritHandle, [In] int processId);
 
 

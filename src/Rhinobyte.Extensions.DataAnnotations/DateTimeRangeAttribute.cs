@@ -12,7 +12,9 @@ namespace Rhinobyte.Extensions.DataAnnotations
 	/// 	See <see href="https://github.com/dotnet/runtime/issues/1143"/>
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+#pragma warning disable CA1813 // Avoid unsealed attributes
 	public class DateTimeRangeAttribute : ValidationAttribute
+#pragma warning restore CA1813 // Avoid unsealed attributes
 	{
 		private DateTime? _maximum;
 		private DateTime? _minimum;
@@ -34,7 +36,9 @@ namespace Rhinobyte.Extensions.DataAnnotations
 		/// </summary>
 		/// <param name="minimum">The minimum date constraint (inclusive).</param>
 		/// <param name="maximum">The maximum date constraint (inclusive).</param>
+#pragma warning disable CA1019 // Define accessors for attribute arguments
 		public DateTimeRangeAttribute(string minimum, string maximum)
+#pragma warning restore CA1019 // Define accessors for attribute arguments
 			: base(errorMessageAccessor: null)
 		{
 			_minimumStringValue = minimum;

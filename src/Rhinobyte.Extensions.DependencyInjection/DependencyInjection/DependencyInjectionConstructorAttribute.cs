@@ -7,7 +7,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// <para>See also <seealso cref="ConstructorSelectionType"/></para>
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Constructor, Inherited = false)]
-	public class DependencyInjectionConstructorAttribute : Attribute
+	public sealed class DependencyInjectionConstructorAttribute : Attribute
 	{
 	}
 }

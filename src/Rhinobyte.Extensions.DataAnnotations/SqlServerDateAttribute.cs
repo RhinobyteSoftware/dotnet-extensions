@@ -13,7 +13,7 @@ namespace Rhinobyte.Extensions.DataAnnotations
 	/// 	See <see href="https://github.com/dotnet/runtime/issues/1143"/>
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-	public class SqlServerDateAttribute : ValidationAttribute
+	public sealed class SqlServerDateAttribute : ValidationAttribute
 	{
 		/// <summary>
 		/// The maximum <see cref="DateTime"/> value of "9999-12-31 00:00:00" for a Sql Server date data type.

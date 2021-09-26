@@ -8,6 +8,6 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// </summary>
 	public interface IServiceRegistrationConvention
 	{
-		bool HandleType(Type discoveredType, IAssemblyScanResult scanResult, ServiceRegistrationCache serviceCollection);
+		bool HandleType(Type discoveredType, IAssemblyScanResult scanResult, ServiceRegistrationCache serviceRegistrationCache);
 	}
 }
