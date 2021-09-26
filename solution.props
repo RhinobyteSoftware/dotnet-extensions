@@ -27,18 +27,23 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageOutputPath>$(RepoRoot)build\$(Configuration)\</PackageOutputPath>
         <PackageProjectUrl>https://github.com/RhinobyteSoftware/dotnet-extensions</PackageProjectUrl>
+        <!-- 
+            Enable The <PackageReadmeFile> tag once the .NET 6 RC 2 SDK version is released. 
+            Needed to solve this problem: https://github.com/NuGet/Home/issues/10791#issuecomment-926218883
+        -->
+        <!--<PackageReadmeFile>README.md</PackageReadmeFile>-->
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/RhinobyteSoftware/dotnet-extensions</RepositoryUrl>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
         <!-- Subproject Package Versions -->
-        <DataAnnotationsPackageVersion>1.0.0</DataAnnotationsPackageVersion>
+        <DataAnnotationsPackageVersion>1.0.1</DataAnnotationsPackageVersion>
         <DataAnnotationsPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DataAnnotationsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DataAnnotationsPackageConsumerDependencyVersion>
-        
+
         <DependencyInjectionPackageVersion>1.0.0</DependencyInjectionPackageVersion>
         <DependencyInjectionPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DependencyInjectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DependencyInjectionPackageConsumerDependencyVersion>
-        
+
         <ReflectionPackageVersion>1.0.0</ReflectionPackageVersion>
         <ReflectionPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(ReflectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</ReflectionPackageConsumerDependencyVersion>
     </PropertyGroup>
@@ -56,7 +61,7 @@
         </PackageReference>
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>$(ProjectName).Tests</_Parameter1>
         </AssemblyAttribute>
@@ -65,9 +70,17 @@
         </AssemblyAttribute>
     </ItemGroup>
 
+    <ItemGroup Condition=" '$(IsPackable)' == 'true' AND '$(IsClsCompliant)' != 'false' ">
+        <AssemblyAttribute Include="System.CLSCompliant">
+            <_Parameter1>true</_Parameter1>
+            <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
+        </AssemblyAttribute>
+    </ItemGroup>
+
     <ItemGroup Condition="'$(IsPackable)' == 'true'">
         <None Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
         <None Include="$(RepoRoot)\RhinobytePackageIcon.png" Pack="true" PackagePath="Icon.png" />
+        <None Include="$(MSBuildProjectDirectory)\README.md" Pack="true" PackagePath="README.md" />
     </ItemGroup>
 
 
