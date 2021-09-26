@@ -21,7 +21,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 
 		public override string ToString()
 		{
-			if (LocalVariable == null)
+			if (LocalVariable is null)
 			{
 				return $"{base.ToString()} [Missing LocalVariableInfo]";
 			}

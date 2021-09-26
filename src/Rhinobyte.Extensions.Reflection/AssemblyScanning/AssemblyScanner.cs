@@ -178,7 +178,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 				return this;
 
 			var matchedAssemblyInclude = FindAssemblyInclude(assembly);
-			if (matchedAssemblyInclude == null)
+			if (matchedAssemblyInclude is null)
 				return this;
 
 			return Remove(matchedAssemblyInclude.Value);

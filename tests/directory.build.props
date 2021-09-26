@@ -8,7 +8,7 @@
         <TargetFrameworks>net48;netcoreapp3.1;net5.0</TargetFrameworks>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(IsExampleProject)' == ''">
+    <ItemGroup Condition="'$(IsTestProject)' == 'true'">
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
         <PackageReference Include="Microsoft.Net.Test.SDK" Version="16.8.3" />
         <PackageReference Include="Moq" Version="4.16.0" />

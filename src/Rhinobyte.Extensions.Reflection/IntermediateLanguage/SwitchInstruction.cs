@@ -29,7 +29,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 
 		public override string ToString()
 		{
-			if (TargetInstructions == null)
+			if (TargetInstructions is null)
 			{
 				return $"{base.ToString()}  [TargetInstructions: null]  [TargetOffsets: {string.Join(", ", TargetOffsets)}]";
 			}

@@ -26,6 +26,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		public Type GetImplementationType() => OriginalImplementationType;
 	}
 
+	/// <summary>
+	/// Static helper methods type for the generic <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/> class
+	/// </summary>
 	public static class ExplicitConstructorServiceDescriptor
 	{
 		/// <summary>
@@ -70,7 +73,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			where TImplementationType : class, TServiceType
 		{
 			var constructorInfo = SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
-			return constructorInfo == null
+			return constructorInfo is null
 				? ServiceDescriptor.Scoped<TServiceType, TImplementationType>()
 				: CreateScoped<TServiceType, TImplementationType>(constructorInfo);
 		}
@@ -85,7 +88,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			where TImplementationType : class, TServiceType
 		{
 			var constructorInfo = SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
-			return constructorInfo == null
+			return constructorInfo is null
 				? ServiceDescriptor.Singleton<TServiceType, TImplementationType>()
 				: CreateSingleton<TServiceType, TImplementationType>(constructorInfo);
 		}
@@ -100,7 +103,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			where TImplementationType : class, TServiceType
 		{
 			var constructorInfo = SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
-			return constructorInfo == null
+			return constructorInfo is null
 				? ServiceDescriptor.Transient<TServiceType, TImplementationType>()
 				: CreateTransient<TServiceType, TImplementationType>(constructorInfo);
 		}

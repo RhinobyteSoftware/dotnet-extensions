@@ -52,7 +52,7 @@ namespace Rhinobyte.Extensions.DataAnnotations
 		protected override ValidationResult IsValid(object? value, ValidationContext? validationContext)
 		{
 			// Automatically pass if value is null or empty. RequiredAttribute should be used to assert a value is not empty.
-			if (value == null)
+			if (value is null)
 			{
 				return ValidationResult.Success;
 			}

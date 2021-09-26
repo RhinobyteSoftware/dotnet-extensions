@@ -193,7 +193,7 @@ namespace Rhinobyte.Extensions.DataAnnotations.Tests
 			public DateTimeRangeAttributeSubclass(string minimum, string maximum)
 				: base(minimum, maximum) { }
 
-			public new void ParseRangeValuesIfNecessary(string? displayName)
+			public new void ParseRangeValuesIfNecessary(string displayName)
 				=> base.ParseRangeValuesIfNecessary(displayName);
 		}
 	}

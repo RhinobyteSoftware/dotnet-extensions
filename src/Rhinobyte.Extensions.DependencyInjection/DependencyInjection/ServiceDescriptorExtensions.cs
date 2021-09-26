@@ -3,6 +3,9 @@ using System;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// Extension methods for instances of the <see cref="ServiceDescriptor"/> type
+	/// </summary>
 	public static class ServiceDescriptorExtensions
 	{
 		/// <summary>

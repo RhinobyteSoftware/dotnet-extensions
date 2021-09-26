@@ -6,10 +6,13 @@ using System.Diagnostics;
 namespace Rhinobyte.Extensions.DependencyInjection
 {
 	/// <summary>
-	/// Wrapper type used by <see cref="ServiceRegistrationConventionBase"/> to allow convention subclasses to specify
-	/// a <see cref="ServiceRegistrationOverwriteBehavior"/> in lieu of the convention's default for a specific <see cref="ServiceDescriptor"/>
+	/// Wrapper type used by <see cref="ServiceRegistrationConventionBase"/> to allow convention subclasses to specify one or more service descriptors
+	/// to register.
+	/// <para>
+	/// Subclasses implementing ServiceRegistrationConventionBase can specify override values such as <see cref="ServiceRegistrationOverwriteBehavior"/>
+	/// to use for the specific registration in lieu of the convention class's default value
 	/// </summary>
-	[DebuggerDisplay("ServiceDescriptors = {ServiceDescriptors}, OverwriteBehavior = {OverwriteBehavior}")]
+	[DebuggerDisplay("ServiceDescriptor = {ServiceDescriptor}, ServiceDescriptors = {ServiceDescriptors}, OverwriteBehavior = {OverwriteBehavior}, SkipDuplicates = {SkipDuplicates}, SkipImplementationTypesAlreadyInUse = {SkipImplementationTypesAlreadyInUse}")]
 	public class ServiceRegistrationParameters
 	{
 		public ServiceRegistrationParameters(

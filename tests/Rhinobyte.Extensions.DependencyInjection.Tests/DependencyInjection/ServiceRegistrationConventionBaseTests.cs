@@ -487,7 +487,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 				throw new System.NotImplementedException();
 			}
 
-			public void SetMockServiceRegistrationParameters(ServiceRegistrationParameters? serviceRegistrationParameters)
+			public void SetMockServiceRegistrationParameters(ServiceRegistrationParameters serviceRegistrationParameters)
 			{
 				_mockServiceRegistrationParameters = serviceRegistrationParameters;
 				_useMockServiceRegistrationParameters = true;

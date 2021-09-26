@@ -22,12 +22,12 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 
 		public override string ToString()
 		{
-			if (MethodReference == null)
+			if (MethodReference is null)
 			{
 				return $"{base.ToString()}  [Missing MethodReference]";
 			}
 
-			var methodName = MethodReference.DeclaringType == null
+			var methodName = MethodReference.DeclaringType is null
 				? $"{MethodReference.Name} (UnknownType)"
 				: $"{MethodReference.DeclaringType.Name}.{MethodReference.Name}";
 

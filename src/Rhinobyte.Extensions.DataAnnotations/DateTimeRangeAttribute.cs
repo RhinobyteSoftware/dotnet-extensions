@@ -76,7 +76,7 @@ namespace Rhinobyte.Extensions.DataAnnotations
 			ParseRangeValuesIfNecessary(validationContext?.DisplayName);
 
 			// Automatically pass if value is null or empty. RequiredAttribute should be used to assert a value is not empty.
-			if (value == null)
+			if (value is null)
 			{
 				return ValidationResult.Success;
 			}

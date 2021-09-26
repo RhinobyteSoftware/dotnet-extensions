@@ -29,7 +29,7 @@ namespace Rhinobyte.Extensions.DataAnnotations.Tests
 
 
 				var fullTypeName = libraryType?.FullName;
-				if (fullTypeName == null)
+				if (fullTypeName is null)
 					continue;
 
 				var lastDotIndex = fullTypeName.LastIndexOf('.');

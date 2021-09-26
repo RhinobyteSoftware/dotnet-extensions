@@ -21,7 +21,7 @@ namespace Rhinobyte.Extensions.Reflection
 			foreach (var constraintType in typeConstraints)
 			{
 				++constraintIndex;
-				if (constraintType == null) { continue; }
+				if (constraintType is null) { continue; }
 
 				var genericArgumentIndex = 0;
 				var constraintName = constraintType.GetDisplayName(constraintType.CustomAttributes, null, null, useFullTypeName, ref genericArgumentIndex);
@@ -42,7 +42,7 @@ namespace Rhinobyte.Extensions.Reflection
 				return string.Empty;
 
 			var underlyingType = Nullable.GetUnderlyingType(type);
-			if (underlyingType == null && isNullable)
+			if (underlyingType is null && isNullable)
 			{
 				underlyingType = type;
 			}
@@ -329,7 +329,7 @@ namespace Rhinobyte.Extensions.Reflection
 				}
 			}
 
-			if (declaringMember == null)
+			if (declaringMember is null)
 				declaringMember = memberType.GetDeclaringMember();
 
 			for (var nextDeclaringMember = declaringMember; nextDeclaringMember != null; nextDeclaringMember = nextDeclaringMember.DeclaringType)

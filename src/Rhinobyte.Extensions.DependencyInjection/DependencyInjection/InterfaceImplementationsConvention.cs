@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// Service registration convention that will register implementations of a discovered interface based on the provided <see cref="InterfaceImplementationResolutionStrategy"/>
+	/// </summary>
 	public class InterfaceImplementationsConvention : ServiceRegistrationConventionBase
 	{
 		public InterfaceImplementationsConvention(
@@ -91,7 +94,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 						return null;
 
 					var serviceDescriptor = BuildServiceDescriptor(discoveredType, defaultConventionImplementationTypes[0], serviceRegistrationCache);
-					return serviceDescriptor == null
+					return serviceDescriptor is null
 						? null
 						: new ServiceRegistrationParameters(serviceDescriptor);
 				}
@@ -101,7 +104,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 					if (defaultConventionImplementationTypes.Count == 1)
 					{
 						var serviceDescriptor = BuildServiceDescriptor(discoveredType, defaultConventionImplementationTypes[0], serviceRegistrationCache);
-						return serviceDescriptor == null
+						return serviceDescriptor is null
 							? null
 							: new ServiceRegistrationParameters(serviceDescriptor);
 					}
@@ -125,7 +128,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 					if (implementationTypes.Count == 1)
 					{
 						var serviceDescriptor = BuildServiceDescriptor(discoveredType, implementationTypes[0], serviceRegistrationCache);
-						return serviceDescriptor == null
+						return serviceDescriptor is null
 							? null
 							: new ServiceRegistrationParameters(serviceDescriptor);
 					}
@@ -133,7 +136,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 					if (defaultConventionImplementationTypes.Count == 1)
 					{
 						var serviceDescriptor = BuildServiceDescriptor(discoveredType, defaultConventionImplementationTypes[0], serviceRegistrationCache);
-						return serviceDescriptor == null
+						return serviceDescriptor is null
 							? null
 							: new ServiceRegistrationParameters(serviceDescriptor);
 					}
@@ -147,7 +150,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 						return null;
 
 					var serviceDescriptor = BuildServiceDescriptor(discoveredType, implementationTypes[0], serviceRegistrationCache);
-					return serviceDescriptor == null
+					return serviceDescriptor is null
 						? null
 						: new ServiceRegistrationParameters(serviceDescriptor);
 				}

@@ -7,6 +7,9 @@ using System.Reflection;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// See extension methods for <see cref="IServiceCollection"/> providing support for convention based registration of types discovered via reflection
+	/// </summary>
 	public static class RhinobyteServiceCollectionExtensions
 	{
 		public static IServiceCollection AddScopedWithConstructorSelection<TServiceType, TImplementationType>(
@@ -18,7 +21,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			_ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
 			var explicitConstructorToUse = ExplicitConstructorServiceDescriptor.SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
-			if (explicitConstructorToUse == null)
+			if (explicitConstructorToUse is null)
 				return serviceCollection.AddScoped<TServiceType, TImplementationType>();
 
 			serviceCollection.Add(new ExplicitConstructorServiceDescriptor<TImplementationType>(typeof(TServiceType), explicitConstructorToUse, ServiceLifetime.Scoped));
@@ -46,7 +49,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			_ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
 			var explicitConstructorToUse = ExplicitConstructorServiceDescriptor.SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
-			if (explicitConstructorToUse == null)
+			if (explicitConstructorToUse is null)
 				return serviceCollection.AddSingleton<TServiceType, TImplementationType>();
 
 			serviceCollection.Add(new ExplicitConstructorServiceDescriptor<TImplementationType>(typeof(TServiceType), explicitConstructorToUse, ServiceLifetime.Singleton));
@@ -74,7 +77,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			_ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
 			var explicitConstructorToUse = ExplicitConstructorServiceDescriptor.SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
-			if (explicitConstructorToUse == null)
+			if (explicitConstructorToUse is null)
 				return serviceCollection.AddTransient<TServiceType, TImplementationType>();
 
 			serviceCollection.Add(new ExplicitConstructorServiceDescriptor<TImplementationType>(typeof(TServiceType), explicitConstructorToUse, ServiceLifetime.Transient));
@@ -106,6 +109,21 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			IAssemblyScanResult scanResult)
 			=> RegisterTypes(serviceCollection, scanResult, new AttributeDecoratedConvention());
 
+		public static IServiceCollection RegisterConcreteTypesAsSelf(
+			this IServiceCollection serviceCollection,
+			IAssemblyScanner scanner,
+			bool skipImplementationTypesAlreadyInUse = true)
+		{
+			_ = scanner ?? throw new ArgumentNullException(nameof(scanner));
+			return RegisterConcreteTypesAsSelf(serviceCollection, scanner.ScanAssemblies(), skipImplementationTypesAlreadyInUse);
+		}
+
+		public static IServiceCollection RegisterConcreteTypesAsSelf(
+			this IServiceCollection serviceCollection,
+			IAssemblyScanResult scanResult,
+			bool skipImplementationTypesAlreadyInUse = true)
+			=> RegisterTypes(serviceCollection, scanResult, new ConcreteTypeAsSelfConvention(skipImplementationTypesAlreadyInUse: skipImplementationTypesAlreadyInUse));
+
 		public static IServiceCollection RegisterInterfaceImplementations(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanner scanner,
@@ -128,6 +146,17 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		{
 			_ = scanner ?? throw new ArgumentNullException(nameof(scanner));
 			return RegisterTypes(serviceCollection, scanner.ScanAssemblies(), serviceRegistrationConvention);
+		}
+
+		public static IServiceCollection RegisterTypes(
+			this IServiceCollection serviceCollection,
+			IEnumerable<Type> discoveredTypes,
+			IServiceRegistrationConvention serviceRegistrationConvention)
+		{
+			_ = discoveredTypes ?? throw new ArgumentNullException(nameof(discoveredTypes));
+			var assemblyScanner = AssemblyScanner.CreateDefault().IncludeTypes(discoveredTypes);
+
+			return RegisterTypes(serviceCollection, assemblyScanner.ScanAssemblies(), serviceRegistrationConvention);
 		}
 
 		public static IServiceCollection RegisterTypes(
@@ -159,6 +188,18 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		{
 			_ = scanner ?? throw new ArgumentNullException(nameof(scanner));
 			return RegisterTypes(serviceCollection, scanner.ScanAssemblies(), serviceRegistrationConventions, tryAllConventions);
+		}
+
+		public static IServiceCollection RegisterTypes(
+			this IServiceCollection serviceCollection,
+			IEnumerable<Type> discoveredTypes,
+			IEnumerable<IServiceRegistrationConvention> serviceRegistrationConventions,
+			bool tryAllConventions = false)
+		{
+			_ = discoveredTypes ?? throw new ArgumentNullException(nameof(discoveredTypes));
+			var assemblyScanner = AssemblyScanner.CreateDefault().IncludeTypes(discoveredTypes);
+
+			return RegisterTypes(serviceCollection, assemblyScanner.ScanAssemblies(), serviceRegistrationConventions, tryAllConventions);
 		}
 
 		public static IServiceCollection RegisterTypes(
@@ -198,7 +239,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			_ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
 			var explicitConstructorToUse = ExplicitConstructorServiceDescriptor.SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
-			if (explicitConstructorToUse == null)
+			if (explicitConstructorToUse is null)
 			{
 				serviceCollection.TryAddScoped<TServiceType, TImplementationType>();
 				return serviceCollection;
@@ -229,7 +270,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			_ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
 			var explicitConstructorToUse = ExplicitConstructorServiceDescriptor.SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
-			if (explicitConstructorToUse == null)
+			if (explicitConstructorToUse is null)
 			{
 				serviceCollection.TryAddSingleton<TServiceType, TImplementationType>();
 				return serviceCollection;
@@ -260,7 +301,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			_ = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
 
 			var explicitConstructorToUse = ExplicitConstructorServiceDescriptor.SelectCustomConstructor(typeof(TImplementationType), constructorSelectionType);
-			if (explicitConstructorToUse == null)
+			if (explicitConstructorToUse is null)
 			{
 				serviceCollection.TryAddTransient<TServiceType, TImplementationType>();
 				return serviceCollection;

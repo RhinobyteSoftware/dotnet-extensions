@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <IsExampleProject>true</IsExampleProject>
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="..\..\src\Rhinobyte.Extensions.DependencyInjection\Rhinobyte.Extensions.DependencyInjection.csproj" />
     </ItemGroup>

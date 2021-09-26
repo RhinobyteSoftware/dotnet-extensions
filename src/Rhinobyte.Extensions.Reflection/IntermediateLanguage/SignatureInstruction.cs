@@ -21,14 +21,14 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		public byte[] GetSignatureBlob()
 		{
 			// Need to return a clone of the array so that consumers of this library cannot change its contents
-			return _signatureBlob == null
+			return _signatureBlob is null
 				? new byte[0]
 				: (byte[])_signatureBlob.Clone();
 		}
 
 		public override string ToString()
 		{
-			if (_signatureBlob == null)
+			if (_signatureBlob is null)
 			{
 				return $"{base.ToString()}  [SignatureBlob: null]";
 			}

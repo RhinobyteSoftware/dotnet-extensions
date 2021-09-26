@@ -5,6 +5,9 @@ using System.Reflection;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// Service registration convention that will handle registration of discovered types that are decorated with the <see cref="RegisterForDependencyInjectionAttribute"/>
+	/// </summary>
 	public class AttributeDecoratedConvention : ServiceRegistrationConventionBase
 	{
 		public AttributeDecoratedConvention(
@@ -39,18 +42,18 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				return null;
 
 			var registrationAttribute = discoveredType.GetCustomAttribute<RegisterForDependencyInjectionAttribute>(false);
-			if (registrationAttribute == null)
+			if (registrationAttribute is null)
 				return null;
 
 			var implementationType = registrationAttribute.ImplementationType;
-			if (implementationType == null)
+			if (implementationType is null)
 				throw new InvalidOperationException($"{discoveredType.FullName} is decorated with a {nameof(RegisterForDependencyInjectionAttribute)} that has a null value for {nameof(RegisterForDependencyInjectionAttribute.ImplementationType)}");
 
 			if (!discoveredType.IsAssignableFrom(implementationType) || !implementationType.IsClass || implementationType.IsAbstract)
 				throw new InvalidOperationException($"{discoveredType.FullName} is decorated with a {nameof(RegisterForDependencyInjectionAttribute)} with an invalid implementationType of {implementationType.FullName}");
 
 			var serviceDescriptor = BuildServiceDescriptor(discoveredType, implementationType, serviceRegistrationCache, constructorSelectionType: registrationAttribute.ConstructorSelectionType, lifetime: registrationAttribute.ServiceLifetime);
-			if (serviceDescriptor == null)
+			if (serviceDescriptor is null)
 				return null;
 
 			return new ServiceRegistrationParameters(serviceDescriptor, registrationAttribute.ServiceRegistrationOverwriteBehavior);

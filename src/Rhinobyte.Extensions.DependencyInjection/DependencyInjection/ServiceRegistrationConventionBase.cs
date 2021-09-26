@@ -6,6 +6,13 @@ using System.Collections.Generic;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// Base implementation of the <see cref="IServiceRegistrationConvention"/> contract.
+	/// <para>
+	/// Subclasses should implement the abstract <see cref="GetServiceRegistrationParameters(Type, IAssemblyScanResult, ServiceRegistrationCache)"/> method to handle
+	/// selection of the implementation type for a discovered type
+	/// </para>
+	/// </summary>
 	public abstract class ServiceRegistrationConventionBase : IServiceRegistrationConvention
 	{
 		protected ServiceRegistrationConventionBase(
@@ -94,7 +101,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			_ = serviceRegistrationCache ?? throw new ArgumentNullException(nameof(serviceRegistrationCache));
 
 			var serviceRegistrationParameters = GetServiceRegistrationParameters(discoveredType, scanResult, serviceRegistrationCache);
-			if (serviceRegistrationParameters == null)
+			if (serviceRegistrationParameters is null)
 				return false;
 
 			var overwriteBehaviorToUse = serviceRegistrationParameters.OverwriteBehavior ?? DefaultOverwriteBehavior;
@@ -104,7 +111,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			if (serviceRegistrationParameters.ServiceDescriptor != null)
 				return TryRegister(overwriteBehaviorToUse, serviceRegistrationParameters.ServiceDescriptor, serviceRegistrationCache, skipDuplicates, skipImplementationTypesAlreadyInUse);
 
-			if (serviceRegistrationParameters.ServiceDescriptors == null)
+			if (serviceRegistrationParameters.ServiceDescriptors is null)
 				return false;
 
 			return TryRegisterMultiple(
@@ -195,7 +202,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			foreach (var serviceDescriptor in serviceDescriptors)
 			{
 				var implementationType = serviceDescriptor.TryGetImplementationType();
-				if (implementationType == null)
+				if (implementationType is null)
 					continue;
 
 				++totalCount;

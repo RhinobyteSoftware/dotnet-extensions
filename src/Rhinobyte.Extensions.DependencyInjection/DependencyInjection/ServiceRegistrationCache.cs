@@ -43,7 +43,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				return;
 
 			var implementationType = serviceDescriptor.TryGetImplementationType();
-			if (implementationType == null)
+			if (implementationType is null)
 				return;
 
 			if (!_lookupByServiceType.TryGetValue(serviceDescriptor.ServiceType, out var byServiceTypeList))
@@ -120,7 +120,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				return false;
 
 			var implementationType = serviceDescriptor.TryGetImplementationType();
-			if (implementationType == null)
+			if (implementationType is null)
 				return false;
 
 			return HasExistingMatch(serviceDescriptor.ServiceType, implementationType);
@@ -154,7 +154,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				return;
 
 			var implementationType = serviceDescriptor.TryGetImplementationType();
-			if (implementationType == null)
+			if (implementationType is null)
 				return;
 
 			if (_lookupByServiceType.TryGetValue(serviceDescriptor.ServiceType, out var byServiceTypeList))

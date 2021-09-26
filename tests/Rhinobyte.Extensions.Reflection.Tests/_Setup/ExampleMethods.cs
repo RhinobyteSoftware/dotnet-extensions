@@ -180,7 +180,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 
 		public static int NullParameterCheck_Type1(string parameter)
 		{
-			if (parameter == null) throw new ArgumentNullException(nameof(parameter));
+			if (parameter is null) throw new ArgumentNullException(nameof(parameter));
 
 			return 5;
 		}

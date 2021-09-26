@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// Service registration convention that will enumerate over a set of sub conventions to see if sub conventions can handle registration of the discovered type
+	/// </summary>
 	public class AggregateConvention : IServiceRegistrationConvention
 	{
 		private readonly IEnumerable<IServiceRegistrationConvention> _conventions;

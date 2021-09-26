@@ -25,7 +25,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 
 		public override string ToString()
 		{
-			if (MemberReference == null)
+			if (MemberReference is null)
 			{
 				return $"{base.ToString()}  [MemberReference: null]";
 			}

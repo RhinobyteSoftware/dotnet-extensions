@@ -27,7 +27,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 
 		public override string ToString()
 		{
-			if (ParameterReference == null)
+			if (ParameterReference is null)
 			{
 				return $"{base.ToString()}  [Parameter #{ParameterIndex}]  [ParameterReference: null]";
 			}
