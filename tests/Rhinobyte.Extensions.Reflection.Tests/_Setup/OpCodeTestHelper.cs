@@ -11,7 +11,9 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 		public static readonly FieldInfo[] OpcodeStaticFields;
 		public static readonly IReadOnlyDictionary<OperandType, List<OpCode>> OpcodeLookupByOperandType;
 
+#pragma warning disable CA1810 // Initialize reference type static fields inline
 		static OpCodeTestHelper()
+#pragma warning restore CA1810 // Initialize reference type static fields inline
 		{
 			OpcodeStaticFields = typeof(OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static);
 			var lookupDictionary = new Dictionary<OperandType, List<OpCode>>();

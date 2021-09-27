@@ -52,7 +52,7 @@ namespace Rhinobyte.Extensions.SolutionIntegrationTests
 			using var dotnetDownloadsHttpClient = httpClientFactory.CreateClient();
 			dotnetDownloadsHttpClient.BaseAddress = new System.Uri("https://dotnet.microsoft.com/");
 
-			int dotnetMajorVersion = 5;
+			var dotnetMajorVersion = 5;
 			var dotnetMinorVersion = 0;
 			string? latestStableSdkVersion = null;
 			var allDiscoveredSdkVersions = new List<string>();

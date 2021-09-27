@@ -17,7 +17,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 		private readonly HashSet<Type> _includedTypes = new HashSet<Type>();
 		private readonly HashSet<IScannedAssemblyFilter> _scannedAssemblyFilters;
 		private readonly HashSet<IScannedTypeFilter> _scannedTypeFilters;
-		 
+
 		protected AssemblyScanner()
 		{
 			_scannedAssemblyFilters = new HashSet<IScannedAssemblyFilter>();
@@ -45,10 +45,9 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			var assemblyScanner = new AssemblyScanner();
 
 			var ignoredAttributeFilter = new IgnoredAttributeFilter();
-			assemblyScanner.AddAssemblyFilter(ignoredAttributeFilter);
-			assemblyScanner.AddTypeFilter(ignoredAttributeFilter);
-
-			return assemblyScanner;
+			return assemblyScanner
+				.AddAssemblyFilter(ignoredAttributeFilter)
+				.AddTypeFilter(ignoredAttributeFilter);
 		}
 
 		public IReadOnlyCollection<AssemblyInclude> AssembliesToScan => _assembliesToScan;
@@ -140,7 +139,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			if (typesToExclude != null)
 			{
 				foreach (var typeToExclude in typesToExclude)
-					ExcludeType(typeToExclude);
+					_ = ExcludeType(typeToExclude);
 			}
 
 			return this;
@@ -166,7 +165,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			if (typesToInclude != null)
 			{
 				foreach (var typeToInclude in typesToInclude)
-					IncludeType(typeToInclude);
+					_ = IncludeType(typeToInclude);
 			}
 
 			return this;
@@ -233,7 +232,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 				{
 					if (includeExcludeConflictResolutionStrategy == IncludeExcludeConflictResolutionStrategy.PrioritizeExcludes)
 					{
-						newScanResult.IgnoredTypes.Add(explicitlyIncludedType);
+						_ = newScanResult.IgnoredTypes.Add(explicitlyIncludedType);
 						continue;
 					}
 
@@ -264,11 +263,11 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 
 				if (ignoreAssembly)
 				{
-					newScanResult.IgnoredAssemblies.Add(assemblyInclude);
+					_ = newScanResult.IgnoredAssemblies.Add(assemblyInclude);
 					continue;
 				}
 
-				newScanResult.ScannedAssemblies.Add(assemblyInclude);
+				_ = newScanResult.ScannedAssemblies.Add(assemblyInclude);
 				var discoveredTypes = assemblyInclude.AreNonExportedTypesIncluded
 					? assemblyInclude.AssemblyToInclude.GetTypes()
 					: assemblyInclude.AssemblyToInclude.GetExportedTypes();
@@ -280,7 +279,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 
 					if (_excludedTypes.Contains(discoveredType))
 					{
-						newScanResult.IgnoredTypes.Add(discoveredType);
+						_ = newScanResult.IgnoredTypes.Add(discoveredType);
 						continue;
 					}
 
@@ -296,7 +295,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 
 					if (isIgnoredType)
 					{
-						newScanResult.IgnoredTypes.Add(discoveredType);
+						_ = newScanResult.IgnoredTypes.Add(discoveredType);
 						continue;
 					}
 
@@ -310,18 +309,18 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return _currentScanResult;
 		}
 
-		private void SetResultTypes(AssemblyScanResult scanResult, Type scannedType)
+		private static void SetResultTypes(AssemblyScanResult scanResult, Type scannedType)
 		{
-			scanResult.AllDiscoveredTypes.Add(scannedType);
+			_ = scanResult.AllDiscoveredTypes.Add(scannedType);
 
 			if (scannedType.IsInterface)
-				scanResult.InterfaceTypes.Add(scannedType);
+				_ = scanResult.InterfaceTypes.Add(scannedType);
 
 			if (scannedType.IsClass && !scannedType.IsAbstract)
-				scanResult.ConcreteTypes.Add(scannedType);
+				_ = scanResult.ConcreteTypes.Add(scannedType);
 
 			if (scannedType.IsOpenGeneric())
-				scanResult.OpenGenericTypes.Add(scannedType);
+				_ = scanResult.OpenGenericTypes.Add(scannedType);
 		}
 	}
 }

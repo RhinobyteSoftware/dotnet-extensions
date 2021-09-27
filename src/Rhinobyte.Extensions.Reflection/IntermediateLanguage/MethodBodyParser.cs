@@ -53,7 +53,9 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					? OpCodeHelper.SingleByteOpCodeLookup[opcodeByte]
 					: OpCodeHelper.TwoByteOpCodeLookup[ReadByte()];
 
+#pragma warning disable IDE0010 // Add missing cases.  Reason: Intentionally want the default case to handle most operand types for this method
 				switch (currentOpcode.OperandType)
+#pragma warning restore IDE0010 // Add missing cases
 				{
 					case OperandType.InlineField:
 					case OperandType.InlineMethod:
@@ -96,7 +98,9 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					? OpCodeHelper.SingleByteOpCodeLookup[opcodeByte]
 					: OpCodeHelper.TwoByteOpCodeLookup[ReadByte()];
 
+#pragma warning disable IDE0010 // Add missing cases.  Reason: Intentionally want the default case to handle most operand types for this method
 				switch (currentOpcode.OperandType)
+#pragma warning restore IDE0010 // Add missing cases
 				{
 					case OperandType.InlineField:
 					case OperandType.InlineMethod:
@@ -139,7 +143,9 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					? OpCodeHelper.SingleByteOpCodeLookup[opcodeByte]
 					: OpCodeHelper.TwoByteOpCodeLookup[ReadByte()];
 
+#pragma warning disable IDE0010 // Add missing cases.  Reason: Intentionally want the default case to handle most operand types for this method
 				switch (currentOpcode.OperandType)
+#pragma warning restore IDE0010 // Add missing cases
 				{
 					case OperandType.InlineField:
 					case OperandType.InlineMethod:
@@ -214,8 +220,8 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 
 			InstructionBase? previousInstruction = null;
 
-			int instructionIndex = 0;
-			int instructionOffset = _bytePosition;
+			var instructionIndex = 0;
+			var instructionOffset = _bytePosition;
 			while (_bytePosition < _ilBytes.Length)
 			{
 				instructionOffset = _bytePosition;
@@ -418,6 +424,9 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 						currentInstruction = new FloatInstruction(instructionIndex, instructionOffset, currentOpcode, ReadSingle());
 						break;
 
+#pragma warning disable CS0618 // Type or member is obsolete. Reason: Ensuring all switch cases are handled.
+					case OperandType.InlinePhi:
+#pragma warning restore CS0618 // Type or member is obsolete
 					default:
 						throw new NotSupportedException($"{nameof(MethodBodyParser)}.{nameof(ParseInstructions)}() is not supported for an {nameof(OperandType)} value of {currentOpcode.OperandType}");
 				}
@@ -437,7 +446,9 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 
 			foreach (var instructionToUpdate in branchInstructionsNeedingLinked)
 			{
+#pragma warning disable IDE0010 // Add missing cases.  Reason: Intentionally limited to the specified cases
 				switch (instructionToUpdate.OpCode.OperandType)
+#pragma warning restore IDE0010 // Add missing cases
 				{
 					case OperandType.InlineBrTarget:
 					case OperandType.ShortInlineBrTarget:

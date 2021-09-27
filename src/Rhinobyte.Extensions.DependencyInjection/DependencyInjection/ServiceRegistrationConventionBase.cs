@@ -173,8 +173,11 @@ namespace Rhinobyte.Extensions.DependencyInjection
 					break;
 
 				case ServiceRegistrationOverwriteBehavior.ReplaceFirst:
-					serviceRegistrationCache.Replace(serviceDescriptor);
+					_ = serviceRegistrationCache.Replace(serviceDescriptor);
 					break;
+
+				default:
+					throw new NotImplementedException($"{nameof(TryRegister)} is not implemented for the {nameof(ServiceRegistrationOverwriteBehavior)} value of {overwriteBehavior}");
 			}
 
 			return true;
@@ -239,7 +242,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				serviceDescriptorsToAdd.Add(serviceDescriptor);
 
 				if (isReplaceAll && byServiceType?.Count > 0)
-					serviceRegistrationCache.RemoveAll(serviceDescriptor.ServiceType);
+					_ = serviceRegistrationCache.RemoveAll(serviceDescriptor.ServiceType);
 			}
 
 			if (totalCount == skipTryAddCount)
@@ -255,15 +258,18 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				case ServiceRegistrationOverwriteBehavior.ReplaceAll:
 					// We already check for duplicates and handle RemoveAll calls above using our fast lookup
 					// so calling Add for the TryAdd and ReplaceAll cases here should be fine
-					serviceRegistrationCache.Add(serviceDescriptorsToAdd);
+					_ = serviceRegistrationCache.Add(serviceDescriptorsToAdd);
 					break;
 
 				case ServiceRegistrationOverwriteBehavior.ReplaceFirst:
 					if (serviceDescriptorsToAdd.Count > 1)
 						throw new InvalidOperationException($"{nameof(ServiceRegistrationOverwriteBehavior)}.{nameof(ServiceRegistrationOverwriteBehavior.ReplaceFirst)} is only valid when registering a single {nameof(ServiceDescriptor)}. {serviceDescriptorsToAdd.Count} descriptors were returned for {discoveredType.FullName}");
 
-					serviceRegistrationCache.Replace(serviceDescriptorsToAdd[0]);
+					_ = serviceRegistrationCache.Replace(serviceDescriptorsToAdd[0]);
 					break;
+
+				default:
+					throw new NotImplementedException($"{nameof(TryRegisterMultiple)} is not implemented for the {nameof(ServiceRegistrationOverwriteBehavior)} value of {overwriteBehavior}");
 			}
 
 			return true;

@@ -9,6 +9,11 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	[Serializable]
 	public class ConstructorSelectionFailedException : InvalidOperationException
 	{
+		public ConstructorSelectionFailedException()
+			: base()
+		{
+		}
+
 		public ConstructorSelectionFailedException(string? message)
 			: base(message)
 		{

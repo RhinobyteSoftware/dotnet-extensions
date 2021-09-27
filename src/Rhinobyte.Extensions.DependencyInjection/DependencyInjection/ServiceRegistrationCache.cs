@@ -160,14 +160,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				return;
 
 			if (_lookupByServiceType.TryGetValue(serviceDescriptor.ServiceType, out var byServiceTypeList))
-			{
-				byServiceTypeList.Remove(serviceDescriptor);
-			}
+				_ = byServiceTypeList.Remove(serviceDescriptor);
 
 			if (_lookupByImplementationType.TryGetValue(implementationType, out var byImplementationTypeList))
-			{
-				byImplementationTypeList.Remove(serviceDescriptor);
-			}
+				_ = byImplementationTypeList.Remove(serviceDescriptor);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => _serviceCollection.GetEnumerator();

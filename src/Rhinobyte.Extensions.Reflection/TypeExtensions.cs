@@ -11,8 +11,7 @@ namespace Rhinobyte.Extensions.Reflection
 	{
 		internal static string BuildGenericConstraintDisplayValue(string typeArgumentName, Type[] typeConstraints, bool useFullTypeName)
 		{
-			var genericConstraintBuilder = new StringBuilder();
-			genericConstraintBuilder
+			var genericConstraintBuilder = new StringBuilder()
 				.Append("where ")
 				.Append(typeArgumentName)
 				.Append(" : ");
@@ -26,10 +25,10 @@ namespace Rhinobyte.Extensions.Reflection
 				var genericArgumentIndex = 0;
 				var constraintName = constraintType.GetDisplayName(constraintType.CustomAttributes, null, null, useFullTypeName, ref genericArgumentIndex);
 
-				genericConstraintBuilder.Append(constraintName);
+				_ = genericConstraintBuilder.Append(constraintName);
 				if (constraintIndex < typeConstraints.Length)
 				{
-					genericConstraintBuilder.Append(", ");
+					_ = genericConstraintBuilder.Append(", ");
 				}
 			}
 
@@ -103,7 +102,7 @@ namespace Rhinobyte.Extensions.Reflection
 			if (type == typeof(object))
 				return "object";
 
-			if (type == typeof(System.ValueType))
+			if (type == typeof(ValueType))
 				return "struct";
 
 			return null;
@@ -129,13 +128,17 @@ namespace Rhinobyte.Extensions.Reflection
 					return declaringMethod;
 				}
 			}
+#pragma warning disable CA1031 // Do not catch general exception types
 			catch (Exception) { }
+#pragma warning restore CA1031 // Do not catch general exception types
 
 			try
 			{
 				return type.DeclaringType;
 			}
+#pragma warning disable CA1031 // Do not catch general exception types
 			catch (Exception) { }
+#pragma warning restore CA1031 // Do not catch general exception types
 
 			return null;
 #endif
@@ -194,7 +197,7 @@ namespace Rhinobyte.Extensions.Reflection
 						if (displayNameBuilder[characterIndexToRemove] == '[' && displayNameBuilder[characterIndexToRemove - 1] == '[')
 						{
 							--characterIndexToRemove;
-							displayNameBuilder.Remove(characterIndexToRemove, displayNameBuilder.Length - characterIndexToRemove);
+							_ = displayNameBuilder.Remove(characterIndexToRemove, displayNameBuilder.Length - characterIndexToRemove);
 							didRemove = true;
 						}
 					}
@@ -212,12 +215,12 @@ namespace Rhinobyte.Extensions.Reflection
 				--characterIndexToRemove;
 				if (displayNameBuilder[characterIndexToRemove] == '`')
 				{
-					displayNameBuilder.Remove(characterIndexToRemove, displayNameBuilder.Length - characterIndexToRemove);
+					_ = displayNameBuilder.Remove(characterIndexToRemove, displayNameBuilder.Length - characterIndexToRemove);
 					break;
 				}
 			}
 
-			displayNameBuilder.Append('<');
+			_ = displayNameBuilder.Append('<');
 
 			var typeArguments = type.GetGenericArguments();
 			if (typeArguments?.Length > 0)
@@ -228,11 +231,11 @@ namespace Rhinobyte.Extensions.Reflection
 					++typeArgumentIndex;
 					++nullableAttributeIndex;
 					var typeArgumentName = typeArgument.GetDisplayName(customAttributes, declaringMember, genericConstraints, useFullTypeName, ref nullableAttributeIndex);
-					displayNameBuilder.Append(typeArgumentName);
+					_ = displayNameBuilder.Append(typeArgumentName);
 
 					if (typeArgumentIndex < typeArguments.Length)
 					{
-						displayNameBuilder.Append(", ");
+						_ = displayNameBuilder.Append(", ");
 					}
 
 					if (typeArgument.IsGenericParameter && genericConstraints != null)
@@ -246,10 +249,10 @@ namespace Rhinobyte.Extensions.Reflection
 				}
 			}
 
-			displayNameBuilder.Append('>');
+			_ = displayNameBuilder.Append('>');
 			if (isNullable)
 			{
-				displayNameBuilder.Append('?');
+				_ = displayNameBuilder.Append('?');
 			}
 
 			return displayNameBuilder.ToString().Trim();

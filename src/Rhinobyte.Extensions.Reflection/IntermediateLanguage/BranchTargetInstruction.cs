@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using System.Globalization;
+using System.Reflection.Emit;
 
 namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 {
@@ -25,6 +26,6 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		public int TargetOffset { get; }
 
 		public override string ToString()
-			=> $"{base.ToString()}  [TargetInstruction: {TargetInstruction?.Index.ToString() ?? "null"}]";
+			=> $"{base.ToString()}  [TargetInstruction: {TargetInstruction?.Index.ToString(CultureInfo.CurrentCulture) ?? "null"}]";
 	}
 }

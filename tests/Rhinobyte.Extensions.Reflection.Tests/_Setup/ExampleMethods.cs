@@ -40,6 +40,8 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 			var simpleInstructionValue = 5;
 
 			// Need to use values > 8 and in the range of the actual type for the rest of these or else it will end up using simpler instructions than expected
+#pragma warning disable IDE0007 // Use implicit type
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
 			byte byteValue = (byte)12;
 			sbyte signedByteValue = (sbyte)-12;
 			short shortValue = (short)-300;
@@ -52,7 +54,9 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 			ulong unsignedLongValue = 10_000_000_000_000_000_000UL;
 			unsignedLongValue -= long.MaxValue;
 			var sum1 = AddTwoValues(intValue, intValue);
+#pragma warning disable IDE0054 // Use compound assignment
 			sum1 = sum1 * sum1;
+#pragma warning restore IDE0054 // Use compound assignment
 			var sum2 = simpleInstructionValue + byteValue + signedByteValue + shortValue + unsignedShortValue + sum1 + unsignedIntValue + longValue + (long)unsignedLongValue;
 
 			double doubleValue = 0.5d;
@@ -61,6 +65,8 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 
 			var stringValue = "SomeString";
 			var stringValue2 = $"{prefix}:  {stringValue} {sum3}  - {typeof(ExampleMethods).FullName}.{nameof(LocalStringField)}: {this.LocalStringField}";
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
+#pragma warning restore IDE0007 // Use implicit type
 
 			switch (byteValue)
 			{

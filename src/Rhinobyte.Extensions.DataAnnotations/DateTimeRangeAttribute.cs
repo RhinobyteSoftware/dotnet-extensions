@@ -93,7 +93,7 @@ namespace Rhinobyte.Extensions.DataAnnotations
 					return ValidationResult.Success;
 				}
 
-				string[]? memberNames = validationContext?.MemberName is { } memberName
+				var memberNames = validationContext?.MemberName is { } memberName
 					? new[] { memberName }
 					: null;
 				return new ValidationResult(FormatErrorMessage(validationContext?.DisplayName), memberNames);
@@ -125,8 +125,8 @@ namespace Rhinobyte.Extensions.DataAnnotations
 
 			try
 			{
-				_minimum = DateTime.Parse(_minimumStringValue);
-				_maximum = DateTime.Parse(_maximumStringValue);
+				_minimum = DateTime.Parse(_minimumStringValue, CultureInfo.CurrentCulture);
+				_maximum = DateTime.Parse(_maximumStringValue, CultureInfo.CurrentCulture);
 
 				if (_minimum > _maximum)
 				{

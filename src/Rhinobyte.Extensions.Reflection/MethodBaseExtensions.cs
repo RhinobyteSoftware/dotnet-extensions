@@ -127,52 +127,52 @@ namespace Rhinobyte.Extensions.Reflection
 
 			if (methodBase.IsStatic)
 			{
-				stringBuilder.Append(" static");
+				_ = stringBuilder.Append(" static");
 			}
 
 			var methodInfo = methodBase as MethodInfo;
 			if (methodInfo != null && methodInfo.IsOverride())
 			{
-				stringBuilder.Append(" override");
+				_ = stringBuilder.Append(" override");
 			}
 			else if (methodBase.IsAbstract)
 			{
-				stringBuilder.Append(" abstract");
+				_ = stringBuilder.Append(" abstract");
 			}
 			else if (methodBase.IsVirtual)
 			{
-				stringBuilder.Append(" virtual");
+				_ = stringBuilder.Append(" virtual");
 			}
 
 			if (methodBase.IsAsync())
 			{
-				stringBuilder.Append(" async");
+				_ = stringBuilder.Append(" async");
 			}
 
-			stringBuilder.Append(' ');
+			_ = stringBuilder.Append(' ');
 			if (methodInfo is null || methodInfo.ReturnType is null)
 			{
-				stringBuilder.Append("<ReturnType>");
+				_ = stringBuilder.Append("<ReturnType>");
 			}
 			else
 			{
 				var nullableAttributeIndex = 0;
-				stringBuilder.Append(methodInfo.ReturnType.GetDisplayName(methodInfo.ReturnParameter.CustomAttributes, methodInfo.ReturnParameter.Member, genericConstraints, useFullTypeName, ref nullableAttributeIndex));
+				_ = stringBuilder.Append(methodInfo.ReturnType.GetDisplayName(methodInfo.ReturnParameter.CustomAttributes, methodInfo.ReturnParameter.Member, genericConstraints, useFullTypeName, ref nullableAttributeIndex));
 			}
 
-			stringBuilder.Append(' ');
+			_ = stringBuilder.Append(' ');
 			if (useFullTypeName && methodBase.DeclaringType != null)
 			{
 				var nullableAttributeIndex = 0;
-				stringBuilder.Append(methodBase.DeclaringType.GetDisplayName(methodBase.DeclaringType.CustomAttributes, methodBase.DeclaringType.GetDeclaringMember(), genericConstraints, true, ref nullableAttributeIndex)).Append('.');
+				_ = stringBuilder.Append(methodBase.DeclaringType.GetDisplayName(methodBase.DeclaringType.CustomAttributes, methodBase.DeclaringType.GetDeclaringMember(), genericConstraints, true, ref nullableAttributeIndex)).Append('.');
 			}
 
-			stringBuilder.Append(methodBase.Name);
+			_ = stringBuilder.Append(methodBase.Name);
 
 			var genericArguments = methodInfo?.GetGenericArguments();
 			if (genericArguments?.Length > 0)
 			{
-				stringBuilder.Append('<');
+				_ = stringBuilder.Append('<');
 				var genericArgumentIndex = 0;
 				foreach (var genericArgument in genericArguments)
 				{
@@ -180,10 +180,10 @@ namespace Rhinobyte.Extensions.Reflection
 
 					var nullableAttributeIndex = 0;
 					var genericArgumentTypeName = genericArgument.GetDisplayName(genericArgument.CustomAttributes, genericArgument.GetDeclaringMember(), genericConstraints, useFullTypeName, ref nullableAttributeIndex);
-					stringBuilder.Append(genericArgumentTypeName);
+					_ = stringBuilder.Append(genericArgumentTypeName);
 					if (genericArgumentIndex < genericArguments.Length)
 					{
-						stringBuilder.Append(", ");
+						_ = stringBuilder.Append(", ");
 					}
 
 					try
@@ -194,17 +194,19 @@ namespace Rhinobyte.Extensions.Reflection
 							genericConstraints.Add(TypeExtensions.BuildGenericConstraintDisplayValue(genericArgumentTypeName, constraints, useFullTypeName));
 						}
 					}
-					catch (Exception)
+					catch (Exception exc)
 					{
+						if (exc.Message != null)
+							throw;
 						// GetGenericParameterConstraints() will throw for open generics even those IsGenericType will be true and IsGenericType can be false for some
 						// method argument types that can have constraints... *sigh*
 					}
 				}
 
-				stringBuilder.Append('>');
+				_ = stringBuilder.Append('>');
 			}
 
-			stringBuilder.Append('(');
+			_ = stringBuilder.Append('(');
 
 			var methodParameters = methodBase.GetParameters();
 			if (methodParameters.Length > 0)
@@ -216,29 +218,29 @@ namespace Rhinobyte.Extensions.Reflection
 					var isNullable = methodParameter.IsNullableType();
 
 					var nullableAttributeIndex = 0;
-					stringBuilder
+					_ = stringBuilder
 						.Append(methodParameter.ParameterType.GetDisplayName(methodParameter.CustomAttributes, methodParameter.Member, genericConstraints, useFullTypeName, ref nullableAttributeIndex))
 						.Append(' ')
 						.Append(methodParameter.Name);
 
 					if (methodParameterIndex < methodParameters.Length)
 					{
-						stringBuilder.Append(", ");
+						_ = stringBuilder.Append(", ");
 					}
 				}
 			}
 
-			stringBuilder.Append(')');
+			_ = stringBuilder.Append(')');
 
 			if (genericConstraints.Count == 1)
 			{
-				stringBuilder.Append(' ').Append(genericConstraints[0]);
+				_ = stringBuilder.Append(' ').Append(genericConstraints[0]);
 			}
 			else if (genericConstraints.Count > 1)
 			{
 				foreach (var constraintString in genericConstraints)
 				{
-					stringBuilder.Append(Environment.NewLine).Append(constraintString);
+					_ = stringBuilder.Append(Environment.NewLine).Append(constraintString);
 				}
 			}
 

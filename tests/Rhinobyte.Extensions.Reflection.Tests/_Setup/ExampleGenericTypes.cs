@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 
 namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 {
+#pragma warning disable CA1815 // Override equals and operator equals on value types
 	public struct GenericStruct<T>
+#pragma warning restore CA1815 // Override equals and operator equals on value types
 		where T : struct, IConvertible
 	{
 		public T Something { get; set; }
@@ -13,12 +15,12 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 		public T? TryGetSomething()
 		{
 			_doGet = !_doGet;
-			return _doGet ? Something : default(T);
+			return _doGet ? Something : default;
 		}
 	}
 
 	public abstract class ExampleGenericRootType<T, U, V, W>
-		where T : System.Enum
+		where T : Enum
 		where U : class
 		where V : struct, IConvertible
 		where W : IDictionary<T, V?>
@@ -39,7 +41,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 		public T Property1 { get; set; }
 		public U? Property2 { get; set; }
 		public V Property3 { get; set; }
-		public W Property4 { get; set; }
+		public W Property4 { get; }
 	}
 
 	public class ExampleGenericType<T, U, V> : ExampleGenericRootType<T, U, V, Dictionary<T, V?>>
@@ -110,7 +112,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 				return item2;
 			}
 
-			return default(TResult);
+			return default;
 		}
 	}
 }

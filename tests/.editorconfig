@@ -4,29 +4,65 @@
 # /tests/ specific overrides
 [*.{cs,csx}]
 
+# Rule: (CA1000) Do not declare static members on generic types
+dotnet_diagnostic.CA1000.severity       = none
+
 # Rule: (CA1014) Mark assemblies with CLSCompliant - Reason: Don't care for non published test/example projects
-dotnet_diagnostic.CA1014.severity    = none
+dotnet_diagnostic.CA1014.severity       = none
 
 # Rule: (CA1024) Use properties where approprate - Reason: Dummy/example test types don't need to confirm to this rule
-dotnet_diagnostic.CA1024.severity    = none
+dotnet_diagnostic.CA1024.severity       = none
 
 # Rule: (CA1034) Nested types should not be visible - Reason: Don't care about this in test projects
-dotnet_diagnostic.CA1034.severity    = none
+dotnet_diagnostic.CA1034.severity       = none
 
 # Rule: (CA1040) Avoid empty interfaces - Reason: Dummy types in test projects / example libraries
-dotnet_diagnostic.CA1040.severity    = none
+dotnet_diagnostic.CA1040.severity       = none
 
 # Rule: (CA1062) Consider calling ConfigureAwait on the awaited task. Reason: Not a concern in tests
-dotnet_diagnostic.CA1062.severity    = none
+dotnet_diagnostic.CA1062.severity       = none
+
+# Rule: (CA1065) Don't Throw NotImplementedException From Property
+dotnet_diagnostic.CA1065.severity       = none
+
+# Rule: (CA1303) Don't pass string literal that should be localizable   - Reason: Not a concern in tests
+dotnet_diagnostic.CA1303.severity       = none
+
+# Rule: (CA1305) DateTime.Parse Culture Info
+dotnet_diagnostic.CA1305.severity       = none
+
+# Rule: (CA1307) Specify StringComparison for clarity. Reason: Not a concern in tests
+dotnet_diagnostic.CA1307.severity       = none
 
 # Rule: (CA1310) Specify StringComparison for correctness. Reason: Not a concern in tests
-dotnet_diagnostic.CA1310.severity    = none
-
-# Rule: (CA1711) Identifiers should not have incorrect suffix - Reason: Dummy/example type names used to describe their test purpose
-dotnet_diagnostic.CA1711.severity    = none
+dotnet_diagnostic.CA1310.severity       = none
 
 # Rule: (CA1707) Identifiers should not contain underscores - Reason: Common pattern for unit test method names
-dotnet_diagnostic.CA1707.severity    = none
+dotnet_diagnostic.CA1707.severity       = none
+
+# Rule: (CA1711) Identifiers should not have incorrect suffix - Reason: Dummy/example type names used to describe their test purpose
+dotnet_diagnostic.CA1711.severity       = none
+
+# Rule: (CA1715) Generic type parameters should be prefixed with 'T'
+dotnet_diagnostic.CA1715.severity       = none
+
+# Rule: (CA1801) Remove unused parameter
+dotnet_diagnostic.CA1801.severity       = none
+
+# Rule: (CA1822) Make Method Static - Reason: Don't care in example libraries or test projects
+dotnet_diagnostic.CA1822.severity       = none
 
 # Rule: (CA2007) Call ConfigureAwait - Reason: Don't care about this in tests
-dotnet_diagnostic.CA2007.severity    = none
+dotnet_diagnostic.CA2007.severity       = none
+
+# Rule: (CA2234) Use Uri in lieu of string
+dotnet_diagnostic.CA2234.severity       = suggestion
+
+# Rule: (IDE0028) Collection initialization can be simplified
+dotnet_diagnostic.IDE0028.severity      = suggestion
+
+# Rule: (IDE0058) Expression value is never used - Reason: Don't care for tests
+dotnet_diagnostic.IDE0058.severity      = silent
+
+# Rule: (IDE0060) Remove unused parameter
+dotnet_diagnostic.IDE0060.severity      = none

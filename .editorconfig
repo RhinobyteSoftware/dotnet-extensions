@@ -3,438 +3,121 @@
 # top-most .editorconfig file
 root = true
 
-#########################
-# WHITESPACE SETTINGS
-#########################
+
+##################################
+##    Defaults For All Files    ##
+##################################
 # Don't set global [*] level whitespace settings, too many unintended consequences
+
+
+
+
+###########################
+##    Mark Down Files    ##
+###########################
+[*.md]
+indent_style = space
+trim_trailing_whitespace = true
+
+
+
+
+########################################
+##    Xml Project And Config Files    ##
+########################################
+# Xml project files
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+# Xml config files
+[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+# .editorconfig files
+[*.editorconfig]
+
+dotnet_diagnostic.EC101.severity    = error
+# Rule (EC104)  - Language rules must specify severity  - Reason: No longer required as of VS 2019 v16.9+ but editor config analyzer incorrectly flags it
+dotnet_diagnostic.EC104.severity    = suggestion
+dotnet_diagnostic.EC112.severity    = error
+
+
+
+
+########################
+##    CSharp Files    ##
+########################
 [*.{cs,csx}]
 indent_style = tab
 trim_trailing_whitespace = true
 insert_final_newline = true
 charset = utf-8-bom
 
-# Markdown files
-[*.md]
-indent_style = space
-
-# Xml project files
-[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
-indent_style = space
-indent_size = 4
-
-# Xml config files
-[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
-indent_style = space
-indent_size = 4
 
 
+# Default analyzer severity to error for all rules. Any non error severity values will be explicitly configured below
+dotnet_analyzer_diagnostic.severity     = error
 
-###############################
-# Code Analysis Configurations
-###############################
-[*]
 
-# Rule: (CA1000) Do not declare static members on generic types.
-dotnet_diagnostic.CA1000.severity    = suggestion
-
-# Rule: (CA1001) Types that own disposable fields should be disposable.
-dotnet_diagnostic.CA1001.severity    = error
+########################################
+##    Code Analysis Configurations    ##
+########################################
 
 # Rule: (CA1028) Enum storage should be Int32.
-dotnet_diagnostic.CA1028.severity    = none
+dotnet_diagnostic.CA1028.severity       = suggestion
 
 # Rule: (CA1030) Use events where appropriate.
-dotnet_diagnostic.CA1030.severity    = suggestion
-
-# Rule: (CA1031) Do not catch general exception types. Reason: Only worth the effort if we we're releasing our libraries for external use.
-dotnet_diagnostic.CA1031.severity    = none
-
-# Rule: (CA1032) Implement standard exception constructors.
-dotnet_diagnostic.CA1032.severity    = suggestion
-
-# Rule: (CA1034) Nested types should not be visible.
-dotnet_diagnostic.CA1034.severity    = suggestion
-
-# Rule: (CA1044) Properties should not be write only.
-dotnet_diagnostic.CA1044.severity    = suggestion
+dotnet_diagnostic.CA1030.severity       = suggestion
 
 # Rule: (CA1051) Do not declare visible instance fields.
-dotnet_diagnostic.CA1051.severity    = suggestion
-
-# Rule: (CA1052) Static holder types should be sealed.
-dotnet_diagnostic.CA1052.severity    = suggestion
-
-# Rule: (CA1054) URI parameters should not be strings.
-dotnet_diagnostic.CA1054.severity    = suggestion
-
-# Rule: (CA1055) URI return values should not be strings.
-dotnet_diagnostic.CA1055.severity    = suggestion
-
-# Rule: (CA1056) URI properties should not be strings.
-dotnet_diagnostic.CA1056.severity    = suggestion
-
-# Rule: (CA1060) Move P/Invokes to NativeMethods class.
-dotnet_diagnostic.CA1060.severity    = suggestion
+dotnet_diagnostic.CA1051.severity       = suggestion
+dotnet_code_quality.CA1051.api_surface  = public, internal
 
 # Rule: (CA1062) Validate arguments of externally visible public methods. Reason: These should be validated to ensure we add necessary guards to ensure the ArgumentNullExceptions are thrown in lieu of null reference exceptions in unexpected locations. This rule is important to ensure we add guards to public methods where the the parameter type is a non-nullable reference type but the method is public so it might be consumed in projects that don't have nullable reference types enabled.
-dotnet_diagnostic.CA1062.severity    = error
-
-# Rule: (CA1063) Implement IDisposable Correctly.  Reason: There are no cases of unmanaged resources being used so there is no need to use the more complicate dispose pattern.
-dotnet_diagnostic.CA1063.severity    = none
-
-# Rule: (CA1065) Do not raise exceptions in unexpected locations.
-dotnet_diagnostic.CA1065.severity    = suggestion
-
-# Rule: (CA1067) Override Object.Equals(object) when implementing IEquatable<T>.
-dotnet_diagnostic.CA1067.severity    = suggestion
+dotnet_diagnostic.CA1062.severity       = error
 
 # Rule: (CA1068) CancellationToken parameters must come last.
-dotnet_diagnostic.CA1068.severity    = suggestion
+dotnet_diagnostic.CA1068.severity       = suggestion
 
 # Rule: (CA1303) Do not pass literals as localized parameters. Retrieve the string(s) from a resource table instead
-dotnet_diagnostic.CA1303.severity    = suggestion
+dotnet_diagnostic.CA1303.severity       = warning
 dotnet_code_quality.CA1303.excluded_type_names_with_derived_types = System.Exception
 
-# Rule: (CA1304) Specify CultureInfo.
-dotnet_diagnostic.CA1304.severity    = none
-
-# Rule: (CA1305) Specify IFormatProvider.
-dotnet_diagnostic.CA1305.severity    = none
-
-# Rule: (CA1307) Specify StringComparison.
-dotnet_diagnostic.CA1307.severity    = suggestion
-
-# Rule: (CA1309) Use ordinal string comparison.
-dotnet_diagnostic.CA1309.severity    = suggestion
-
-# Rule: (CA1401) P/Invokes should not be visible.
-dotnet_diagnostic.CA1401.severity    = suggestion
-
-# Rule: (CA1507) Use nameof to express symbol names.
-dotnet_diagnostic.CA1507.severity    = suggestion
-
-# Rule: (CA1707) Identifiers should not contain underscores.
-dotnet_diagnostic.CA1707.severity    = suggestion
-
-# Rule: (CA1710) Identifiers should have correct suffix.
-dotnet_diagnostic.CA1710.severity    = suggestion
-
-# Rule: (CA1712) Do not prefix enum values with type name.
-dotnet_diagnostic.CA1712.severity    = suggestion
-
-# Rule: (CA1714) Flags enums should have plural names.
-dotnet_diagnostic.CA1714.severity    = suggestion
-
-# Rule: (CA1715) Identifiers should have correct prefix.
-dotnet_diagnostic.CA1715.severity    = suggestion
-
-# Rule: (CA1716) Identifiers should match keywords.
-dotnet_diagnostic.CA1716.severity    = suggestion
-
-# Rule: (CA1717) Only FlagsAttribute enums should have plural names.
-dotnet_diagnostic.CA1717.severity    = suggestion
-
-# Rule: (CA1720) Identifier contains type name.
-dotnet_diagnostic.CA1720.severity    = suggestion
-
-# Rule: (CA1721) Property names should not match get methods.
-dotnet_diagnostic.CA1721.severity    = suggestion
-
-# Rule: (CA1724) Type names should not match namespaces.
-dotnet_diagnostic.CA1724.severity    = suggestion
-
-# Rule: (CA1801) Review unused parameters.
-dotnet_diagnostic.CA1801.severity    = suggestion
-
-# Rule: (CA1802) Use literals where appropriate.
-dotnet_diagnostic.CA1802.severity    = suggestion
-
-# Rule: (CA1806) Do not ignore method results. (Use warning for new projects)
-dotnet_diagnostic.CA1806.severity    = warning
-#dotnet_diagnostic.CA1806.severity    = silent
-
 # Rule: (CA1810) Initialize reference type static fields inline. (Initialize all static fields when those fields are declared and remove the explicit static constructor.)  Reason: Static initialization is weird.  It is safer to do it in a static constructor.
-dotnet_diagnostic.CA1810.severity    = none
-
-# Rule: (CA1814) Prefer jagged arrays over multidimensional.
-dotnet_diagnostic.CA1814.severity    = suggestion
-
-# Rule: (CA1815) Override equals and operator equals on value types.
-dotnet_diagnostic.CA1815.severity    = suggestion
-
-# Rule: (CA1816) Dispose methods should call SuppressFinalize.  Reason: There are no cases of unmanaged resources being used so there is no need to use the more complicate dispose pattern.
-dotnet_diagnostic.CA1816.severity    = none
-
-# Rule: (CA1819) Properties should not return arrays.
-dotnet_diagnostic.CA1819.severity    = suggestion
-
-# Rule: (CA1820) Testing for emtpy strings should be done using string.Length or string.IsNullOrEmpty(..) and not using Equals().
-dotnet_diagnostic.CA1820.severity    = suggestion
-
-# Rule: (CA1822) Mark members as static.
-dotnet_diagnostic.CA1822.severity    = silent
-
-# Rule: (CA1823) Avoid unused private fields.
-dotnet_diagnostic.CA1823.severity    = suggestion
-
-# Rule: (CA1825) Avoid zero-length array allocations.
-dotnet_diagnostic.CA1825.severity    = suggestion
-
-# Rule: (CA1827) Do not use Count() or LongCount() when Any() can be used.
-dotnet_diagnostic.CA1827.severity    = error
-
-# Rule: (CA1829) Use Length/Count property instead of Count() when available.
-dotnet_diagnostic.CA1829.severity    = error
-
-# Rule: (CA2000) Dispose objects before losing scope. Reason: Ensure that using(..) statements are applied properly or the rule is suppressed explicitly with a justification.
-dotnet_diagnostic.CA2000.severity    = error
-
-# Rule: (CA2007) Consider calling ConfigureAwait on the awaited task. Reason: Defacto thing to do. Deadlocks are bad.
-dotnet_diagnostic.CA2007.severity    = error
-
-# Rule: (CA2008) Do not create tasks without passing a TaskScheduler.
-dotnet_diagnostic.CA2008.severity    = suggestion
-
-# Rule: (CA2100) Review SQL queries for security vulnerabilities.
-dotnet_diagnostic.CA2100.severity    = suggestion
-
-# Rule: (CA2101) Specify marshaling for P/Invoke string arguments.
-dotnet_diagnostic.CA2101.severity    = suggestion
-
-# Rule: (CA2200) Rethrow to preserve stack details.
-dotnet_diagnostic.CA2200.severity    = error
-
-# Rule: (CA2208) Instantiate argument exceptions correctly.
-dotnet_diagnostic.CA2208.severity    = error
+#dotnet_diagnostic.CA1810.severity    = none
 
 # Rule: (CA2211) Non-constant fields should not be visible.
-dotnet_diagnostic.CA2211.severity    = suggestion
+#dotnet_diagnostic.CA2211.severity    = suggestion
 
-# Rule: (CA2213) Disposable fields should be disposed.
-dotnet_diagnostic.CA2213.severity    = error
 
-# Rule: (CA2216) Disposable types should declare finalizer.
-dotnet_diagnostic.CA2216.severity    = error
 
-# Rule: (CA2224) Override Equals on overloading operator equals.
-dotnet_diagnostic.CA2224.severity    = suggestion
 
-# Rule: (CA2225) Operator overloads have named alternates.
-dotnet_diagnostic.CA2225.severity    = none
+#############################
+##    Basic Code Checks    ##
+#############################
+# e.g. Rules in the CS00XX range
 
-# Rule: (CA2226) Operators should have symmetrical overloads.
-dotnet_diagnostic.CA2226.severity    = suggestion
 
-# Rule: (CA2227) Collection properties should be read only.
-dotnet_diagnostic.CA2227.severity    = suggestion
 
-# Rule: (CA2234) Pass system uri objects instead of strings.
-dotnet_diagnostic.CA2234.severity    = suggestion
+############################################
+##    Nullable Reference Type Severity    ##
+############################################
+# e.g. Rules in the CS8000 ish range
 
-# Rule: (CA2235) Mark all non-serializable fields.
-dotnet_diagnostic.CA2235.severity    = suggestion
 
-# Rule: (CA2237) Mark ISerializable types with serializable attribute.
-dotnet_diagnostic.CA2237.severity    = suggestion
 
-# Rule: (CA2241) Provide correct arguments to formatting methods.
-dotnet_diagnostic.CA2241.severity    = error
 
-# Rule: (CA2245) Do not assign a property to itself.
-dotnet_diagnostic.CA2245.severity    = error
-
-# Rule: (CA3075) Insecure DTD processing in XML.
-dotnet_diagnostic.CA3075.severity    = suggestion
-
-# Rule: (CA3076) Insecure XSLT script processing.
-dotnet_diagnostic.CA3076.severity    = suggestion
-
-# Rule: (CA3077) Insecure Processing in API Design, XmlDocument and XmlTextReader.
-dotnet_diagnostic.CA3077.severity    = suggestion
-
-# Rule: (CA5350) Do not use weak cryptographic algorithms.
-dotnet_diagnostic.CA5350.severity    = suggestion
-
-# Rule: (CA5351) Do not use broken cryptographic algorithms.
-dotnet_diagnostic.CA5351.severity    = suggestion
-
-# Rule: (CA5359) Do not disable certificate validation.
-dotnet_diagnostic.CA5359.severity    = suggestion
-
-# Rule: (CA5372) This overload of the XPathDocument.XPathDocument method is potentially unsafe, use an overload that takes a XmlReader instance instead.
-dotnet_diagnostic.CA5372.severity    = suggestion
-
-# Rule: (CS0219) The variable is assigned but its value is never used.
-dotnet_diagnostic.CS0219.severity = error
-
-# Rule: (CS0649) Private field is never assigned to. Reason: Catch these at design time so we don't end up with null reference errors at runtime.
-dotnet_diagnostic.CS0649.severity = error
-
-# Rule: (CS1998) Async method lacks 'await' operators and will run synchronously. Reason: This should be treated as an error to ensure proper async/wait patterns are followed.
-dotnet_diagnostic.CS1998.severity    = error
-
-# Rule: (CS4014) Because this call is not awaited, execution of the current method continues before the call is complete4d. Reason: This should be treated as an error to ensure proper async/wait patterns are followed.
-dotnet_diagnostic.CS4014.severity    = error
-
-###### Basic Code Checks ##########
-
-# Rule: (CS0067) The event is never used. Reason: Most likely a bug.
-dotnet_diagnostic.CS0067.severity    = error
-
-# Rule: (CS0169) The field is never used. Reason: Most likely a bug.
-dotnet_diagnostic.CS0169.severity    = error
-
-# Rule: (CS0414) The field is assigned but its value is never used. Reason: Most likely a bug.
-dotnet_diagnostic.CS0414.severity    = error
-
-# Rule: (CS1717) Assignment made to the same variable. Reason: Most likely a bug.
-dotnet_diagnostic.CS1717.severity    = error
-
-###### Nullable Reference Type Severity ##########
-
-# Rule: (CS8597) Thrown value may be null. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8597.severity    = error
-
-# Rule: (CS8600) Converting null literal or possible null value to non-nullable type. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8600.severity    = error
-
-# Rule: (CS8601) Possible null reference assignment. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8601.severity    = error
-
-# Rule: (CS8602) Dereference of a possibly null reference. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8602.severity    = error
-
-# Rule: (CS8603) Possible null reference return. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8603.severity    = error
-
-# Rule: (CS8604) Possible null reference argument for parameter <parametername> in <method>. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8604.severity    = error
-
-# Rule: (CS8605) Unboxing a possibly null value. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8605.severity    = error
-
-# Rule: (CS8606) Possible null reference assignment to iteration variable. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8606.severity    = error
-
-# Rule: (CS8607) A possible null value may not be assigned to a target marked with the [DisallowNull] attribute. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8607.severity    = error
-
-# Rule: (CS8608) Nullability of reference types in type doesn't match overriden member. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8608.severity    = error
-
-# Rule: (CS8609) Nullability of reference types in return type doesn't match overridden member. Reason: these should be treated as errors to ensure signature's match the overriden signature. In edge cases, this can be suppressed explicitly.
-dotnet_diagnostic.CS8609.severity    = error
-
-# Rule: (CS8610) Nullability of reference types in type of parameter <paramName> doesn't match overriden member. Reason: these should be treated as errors to ensure signature's match the overriden signature. In edge cases, this can be suppressed explicitly.
-dotnet_diagnostic.CS8610.severity    = error
-
-# Rule: (CS8611) Nullability of reference types in type of parameter doesn't match partial method declaration. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8611.severity    = error
-
-# Rule: (CS8612) Nullability of reference types in type doesn't match implicitly implemented member. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8612.severity    = error
-
-# Rule: (CS8613) Nullability of reference types in return type doesn't match implicitly implemented member. Reason: these should be treated as errors to ensure signature's match the overriden signature. In edge cases, this can be suppressed explicitly.
-dotnet_diagnostic.CS8613.severity    = error
-
-# Rule: (CS8614) Nullability of reference types in type of parameter <paramName> of <typeName> doesn't match implicitly implemented member <implementedMemberName>. Reason: these should be treated as errors to ensure signature's match the interface/abstract signature. In edge cases, this can be suppressed explicitly.
-dotnet_diagnostic.CS8614.severity    = error
-
-# Rule: (CS8615) Nullability of reference types in type doesn't match implemented member. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8615.severity    = error
-
-# Rule: (CS8616) Nullability of reference types in return type doesn't match implemented member. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8616.severity    = error
-
-# Rule: (CS8617) Nullability of reference types in type of parameter doesn't match implemented member. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8617.severity    = error
-
-# Rule: (CS8618) Non-nullable property <propertyName> is uninitialized. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8618.severity    = error
-
-# Rule: (CS8619) Nullability of reference types in value doesn't match target type. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8619.severity    = error
-
-# Rule: (CS8620) Argument of type <type> cannot be used for parameter <parameter> in <method> due to differences in the nullability of reference types. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8620.severity    = error
-
-# Rule: (CS8621) Nullability of reference types in return type doesn't match the target delegate. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8621.severity    = error
-
-# Rule: (CS8622) Nullability of reference types in type of parameter doesn't match the target delegate. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8622.severity    = error
-
-# Rule: (CS8624) Argument cannot be used as an output for parameter due to differences in the nullability of reference types. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8624.severity    = error
-
-# Rule: (CS8625) Cannot convert null literal to non-nullable reference type. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8625.severity    = error
-
-# Rule: (CS8626) The 'as' operator may produce a null value for a type parameter. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8626.severity    = error
-
-# Rule: (CS8629) Nullable value type may be null. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8629.severity    = error
-
-# Rule: (CS8631) The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match constraint type. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8631.severity    = error
-
-# Rule: (CS8632) The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8632.severity    = error
-
-# Rule: (CS8633) Nullability in constraints for type parameter doesn't match the constraints for type parameter in implicitly implemented interface method. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8633.severity    = error
-
-# Rule: (CS8634) The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8634.severity    = error
-
-# Rule: (CS8638) Conditional access may produce a null value for a type parameter. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8638.severity    = error
-
-# Rule: (CS8643) Nullability of reference types in explicit interface specifier doesn't match interface implemented by the type. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8643.severity    = error
-
-# Rule: (CS8644) Type does not implement interface member. Nullability of reference types in interface implemented by the base type doesn't match. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8644.severity    = error
-
-# Rule: (CS8645) Interface is already listed in the interface list wtih different nullability of reference types. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8645.severity    = error
-
-# Rule: (CS8653) A default expression introduces a null value when 'T' is a non-nullable reference type. Reason: these should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8653.severity    = error
-
-# Rule: (CS8654) A null literal introduces a null value for a type parameter. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8654.severity    = error
-
-# Rule: (CS8655) The switch expression does not handle some null inputs. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8655.severity    = error
-
-# Rule: (CS8656) Call to non-readonly member from a 'readonly' member results in an implicit copy.
-#dotnet_diagnostic.CS8656.severity    = error
-
-# Rule: (CS8667) Partial method declarations have inconsistent nullability in constraints for type parameter. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8667.severity    = error
-
-# Rule: (CS8669) The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Auto-generated code requires an explicit '#nullable' directive in source. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8669.severity    = error
-
-# Rule: (CS8670) Object or collection initializer implicitly dereferences possibly null member. Reason: These should be treated as errors to ensure we don't introduce null reference exceptions.
-dotnet_diagnostic.CS8670.severity    = error
-
-
-###
-# xUnit Configurations
-###
-dotnet_diagnostic.xUnit2007.severity = error
-
-## Microsoft.VisualStudio.Threading.Analyzers
-## https://github.com/microsoft/vs-threading/blob/master/doc/analyzers/index.md
+#####################################################################################
+## Microsoft.VisualStudio.Threading.Analyzers                                      ##
+## https://github.com/microsoft/vs-threading/blob/master/doc/analyzers/index.md    ##
+#####################################################################################
 
 # Rule: Avoid legacy thread switching methods. Reason: Specific to Visual Studio.
 dotnet_diagnostic.VSTHRD001.severity = none
-
-# Rule: Synchronously waiting on tasks or awaiters my cause deadlocks.  Use await or Task.Run instead.  Reason: Deadlocks are bad.
-dotnet_diagnostic.VSTHRD002.severity = error
 
 # Rule: Avoid awaiting foreign Tasks. Reason: Specific to Visual Studio.
 dotnet_diagnostic.VSTHRD003.severity = none
@@ -445,44 +128,14 @@ dotnet_diagnostic.VSTHRD004.severity = none
 # Rule: Invoke single-threaded types on Main thread. Reason: Specific to Visual Studio.
 dotnet_diagnostic.VSTHRD010.severity = none
 
-# Rule: Use AsyncLazy<T>. Reason: Deadlocks are bad.
-dotnet_diagnostic.VSTHRD011.severity = error
-
 # Rule: Provide JoinableTaskFactory where allowed. Reason: Specific to Visual Studio.
 dotnet_diagnostic.VSTHRD012.severity = none
 
-# Rule: Avoid async void methods. Reason: async void can lead to application crashes due to unhandled exceptions.
-dotnet_diagnostic.VSTHRD100.severity = error
-
-# Rule: Avoid unsupported async delegates. Reason: Essentially the problem as async void, which can lead to application crashes due to unhandled exceptions.
-dotnet_diagnostic.VSTHRD101.severity = error
-
-# Rule: Implement internal logic asynchronously. Reason: Doing async all the way has better throughput.
-dotnet_diagnostic.VSTHRD102.severity = warning
-
-# Rule: Call async methods when in an async method. Reason: Doing async all the way has better throughput.
-dotnet_diagnostic.VSTHRD103.severity = error
-
-# Rule: Offer async option. Reason: Nice to do, but by no means necessary.
-dotnet_diagnostic.VSTHRD104.severity = suggestion
-
-# Rule: Avoid method overloads that assume TaskScheduler.Current. Reason: Specifying the scheduler ensures that the behavior is consistent.
-dotnet_diagnostic.VSTHRD105.severity = warning
-
-# Rule: Use InvokeAsync to raise async events. Reason: There can be issues when invoking async void events so we should probably be doing this.
-dotnet_diagnostic.VSTHRD106.severity = warning
-
-# Rule: Await Task within using expression. Reason: Missing the await is bad.
-dotnet_diagnostic.VSTHRD107.severity = error
-
 # Rule: Assert thread affinity unconditionally. Reason: Doesn't apply to this project.
-dotnet_diagnostic.VSTHRD108.severity = none
+#dotnet_diagnostic.VSTHRD108.severity = none
 
 # Rule: Switch instead of assert in async methods. Reason: Doesn't apply to this project.
-dotnet_diagnostic.VSTHRD109.severity = none
-
-# Rule: Observe result of async calls. Reason: All tasks should be awaited.
-dotnet_diagnostic.VSTHRD110.severity = error
+#dotnet_diagnostic.VSTHRD109.severity = none
 
 # Rule: Use .ConfigureAwait(bool). Reason: Covered by CA2007.
 dotnet_diagnostic.VSTHRD111.severity = none
@@ -492,72 +145,172 @@ dotnet_diagnostic.VSTHRD200.severity = none
 
 
 
-##############################
-# CSharp Code Styles
-##############################
-[*.cs]
-# Prefer "var" everywhere
-csharp_style_var_for_built_in_types = true:suggestion
-csharp_style_var_when_type_is_apparent = true:suggestion
-csharp_style_var_elsewhere = true:suggestion
 
-# Prefer method-like constructs to have an expression-body
-csharp_style_expression_bodied_methods = true:none
-csharp_style_expression_bodied_constructors = true:none
-csharp_style_expression_bodied_operators = true:none
+###############################
+##    CODE STYLE SETTINGS    ##
+###############################
 
-# Prefer property-like constructs to have an expression-body
-csharp_style_expression_bodied_properties = true:none
-csharp_style_expression_bodied_indexers = true:none
-csharp_style_expression_bodied_accessors = true:none
+# Rule (IDE0001)    -  Name Can Be Simplified (Full Type Name)    - Reason: Sometimes useful/preferred for clarity
+dotnet_diagnostic.IDE0001.severity                      = suggestion
 
-# Suggest more modern language features when available
-csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
-csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
-csharp_style_inlined_variable_declaration = true:suggestion
-csharp_style_throw_expression = true:suggestion
-csharp_style_conditional_delegate_call = true:suggestion
+# Rule (IDE0003)    -  Name Can Be Simplified (this keyword)      - Reason: Sometimes useful/preferred for clarity
+dotnet_diagnostic.IDE0003.severity                      = suggestion
 
+# this keyword style rules
+dotnet_style_qualification_for_field                    = false
+dotnet_style_qualification_for_property                 = false
+dotnet_style_qualification_for_method                   = false
+dotnet_style_qualification_for_event                    = false
+
+# IDE0007 and IDE0008 - Use 'var' keyword
+csharp_style_var_for_built_in_types                     = true
+csharp_style_var_when_type_is_apparent                  = true
+csharp_style_var_elsewhere                              = true
+
+# Rule (IDE0011)    - If Statement Braces
+csharp_prefer_braces                                    = when_multiline
+
+# Rule (IDE0017)    - Use Object Initializers   - Reason: Mostly preferred, but not required and sometimes exceptions to the rule
+dotnet_style_object_initializer                         = true
+
+# IDE0022: Use block body for methods
+dotnet_diagnostic.IDE0022.severity                      = suggestion
+csharp_style_expression_bodied_methods                  = when_on_single_line
+
+# IDE0024: Use block body for operators
+csharp_style_expression_bodied_operators = when_on_single_line
+
+# Rule (IDE0028)    - Use Collection Initializers
+#dotnet_diagnostic.IDE0028.severity                     = refactoring
+#dotnet_style_collection_initializer                    = true
+
+# Rule (IDE0029) and (IDE0030)  - Use Coalesce Expression
+dotnet_style_coalesce_expression                        = true
+
+# Rule (IDE0031)    - Use Null Propagation
+dotnet_style_null_propagation                           = true
+
+# Rule (IDE0032)    - Use Auto Property
+dotnet_style_prefer_auto_properties                     = true
+
+# Rule (IDE0033)    - Use Explicitly Provided Tuple Name
+dotnet_style_explicit_tuple_names                       = true
+
+# Rule (IDE0037)    - Use inferred member name for tuples
+dotnet_style_prefer_inferred_tuple_names                    = true
+dotnet_style_prefer_inferred_anonymous_type_member_names    = true
+
+# Rule (IDE0046)    - If Statement Can Be Simplified        - Reason: Suggestion only. We only prefer ternary conditional expressions for very simple conditionals.
+dotnet_diagnostic.IDE0046.severity      = suggestion
+
+# Rule (IDE0055)    - Fix Formatting
+csharp_indent_case_contents             = true
+csharp_indent_case_contents_when_block  = false
+csharp_indent_labels                    = one_less_than_current
+csharp_indent_switch_labels             = true
+
+# Rule (IDE0047)    - Remove unnecessary parentheses
+dotnet_diagnostic.IDE0047.severity                          = refactoring
+
+# Rule (IDE0048)    - Add parentheses for clarity
+#dotnet_diagnostic.IDE0048.severity                          = suggestion
+dotnet_style_parentheses_in_arithmetic_binary_operators     = true
+dotnet_style_parentheses_in_relational_binary_operators     = true
+dotnet_style_parentheses_in_other_binary_operators          = true
+dotnet_style_parentheses_in_other_operators                 = true
+
+# Rule (IDE0057)    - Substring can be simplified (range operator)      - Reason: Only available in .net core
+dotnet_diagnostic.IDE0057.severity                          = silent
+
+# Rule (IDE0066)    - Use Switch Expression
+dotnet_diagnostic.IDE0066.severity                          = refactoring
+
+# Rule (IDE0078)    - Use Pattern Matching
+csharp_style_prefer_pattern_matching                                = false
+dotnet_style_prefer_is_null_check_over_reference_equality_method    = true:
+
+# Rule (IDE0090)    - New Expression Can Be Simplified      - Reason: Explicit new expression preferred for clarity
+dotnet_diagnostic.IDE0090.severity                          = refactoring
+
+# Rule (IDE0130)    - Namespace does not match folder structure     - Reason: Not required and analyzer is broken
+dotnet_diagnostic.IDE0130.severity                      = refactoring
+
+
+
+
+#############################
+##    CODE NAMING RULES    ##
+#############################
+
+# Rule (IDE1006)    - Naming Rules
+dotnet_diagnostic.IDE1006.severity                         = warning
+
+# camel_case_style
+dotnet_naming_style.CamelCaseStyle.capitalization = camel_case
+
+# pascal_case_style
+dotnet_naming_style.PascalCaseStyle.capitalization = pascal_case
+
+# underscore_prefix_camel_case_style
+dotnet_naming_style.CamelCase_WithUnderscorePrefix_Style.capitalization = camel_case
+dotnet_naming_style.CamelCase_WithUnderscorePrefix_Style.required_prefix = _
+
+
+# ReadOnly Static Fields
+dotnet_naming_symbols.ReadOnlyStaticFields.applicable_kinds = field
+dotnet_naming_symbols.ReadOnlyStaticFields.applicable_accessibilities = public, protected, internal, protected_internal, private_protected, private
+dotnet_naming_symbols.ReadOnlyStaticFields.required_modifiers = readonly, static
+
+dotnet_naming_rule.ReadOnlyStaticFields_ShouldBePascalCase.symbols = ReadOnlyStaticFields
+dotnet_naming_rule.ReadOnlyStaticFields_ShouldBePascalCase.style = PascalCaseStyle
+
+# Private ReadOnly Fields
+dotnet_naming_symbols.PrivateReadOnlyFields.applicable_kinds = field
+dotnet_naming_symbols.PrivateReadOnlyFields.applicable_accessibilities = private
+dotnet_naming_symbols.PrivateReadOnlyFields.required_modifiers = readonly
+
+dotnet_naming_rule.PrivateReadOnlyFields_ShouldBeUnderscorePrefixCamelCaseStyle.symbols = PrivateReadOnlyFields
+dotnet_naming_rule.PrivateReadOnlyFields_ShouldBeUnderscorePrefixCamelCaseStyle.style = CamelCase_WithUnderscorePrefix_Style
+
+
+
+
+######################################
+##    CSharp Whitespace Settings    ##
+######################################
 # Newline settings
-csharp_new_line_before_open_brace = all
-csharp_new_line_before_else = true
-csharp_new_line_before_catch = true
-csharp_new_line_before_finally = true
+csharp_new_line_before_open_brace                     = all
+csharp_new_line_before_else                           = true
+csharp_new_line_before_catch                          = true
+csharp_new_line_before_finally                        = true
 csharp_new_line_before_members_in_object_initializers = true
-csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_before_members_in_anonymous_types     = true
+csharp_new_line_between_query_expression_clauses      = true
 
+# Space settings
+csharp_space_after_cast                                                  = false
+csharp_space_after_keywords_in_control_flow_statements                   = true
+csharp_space_between_parentheses                                         = false
+csharp_space_before_colon_in_inheritance_clause                          = true
+csharp_space_after_colon_in_inheritance_clause                           = true
+csharp_space_around_binary_operators                                     = ignore
+csharp_space_between_method_declaration_parameter_list_parentheses       = false
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_declaration_name_and_open_parenthesis        = false
+csharp_space_between_method_call_parameter_list_parentheses              = false
+csharp_space_between_method_call_empty_parameter_list_parentheses        = false
+csharp_space_between_method_call_name_and_opening_parenthesis            = false
+csharp_space_after_comma                                                 = true
+csharp_space_before_comma                                                = false
+csharp_space_after_dot                                                   = false
+csharp_space_before_dot                                                  = false
+csharp_space_after_semicolon_in_for_statement                            = true
+csharp_space_before_semicolon_in_for_statement                           = false
+csharp_space_around_declaration_statements                               = false
+csharp_space_before_open_square_brackets                                 = false
+csharp_space_between_empty_square_brackets                               = false
+csharp_space_between_square_brackets                                     = false
 
-
-##############################
-# Dotnet Code Styles
-##############################
-# Fields that are constant should have a proper cased name
-dotnet_naming_rule.const_pascal.symbols                  = constant_fields
-dotnet_naming_symbols.constant_fields.applicable_kinds   = field
-dotnet_naming_symbols.constant_fields.required_modifiers = const
-dotnet_naming_rule.const_pascal.style                    = pascal_style
-dotnet_naming_style.pascal_style.capitalization          = pascal_case
-
-# Fields that are private should be prefixed with underscore
-dotnet_naming_rule.private_fields_rule.symbols  = private_fields
-dotnet_naming_rule.private_fields_rule.style    = prefix_with_underscore_camal_case
-dotnet_naming_rule.private_fields_rule.severity = error
-
-dotnet_sort_system_directives_first = false
-
-# Avoid "this." and "Me." if not necessary
-dotnet_style_qualification_for_field = false:suggestion
-dotnet_style_qualification_for_property = false:suggestion
-dotnet_style_qualification_for_method = false:suggestion
-dotnet_style_qualification_for_event = false:suggestion
-
-# Use language keywords instead of framework type names for type references
-dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
-dotnet_style_predefined_type_for_member_access = true:suggestion
-
-# Suggest more modern language features when available
-dotnet_style_object_initializer = true:suggestion
-dotnet_style_collection_initializer = true:suggestion
-dotnet_style_coalesce_expression = true:suggestion
-dotnet_style_null_propagation = true:suggestion
-dotnet_style_explicit_tuple_names = true:warning
+# Wrap settings
+csharp_preserve_single_line_statements                                   = true
+csharp_preserve_single_line_blocks                                       = true

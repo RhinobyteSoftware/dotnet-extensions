@@ -23,7 +23,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 		public Type OriginalImplementationType { get; }
 
+#pragma warning disable CA1721 // Property names should not match get methods	- Reason: The property name ImplementationType in the base ServiceDescriptor class can be null when an explicit implementation or factory is used
 		public Type GetImplementationType() => OriginalImplementationType;
+#pragma warning restore CA1721 // Property names should not match get methods
 	}
 
 	/// <summary>
@@ -210,7 +212,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				var constructorParameterTypes = new HashSet<Type>();
 				foreach (var parameterInfo in mostParametersConstructor.GetParameters())
 				{
-					constructorParameterTypes.Add(parameterInfo.ParameterType);
+					_ = constructorParameterTypes.Add(parameterInfo.ParameterType);
 				}
 
 				for (var constructorIndex = 1; constructorIndex < potentialConstructors.Count; ++constructorIndex)

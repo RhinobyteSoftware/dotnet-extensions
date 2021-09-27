@@ -30,14 +30,9 @@ namespace Rhinobyte.Extensions.DataAnnotations.Tests
 		public void Validation_fails_when_above_maximum(Type attributeType)
 		{
 			var aboveMaximumValue = GetMaximumValueForAttributeType(attributeType);
-			if (aboveMaximumValue.Year == 9999)
-			{
-				aboveMaximumValue = DateTime.MaxValue;
-			}
-			else
-			{
-				aboveMaximumValue = aboveMaximumValue.AddSeconds(50);
-			}
+			aboveMaximumValue = aboveMaximumValue.Year == 9999
+				? DateTime.MaxValue
+				: aboveMaximumValue.AddSeconds(50);
 
 			var model = CreateTestModel(attributeType, aboveMaximumValue);
 			var validationFailures = ValidateObject(model);

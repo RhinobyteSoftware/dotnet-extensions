@@ -747,34 +747,44 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </remarks>
 		public static int GetOperandSize(OperandType operandType)
 		{
-			return operandType switch
+			switch (operandType)
 			{
-				OperandType.InlineBrTarget => 4,
-				OperandType.InlineField => 4,
-				OperandType.InlineI => 4,
-				OperandType.InlineI8 => 8,
-				OperandType.InlineMethod => 4,
-				OperandType.InlineNone => 0,
-				OperandType.InlineR => 8,
-				OperandType.InlineSig => 4,
-				OperandType.InlineString => 4,
+				case OperandType.InlineNone:
+					return 0;
 
+				case OperandType.ShortInlineBrTarget:
+				case OperandType.ShortInlineI:
+				case OperandType.ShortInlineVar:
+					return 1;
+
+				case OperandType.InlineVar:
+					return 2;
+
+				case OperandType.InlineBrTarget:
+				case OperandType.InlineField:
+				case OperandType.InlineI:
+				case OperandType.InlineMethod:
+				case OperandType.InlineSig:
+				case OperandType.InlineString:
 				// Note: The actual oprand size of OperandType.InlineSwitch is variable.
 				// The first four bytes of the operand contain the length of the jump table array.
 				// The following (arrayLength * 4) bytes contain the target offset values that make up the
 				// jump table array.
-				OperandType.InlineSwitch => 4,
+				case OperandType.InlineSwitch:
+				case OperandType.InlineTok:
+				case OperandType.InlineType:
+				case OperandType.ShortInlineR:
+					return 4;
 
-				OperandType.InlineTok => 4,
-				OperandType.InlineType => 4,
-				OperandType.InlineVar => 2,
-				OperandType.ShortInlineBrTarget => 1,
-				OperandType.ShortInlineI => 1,
-				OperandType.ShortInlineR => 4,
-				OperandType.ShortInlineVar => 1,
+				case OperandType.InlineI8:
+				case OperandType.InlineR:
+					return 8;
 
-				// case OperandType.InlinePhi:
-				_ => throw new NotSupportedException($"{nameof(OpCodeHelper)}.{nameof(GetOperandSize)}(..) is not supported for an {nameof(OperandType)} value of {operandType}"),
+#pragma warning disable CS0618 // Type or member is obsolete. Reason: Ensuring all switch cases are handled.
+				case OperandType.InlinePhi:
+#pragma warning restore CS0618 // Type or member is obsolete
+				default:
+					throw new NotSupportedException($"{nameof(OpCodeHelper)}.{nameof(GetOperandSize)}(..) is not supported for an {nameof(OperandType)} value of {operandType}");
 			};
 		}
 	}

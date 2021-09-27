@@ -175,7 +175,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			}
 
 			foreach (var discoveredType in scanResult.AllDiscoveredTypes)
-				serviceRegistrationConvention.HandleType(discoveredType, scanResult, serviceRegistrationCache);
+				_ = serviceRegistrationConvention.HandleType(discoveredType, scanResult, serviceRegistrationCache);
 
 			return serviceRegistrationCache;
 		}

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection;
+#if NETFRAMEWORK || NETSTANDARD2_0
 using System.Runtime.ExceptionServices;
+#endif
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
@@ -45,7 +47,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				throw;
 			}
 #else
-				return (TImplementationType)_explicitConstructorToUse.Invoke(BindingFlags.DoNotWrapExceptions, binder: null, parameters: parameterValues, culture: null);
+			return (TImplementationType)_explicitConstructorToUse.Invoke(BindingFlags.DoNotWrapExceptions, binder: null, parameters: parameterValues, culture: null);
 #endif
 		}
 	}

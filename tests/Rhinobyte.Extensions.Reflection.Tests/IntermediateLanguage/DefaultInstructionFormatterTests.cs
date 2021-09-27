@@ -34,8 +34,10 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			var switchInstruction = new SwitchInstruction(0, 0, OpCodes.Switch, Array.Empty<int>());
 			defaultInstructionFormatter.DescribeInstruction(switchInstruction).Should().Be(switchInstruction.ToString());
 
-			switchInstruction = new SwitchInstruction(0, 0, OpCodes.Switch, new int[] { switchInstruction.Size + 4 });
-			switchInstruction.TargetInstructions = new List<InstructionBase>() { fakeInstruction };
+			switchInstruction = new SwitchInstruction(0, 0, OpCodes.Switch, new int[] { switchInstruction.Size + 4 })
+			{
+				TargetInstructions = new List<InstructionBase>() { fakeInstruction }
+			};
 			defaultInstructionFormatter.DescribeInstruction(switchInstruction).Should().Be(switchInstruction.ToString());
 
 			fakeInstruction = new TypeReferenceInstruction(0, 0, OpCodes.Refanytype, null!);
@@ -78,7 +80,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			fakeInstructions.Add(new SimpleInstruction(fakeInstructions.Count, offset, fakeOpCode));
 			offset += fakeInstructions.Last().Size;
 
-			fakeInstructions.Add(new SignatureInstruction(fakeInstructions.Count, offset, OpCodeTestHelper.OpcodeLookupByOperandType[OperandType.InlineSig].First(), new byte[0]));
+			fakeInstructions.Add(new SignatureInstruction(fakeInstructions.Count, offset, OpCodeTestHelper.OpcodeLookupByOperandType[OperandType.InlineSig].First(), Array.Empty<byte>()));
 			offset += fakeInstructions.Last().Size;
 
 			fakeInstructions.Add(new SwitchInstruction(fakeInstructions.Count, offset, OpCodeTestHelper.OpcodeLookupByOperandType[OperandType.InlineSwitch].First(), Array.Empty<int>()));

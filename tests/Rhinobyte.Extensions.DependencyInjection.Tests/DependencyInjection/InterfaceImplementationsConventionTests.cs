@@ -3,7 +3,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhinobyte.Extensions.Reflection.AssemblyScanning;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Rhinobyte.Extensions.DependencyInjection.Tests

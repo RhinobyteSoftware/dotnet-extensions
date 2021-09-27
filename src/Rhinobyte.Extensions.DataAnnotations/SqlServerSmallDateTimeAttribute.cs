@@ -65,7 +65,7 @@ namespace Rhinobyte.Extensions.DataAnnotations
 					return ValidationResult.Success;
 				}
 
-				string[]? memberNames = validationContext?.MemberName is { } memberName
+				var memberNames = validationContext?.MemberName is { } memberName
 					? new[] { memberName }
 					: null;
 				return new ValidationResult(FormatErrorMessage(validationContext?.DisplayName), memberNames);

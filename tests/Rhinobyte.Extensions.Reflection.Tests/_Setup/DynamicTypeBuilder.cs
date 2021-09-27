@@ -13,8 +13,10 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 		public static Type? BuildTypeWithJumpTableMethod()
 		{
 			// Build a method that contains a jump table / OpCodes.Switch instance
-			var dynamicAssemblyName = new AssemblyName();
-			dynamicAssemblyName.Name = "TestDynamicAssembly";
+			var dynamicAssemblyName = new AssemblyName
+			{
+				Name = "TestDynamicAssembly"
+			};
 			var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(dynamicAssemblyName, AssemblyBuilderAccess.Run);
 			var moduleBuilder = assemblyBuilder.DefineDynamicModule("JumpTableDemo");
 			var typeBuilder = moduleBuilder.DefineType("JumpTableDemoType", TypeAttributes.Public);
@@ -69,8 +71,10 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 		public static Type? BuildTypeWithInlineSignatureMethod()
 		{
 			// Build a method that contains a jump table / OpCodes.Switch instance
-			var dynamicAssemblyName = new AssemblyName();
-			dynamicAssemblyName.Name = "TestDynamicAssembly";
+			var dynamicAssemblyName = new AssemblyName
+			{
+				Name = "TestDynamicAssembly"
+			};
 			var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(dynamicAssemblyName, AssemblyBuilderAccess.Run);
 			var moduleBuilder = assemblyBuilder.DefineDynamicModule("InlineSignatureDemo");
 			var typeBuilder = moduleBuilder.DefineType("InlineSignatureDemoType", TypeAttributes.Public);

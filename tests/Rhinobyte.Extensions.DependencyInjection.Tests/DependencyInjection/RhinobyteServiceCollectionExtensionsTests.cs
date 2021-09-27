@@ -39,7 +39,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 			serviceDescriptor.Lifetime.Should().Be(ServiceLifetime.Scoped);
 
 			serviceCollection.Clear();
-			
+
 			serviceCollection.AddScopedWithConstructorSelection<IExplicitConstructorType, ExplicitConstructorType>(constructorToUse!);
 			serviceDescriptor = serviceCollection.Single();
 			serviceDescriptor.Should().BeOfType<ExplicitConstructorServiceDescriptor<ExplicitConstructorType>>();
@@ -287,7 +287,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 			serviceCollection.Count.Should().Be(1);
 
 			serviceCollection.Clear();
-			
+
 			serviceCollection.TryAddScopedWithConstructorSelection<IExplicitConstructorType, ExplicitConstructorType>(constructorToUse!);
 			serviceDescriptor = serviceCollection.Single();
 			serviceDescriptor.Should().BeOfType<ExplicitConstructorServiceDescriptor<ExplicitConstructorType>>();
