@@ -12,6 +12,8 @@ namespace Rhinobyte.Extensions.Reflection.Tests.AssemblyScanning
 	[TestClass]
 	public class AssemblyScannerTests
 	{
+		/******     TEST METHODS     ****************************
+		 ********************************************************/
 		[TestMethod]
 		public void AddAssembly_successfully_adds_the_assemblies()
 		{
@@ -21,7 +23,6 @@ namespace Rhinobyte.Extensions.Reflection.Tests.AssemblyScanning
 
 			assemblyScanner.Add(null!);
 			assemblyScanner.AssembliesToScan.Should().BeEmpty();
-
 
 			assemblyScanner.Add(thisAssembly);
 			assemblyScanner.FindAssemblyInclude(thisAssembly).Should().NotBeNull();
@@ -34,14 +35,54 @@ namespace Rhinobyte.Extensions.Reflection.Tests.AssemblyScanning
 		}
 
 		[TestMethod]
+		public void AddAssembly_with_non_exported_types_included_does_not_capture_compiler_generated_types()
+		{
+			var reflectionAssembly = typeof(Rhinobyte.Extensions.Reflection.MethodBaseExtensions).Assembly;
+			var compilerGeneratedTypes = reflectionAssembly.GetTypes().Where(type => type.IsCompilerGenerated()).ToArray();
+			compilerGeneratedTypes.Should().NotBeEmpty();
+
+			var assemblyScanner = AssemblyScanner.CreateDefault();
+			assemblyScanner.Add(reflectionAssembly, areNonExportedTypesIncluded: true);
+
+			var scanResult = assemblyScanner.ScanAssemblies();
+			scanResult.AllDiscoveredTypes.Should().NotContain(compilerGeneratedTypes);
+			scanResult.IgnoredTypes.Should().NotContain(compilerGeneratedTypes);
+		}
+
+		[TestMethod]
+		public void AddAssemblyFilter_behaves_as_expected()
+		{
+			var assemblyScanner = AssemblyScanner.CreateDefault();
+			assemblyScanner.AddAssemblyFilter(scannedAssemblyFilter: null!).Should().Be(assemblyScanner);
+			assemblyScanner.ScannedAssemblyFilters.Count.Should().Be(1);
+
+			assemblyScanner.AddAssemblyFilter(new DummyFilter()).Should().Be(assemblyScanner);
+			assemblyScanner.ScannedAssemblyFilters.Count.Should().Be(2);
+		}
+
+		[TestMethod]
 		public void AddForType_behaves_as_expected()
 		{
 			var assemblyScanner = AssemblyScanner.CreateDefault();
 
 			assemblyScanner.AssembliesToScan.Should().BeEmpty();
+			assemblyScanner.AddForType(null!);
+			assemblyScanner.AssembliesToScan.Should().BeEmpty();
+
 			assemblyScanner.AddForType<ISomethingOptions>();
 
 			assemblyScanner.AssembliesToScan.Should().Contain(new AssemblyInclude(typeof(ISomethingOptions).Assembly));
+		}
+
+		[TestMethod]
+		public void AddTypeFilter_behaves_as_expected()
+		{
+			var assemblyScanner = AssemblyScanner.CreateDefault();
+			assemblyScanner.AddTypeFilter(scannedTypeFilter: null!).Should().Be(assemblyScanner);
+			assemblyScanner.ScannedTypeFilters.Count.Should().Be(1);
+
+			assemblyScanner.AddTypeFilter(new DummyFilter()).Should().Be(assemblyScanner);
+			assemblyScanner.ScannedTypeFilters.Count.Should().Be(2);
 		}
 
 		[TestMethod]
@@ -110,6 +151,15 @@ namespace Rhinobyte.Extensions.Reflection.Tests.AssemblyScanning
 			var assemblyScanner = AssemblyScanner.CreateDefault();
 
 			assemblyScanner.AddForType<ISomethingOptions>();
+			assemblyScanner.AssembliesToScan.Count.Should().Be(1);
+			assemblyScanner.AssembliesToScan.Should().Contain(new AssemblyInclude(typeof(ISomethingOptions).Assembly));
+
+			assemblyScanner.Remove(assembly: null!).Should().Be(assemblyScanner);
+			assemblyScanner.AssembliesToScan.Count.Should().Be(1);
+			assemblyScanner.AssembliesToScan.Should().Contain(new AssemblyInclude(typeof(ISomethingOptions).Assembly));
+
+			assemblyScanner.Remove(typeof(AssemblyScannerTests).Assembly).Should().Be(assemblyScanner);
+			assemblyScanner.AssembliesToScan.Count.Should().Be(1);
 			assemblyScanner.AssembliesToScan.Should().Contain(new AssemblyInclude(typeof(ISomethingOptions).Assembly));
 
 			assemblyScanner.Remove(typeof(ISomethingOptions).Assembly);
@@ -120,6 +170,10 @@ namespace Rhinobyte.Extensions.Reflection.Tests.AssemblyScanning
 		public void RemoveAssemblyFilter_behaves_as_expected()
 		{
 			var assemblyScanner = AssemblyScanner.CreateDefault();
+			assemblyScanner.ScannedAssemblyFilters.Count.Should().Be(1);
+			assemblyScanner.ScannedTypeFilters.Count.Should().Be(1);
+
+			assemblyScanner.RemoveAssemblyFilter(null!).Should().Be(assemblyScanner);
 			assemblyScanner.ScannedAssemblyFilters.Count.Should().Be(1);
 			assemblyScanner.ScannedTypeFilters.Count.Should().Be(1);
 
@@ -134,6 +188,10 @@ namespace Rhinobyte.Extensions.Reflection.Tests.AssemblyScanning
 		public void RemoveTypeFilter_behaves_as_expected()
 		{
 			var assemblyScanner = AssemblyScanner.CreateDefault();
+			assemblyScanner.ScannedAssemblyFilters.Count.Should().Be(1);
+			assemblyScanner.ScannedTypeFilters.Count.Should().Be(1);
+
+			assemblyScanner.RemoveTypeFilter(null!).Should().Be(assemblyScanner);
 			assemblyScanner.ScannedAssemblyFilters.Count.Should().Be(1);
 			assemblyScanner.ScannedTypeFilters.Count.Should().Be(1);
 
@@ -284,6 +342,16 @@ namespace Rhinobyte.Extensions.Reflection.Tests.AssemblyScanning
 			assemblyScanner.ExcludeType<ISomethingOptions>();
 			var scanResult3 = assemblyScanner.ScanAssemblies();
 			scanResult3.Should().NotBeSameAs(scanResult2);
+		}
+
+
+
+		/******     TEST SETUP     *****************************
+		 *******************************************************/
+		public class DummyFilter : IScannedAssemblyFilter, IScannedTypeFilter
+		{
+			public bool ShouldIgnoreAssembly(AssemblyInclude assemblyInclude, IAssemblyScanner scanner, IAssemblyScanResult scanResult) => false;
+			public bool ShouldIgnoreType(AssemblyInclude assemblyInclude, Type scannedType, IAssemblyScanner scanner, IAssemblyScanResult scanResult) => false;
 		}
 	}
 }

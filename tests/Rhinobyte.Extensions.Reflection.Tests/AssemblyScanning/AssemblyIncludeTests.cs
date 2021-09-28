@@ -23,11 +23,19 @@ namespace Rhinobyte.Extensions.Reflection.Tests.AssemblyScanning
 		{
 			var assemblyInclude1 = new AssemblyInclude(typeof(AssemblyIncludeTests).Assembly);
 			assemblyInclude1.Equals(null).Should().BeFalse();
+			assemblyInclude1.Equals(new object()).Should().BeFalse();
 			assemblyInclude1.Equals(assemblyInclude1).Should().BeTrue();
 
 			var assemblyInclude2 = new AssemblyInclude(typeof(Rhinobyte.Extensions.Reflection.AssemblyScanning.AssemblyInclude).Assembly);
 			assemblyInclude1.Equals(assemblyInclude2).Should().BeFalse();
 			assemblyInclude2.Equals(assemblyInclude1).Should().BeFalse();
+
+#pragma warning disable IDE0007 // Use implicit type
+#pragma warning disable IDE0004 // Remove Unnecessary Cast
+			object assemblyInclude2AsObject = (object)assemblyInclude2;
+#pragma warning restore IDE0004 // Remove Unnecessary Cast
+#pragma warning restore IDE0007 // Use implicit type
+			assemblyInclude2.Equals(assemblyInclude2AsObject).Should().BeTrue();
 
 			var assemblyInclude3 = new AssemblyInclude(typeof(Rhinobyte.Extensions.Reflection.AssemblyScanning.AssemblyInclude).Assembly);
 			assemblyInclude3.Equals(assemblyInclude2).Should().BeTrue();

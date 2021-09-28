@@ -3,10 +3,27 @@
 allTestProjectNames=("Rhinobyte.Extensions.DataAnnotations.Tests" "Rhinobyte.Extensions.DependencyInjection.Tests" "Rhinobyte.Extensions.Reflection.Tests");
 allTestProjectsCount=${#allTestProjectNames[@]}
 
-testProjectNames=("Rhinobyte.Extensions.DataAnnotations.Tests" "Rhinobyte.Extensions.DependencyInjection.Tests" "Rhinobyte.Extensions.Reflection.Tests");
-#testProjectNames=("Rhinobyte.Extensions.Reflection.Tests");
-testProjectsCount=${#testProjectNames[@]}
-echo "Test Project Names:  ${testProjectNames[@]}"
+
+testProjectNames=()
+testProjectIndex=0
+for (( paramIndex=1; paramIndex<=$#; paramIndex++ )); do
+	nextParam="${!paramIndex}";
+	#echo "nextParam: $nextParam";
+	if [ "$nextParam" = '-p' ] || [ "$nextParam" = '--project' ]; then
+		paramIndex=$((paramIndex+1));
+		testProjectNames[$testProjectIndex]="${!paramIndex}";
+		testProjectIndex=$((testProjectIndex+1));
+	fi;
+done;
+
+if [ $testProjectIndex -eq 0 ]; then
+	testProjectNames=("Rhinobyte.Extensions.DataAnnotations.Tests" "Rhinobyte.Extensions.DependencyInjection.Tests" "Rhinobyte.Extensions.Reflection.Tests");
+	testProjectsCount=${#testProjectNames[@]};
+else
+	testProjectsCount=$testProjectIndex
+fi;
+
+echo "Test Project Names:  ${testProjectNames[@]}  ($testProjectsCount)"
 
 # Switch commented line to run coverage for all 3 target frameworks
 #targetFrameworkNames=("net48", "netcoreapp3.1", "net5.0");

@@ -194,10 +194,8 @@ namespace Rhinobyte.Extensions.Reflection
 							genericConstraints.Add(TypeExtensions.BuildGenericConstraintDisplayValue(genericArgumentTypeName, constraints, useFullTypeName));
 						}
 					}
-					catch (Exception exc)
+					catch (InvalidOperationException)
 					{
-						if (exc.Message != null)
-							throw;
 						// GetGenericParameterConstraints() will throw for open generics even those IsGenericType will be true and IsGenericType can be false for some
 						// method argument types that can have constraints... *sigh*
 					}
