@@ -6,6 +6,13 @@ using System.Reflection.Emit;
 
 namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 {
+	/// <summary>
+	/// Parser class that processes the IL bytes from a <see cref="MethodBody"/>.
+	/// <para>
+	/// The parser can be used to detect matches for <see cref="MemberInfo"/> references within the IL bytes or to return a collection of
+	/// strongly typed <see cref="InstructionBase"/> objects that represent the method's IL instructions.
+	/// </para>
+	/// </summary>
 	internal class MethodBodyParser
 	{
 		private int _bytePosition;

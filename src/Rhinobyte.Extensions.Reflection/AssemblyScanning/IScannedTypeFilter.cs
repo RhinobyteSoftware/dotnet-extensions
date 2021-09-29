@@ -7,6 +7,9 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 	/// </summary>
 	public interface IScannedTypeFilter
 	{
+		/// <summary>
+		/// 
+		/// </summary>
 		bool ShouldIgnoreType(AssemblyInclude assemblyInclude, Type scannedType, IAssemblyScanner scanner, IAssemblyScanResult scanResult);
 	}
 }

@@ -14,6 +14,7 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			_filter = filter ?? throw new ArgumentNullException(nameof(filter));
 		}
 
+		/// <inheritdoc/>
 		public bool ShouldIgnoreAssembly(AssemblyInclude assemblyInclude, IAssemblyScanner scanner, IAssemblyScanResult scanResult)
 			=> _filter.Invoke(assemblyInclude, scanner, scanResult);
 	}

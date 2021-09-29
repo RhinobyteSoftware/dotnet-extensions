@@ -35,6 +35,13 @@ namespace Rhinobyte.Extensions.Reflection
 			return genericConstraintBuilder.ToString().Trim();
 		}
 
+		/// <summary>
+		/// Returns a common (code like) type name for many types.
+		/// <para>For example:</para>
+		/// <para>
+		/// <c>typeof(bool?).GetCommonTypeName()</c> will return "bool?" where as <c>typeof(bool?).GetType().Name</c> might return "Nullable`&lt;Boolean&gt;"
+		/// </para>
+		/// </summary>
 		public static string? GetCommonTypeName(this Type? type, bool isNullable = false)
 		{
 			if (type is null)
@@ -258,6 +265,11 @@ namespace Rhinobyte.Extensions.Reflection
 			return displayNameBuilder.ToString().Trim();
 		}
 
+		/// <summary>
+		/// Convenience extension method to check if the <paramref name="type"/> is decorated with the <see cref="System.Runtime.CompilerServices.CompilerGeneratedAttribute"/>
+		/// </summary>
+		/// <param name="type">The type to check</param>
+		/// <returns>true if <paramref name="type"/> is compiler generated, false otherwise</returns>
 		public static bool IsCompilerGenerated(this Type type)
 		{
 			if (type is null)
@@ -352,6 +364,9 @@ namespace Rhinobyte.Extensions.Reflection
 			return false;
 		}
 
+		/// <summary>
+		/// Convenience extension method to determine <paramref name="type"/> is an open generic type
+		/// </summary>
 		public static bool IsOpenGeneric(this Type type)
 		{
 			if (type is null)
@@ -360,6 +375,9 @@ namespace Rhinobyte.Extensions.Reflection
 			return type.IsGenericTypeDefinition || type.ContainsGenericParameters;
 		}
 
+		/// <summary>
+		/// Convenience extension method to determine <paramref name="type"/> is either a <see cref="ValueType"/> or the <see cref="string"/> type
+		/// </summary>
 		public static bool IsValueTypeOrString(this Type type)
 		{
 			if (type is null)

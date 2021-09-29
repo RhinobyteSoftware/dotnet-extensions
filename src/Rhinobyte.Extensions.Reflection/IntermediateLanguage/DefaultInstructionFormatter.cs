@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 {
+	/// <summary>
+	/// Default implementation of <see cref="IInstructionFormatter"/> that uses the <see cref="InstructionBase.ToString"/> method.
+	/// <para>When describing multiple instructions <see cref="Environment.NewLine"/> is used as the separator between individual instructions.</para>
+	/// </summary>
 	public class DefaultInstructionFormatter : IInstructionFormatter
 	{
 		public virtual string DescribeInstruction(InstructionBase instruction)

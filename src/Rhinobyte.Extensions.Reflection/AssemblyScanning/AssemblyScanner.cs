@@ -216,6 +216,18 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return this;
 		}
 
+		/// <summary>
+		/// Scans the registered assemblies and return the generated <see cref="IAssemblyScanResult"/>
+		/// </summary>
+		/// <param name="includeExcludeConflictResolutionStrategy">
+		/// The resolution strategy to apply if there is overlap
+		/// between the <see cref="ExplicitTypeExcludes"/> and <see cref="ExplicitTypeIncludes"/> collections.
+		/// </param>
+		/// <returns>The cached scan result or a new scan result if one is not already cached.</returns>
+		/// <remarks>
+		/// Internally this implementation caches the scan result and returns the cached object on subsequent calls to this method.
+		/// <para>Calls to any of the methods that change the scanner configuration will clear the cached result object.</para>
+		/// </remarks>
 		public IAssemblyScanResult ScanAssemblies(
 			IncludeExcludeConflictResolutionStrategy includeExcludeConflictResolutionStrategy = IncludeExcludeConflictResolutionStrategy.PrioritizeExcludes)
 		{

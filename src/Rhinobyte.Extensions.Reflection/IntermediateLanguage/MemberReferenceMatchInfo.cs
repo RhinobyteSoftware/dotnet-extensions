@@ -4,6 +4,13 @@ using System.Reflection;
 
 namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 {
+	/// <summary>
+	/// Default implementation of the <see cref="IMemberReferenceMatchInfo"/> contract.
+	/// <para>In addition to checking for an exact (reference equals) match, this implementation will consider the following as a successful match:</para>
+	/// <para>If <see cref="MemberReferenceMatchInfo.MemberInfoToLookFor"/> is an instance of <see cref="PropertyInfo"/> and the IL instruction member reference is for the get / set method of the property</para>
+	/// <para>If <see cref="MemberReferenceMatchInfo.MatchAgainstBaseClassMembers"/> is true and the IL instruction member references a field/method/property on a base type with the same signature as <see cref="MemberReferenceMatchInfo.MemberInfoToLookFor"/></para>
+	/// <para>If <see cref="MemberReferenceMatchInfo.MatchAgainstDeclaringTypeMember"/> is true, <see cref="MemberReferenceMatchInfo.MemberInfoToLookFor"/> has a different <see cref="MemberInfo.ReflectedType"/> than it's <see cref="MemberInfo.DeclaringType"/>, and the IL instruction member references the member from the declared type</para>
+	/// </summary>
 	public sealed class MemberReferenceMatchInfo : IMemberReferenceMatchInfo
 	{
 		public MemberReferenceMatchInfo(
