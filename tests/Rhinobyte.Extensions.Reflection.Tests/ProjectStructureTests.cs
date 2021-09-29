@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Rhinobyte.Extensions.TestTools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +62,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 				var testMethods = testType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 				foreach (var testMethod in testMethods)
 				{
-					if (testMethod.IsDefined(typeof(TestMethodAttribute), true))
+					if (testMethod.IsDefined(typeof(TestMethodAttribute), true) || testMethod.IsDefined(typeof(NotATestMethodAttribute), false))
 						continue;
 
 					missingTestMethodAttributes.Add($"{testType.Name}.{testMethod.Name}");

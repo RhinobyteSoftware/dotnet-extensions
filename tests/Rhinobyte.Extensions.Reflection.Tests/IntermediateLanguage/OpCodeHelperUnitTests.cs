@@ -5,12 +5,22 @@ using Rhinobyte.Extensions.Reflection.Tests.Setup;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
+using static FluentAssertions.FluentActions;
 
 namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 {
 	[TestClass]
 	public class OpCodeHelperUnitTests
 	{
+		[TestMethod]
+		public void GetOperandSize_should_throw_for_unknown_operand_type_values()
+		{
+			Invoking(() => OpCodeHelper.GetOperandSize((OperandType)250))
+				.Should()
+				.Throw<System.NotSupportedException>()
+				.WithMessage("OpCodeHelper.GetOperandSize(..) is not supported for an OperandType value of 250");
+		}
+
 		[TestMethod]
 		public void LocalVariableOpcodeValues_should_match_the_values_found_using_reflection()
 		{

@@ -6,8 +6,10 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 {
 	public class MockMethodBase : MethodBase
 	{
+		public MethodAttributes _attributes;
 		private MethodBody? _methodBody;
 		private Module? _module;
+		private Type? _reflectedType;
 
 		public MockMethodBase(
 			Type? declaringType,
@@ -28,7 +30,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 
 		public override RuntimeMethodHandle MethodHandle => throw new NotImplementedException();
 
-		public override MethodAttributes Attributes => MethodAttributes.Public | MethodAttributes.Static;
+		public override MethodAttributes Attributes => _attributes;
 
 		public override MemberTypes MemberType => MemberTypes.Method;
 
@@ -38,7 +40,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 
 		public override Type DeclaringType { get; }
 
-		public override Type ReflectedType => throw new NotImplementedException();
+		public override Type ReflectedType => _reflectedType!;
 
 
 		public override object[] GetCustomAttributes(bool inherit) => Array.Empty<object>();
@@ -53,8 +55,10 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 		public override object? Invoke(object? obj, BindingFlags invokeAttr, Binder? binder, object?[]? parameters, CultureInfo? culture) => throw new NotImplementedException();
 		public override bool IsDefined(Type attributeType, bool inherit) => false;
 
+		public void SetAttributes(MethodAttributes attributes) => _attributes = attributes;
 		public void SetMethodBody(MethodBody? methodBody) => _methodBody = methodBody;
 		public void SetModule(Module? module) => _module = module;
+		public void SetReflectedType(Type? reflectedType) => _reflectedType = reflectedType;
 	}
 
 	public class MockMethodBody : MethodBody

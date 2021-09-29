@@ -40,11 +40,26 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// <summary>
 		/// Returns true if a reference to each of the <paramref name="memberReferencesToLookFor"/> members is found. Returns false otherwise.
 		/// </summary>
-		internal bool ContainsReferencesToAll(IEnumerable<MemberInfo> memberReferencesToLookFor)
+		internal bool ContainsReferencesToAll(
+			IEnumerable<MemberInfo> memberReferencesToLookFor,
+			bool matchAgainstBaseClassMembers,
+			bool matchAgainstDeclaringTypeMember)
+		{
+			var referencesMatchInfo = new List<MemberReferenceMatchInfo>();
+			foreach (var memberInfo in memberReferencesToLookFor)
+				referencesMatchInfo.Add(new MemberReferenceMatchInfo(memberInfo, matchAgainstBaseClassMembers, matchAgainstDeclaringTypeMember));
+
+			return ContainsReferencesToAll(referencesMatchInfo);
+		}
+
+		/// <summary>
+		/// Returns true if a reference to each of the <paramref name="memberReferencesToLookFor"/> members is found. Returns false otherwise.
+		/// </summary>
+		internal bool ContainsReferencesToAll(IEnumerable<IMemberReferenceMatchInfo> memberReferencesToLookFor)
 		{
 			_bytePosition = 0;
 
-			var referencesToLookFor = new HashSet<MemberInfo>(memberReferencesToLookFor);
+			var referencesNotFoundYet = new List<IMemberReferenceMatchInfo>(memberReferencesToLookFor);
 
 			while (_bytePosition < _ilBytes.Length)
 			{
@@ -61,11 +76,21 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					case OperandType.InlineMethod:
 					case OperandType.InlineType:
 					case OperandType.InlineTok:
-						var memberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
-						if (memberReference != null && referencesToLookFor.Remove(memberReference) && referencesToLookFor.Count == 0)
+						var instructionMemberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
+
+						var nextReferenceIndex = 0;
+						while (nextReferenceIndex < referencesNotFoundYet.Count)
 						{
-							return true;
+							var nextReferenceToLookFor = referencesNotFoundYet[nextReferenceIndex];
+							if (nextReferenceToLookFor.DoesInstructionReferenceMatch(instructionMemberReference))
+								referencesNotFoundYet.RemoveAt(nextReferenceIndex);
+							else
+								++nextReferenceIndex;
 						}
+
+						if (referencesNotFoundYet.Count == 0)
+							return true;
+
 						break;
 
 					case OperandType.InlineSwitch:
@@ -87,7 +112,16 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// <summary>
 		/// Returns true if a reference to the <paramref name="memberReferenceToLookFor"/> is found. Returns false otherwise.
 		/// </summary>
-		internal bool ContainsReferenceTo(MemberInfo memberReferenceToLookFor)
+		internal bool ContainsReferenceTo(
+			MemberInfo memberReferenceToLookFor,
+			bool matchAgainstBaseClassMembers,
+			bool matchAgainstDeclaringTypeMember)
+			=> ContainsReferenceTo(new MemberReferenceMatchInfo(memberReferenceToLookFor, matchAgainstBaseClassMembers, matchAgainstDeclaringTypeMember));
+
+		/// <summary>
+		/// Returns true if a reference to the <paramref name="memberReferenceToLookFor"/> is found. Returns false otherwise.
+		/// </summary>
+		internal bool ContainsReferenceTo(IMemberReferenceMatchInfo memberReferenceToLookFor)
 		{
 			_bytePosition = 0;
 
@@ -106,8 +140,8 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					case OperandType.InlineMethod:
 					case OperandType.InlineType:
 					case OperandType.InlineTok:
-						var memberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
-						if (memberReferenceToLookFor.Equals(memberReference))
+						var instructionMemberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
+						if (memberReferenceToLookFor.DoesInstructionReferenceMatch(instructionMemberReference))
 						{
 							return true;
 						}
@@ -132,7 +166,22 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// <summary>
 		/// Returns true if a reference to any of the <paramref name="memberReferencesToLookFor"/> is found. Returns false otherwise.
 		/// </summary>
-		internal bool ContainsReferenceToAny(IEnumerable<MemberInfo> memberReferencesToLookFor)
+		internal bool ContainsReferenceToAny(
+			IEnumerable<MemberInfo> memberReferencesToLookFor,
+			bool matchAgainstBaseClassMembers,
+			bool matchAgainstDeclaringTypeMember)
+		{
+			var referencesMatchInfo = new List<MemberReferenceMatchInfo>();
+			foreach (var memberInfo in memberReferencesToLookFor)
+				referencesMatchInfo.Add(new MemberReferenceMatchInfo(memberInfo, matchAgainstBaseClassMembers, matchAgainstDeclaringTypeMember));
+
+			return ContainsReferenceToAny(referencesMatchInfo);
+		}
+
+		/// <summary>
+		/// Returns true if a reference to any of the <paramref name="memberReferencesToLookFor"/> is found. Returns false otherwise.
+		/// </summary>
+		internal bool ContainsReferenceToAny(IEnumerable<IMemberReferenceMatchInfo> memberReferencesToLookFor)
 		{
 			_bytePosition = 0;
 
@@ -151,10 +200,11 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					case OperandType.InlineMethod:
 					case OperandType.InlineType:
 					case OperandType.InlineTok:
-						var memberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
-						if (memberReferencesToLookFor.Contains(memberReference))
+						var instructionMemberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
+						foreach (var referenceToLookFor in memberReferencesToLookFor)
 						{
-							return true;
+							if (referenceToLookFor.DoesInstructionReferenceMatch(instructionMemberReference))
+								return true;
 						}
 						break;
 

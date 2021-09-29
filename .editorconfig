@@ -153,6 +153,9 @@ dotnet_diagnostic.VSTHRD200.severity = none
 # Rule (IDE0001)    -  Name Can Be Simplified (Full Type Name)    - Reason: Sometimes useful/preferred for clarity
 dotnet_diagnostic.IDE0001.severity                      = suggestion
 
+# Rule (IDE0002)    -  Name Can Be Simplified                     - Reason: Sometimes useful/preferred for clarity
+dotnet_diagnostic.IDE0002.severity                      = suggestion
+
 # Rule (IDE0003)    -  Name Can Be Simplified (this keyword)      - Reason: Sometimes useful/preferred for clarity
 dotnet_diagnostic.IDE0003.severity                      = suggestion
 

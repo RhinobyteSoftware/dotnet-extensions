@@ -46,6 +46,9 @@
 
         <ReflectionPackageVersion>1.0.0</ReflectionPackageVersion>
         <ReflectionPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(ReflectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</ReflectionPackageConsumerDependencyVersion>
+
+        <TestToolsPackageVersion>1.0.0</TestToolsPackageVersion>
+        <TestToolsPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(TestToolsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</TestToolsPackageConsumerDependencyVersion>
     </PropertyGroup>
 
     <Import Condition="Exists('$(RepoRoot)\development.props')" Project="$(RepoRoot)\development.props"/>

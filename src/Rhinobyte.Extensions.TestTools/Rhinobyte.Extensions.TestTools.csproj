@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
+        <IsPackable>true</IsPackable>
+
+        <!-- VERSION VALUES -->
+        <AssemblyVersion>$(TestToolsPackageVersion).0</AssemblyVersion>
+        <FileVersion>$(TestToolsPackageVersion).0</FileVersion>
+        <InformationalVersion>$(TestToolsPackageVersion)</InformationalVersion>
+        <PackageVersion>$(TestToolsPackageVersion)</PackageVersion>
+        <Version>$(TestToolsPackageVersion)</Version>
+
+        <PackageId>Rhinobyte.Extensions.TestTools</PackageId>
+        <AssemblyName>$(PackageId)</AssemblyName>
+        <RootNamespace>$(PackageId)</RootNamespace>
+        <Title>$(PackageId)</Title>
+        <PackageTags>tests unittesting automation</PackageTags>
+
+        <Summary>Extensions for .NET automated testing tools</Summary>
+        <Description>$(Summary)</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    </ItemGroup>
+
+</Project>

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Rhinobyte.Extensions.Reflection.IntermediateLanguage;
 using Rhinobyte.Extensions.Reflection.Tests.Setup;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 			var methodToSearch1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues_Of_7_And_14), BindingFlags.Public | BindingFlags.Static);
 			methodToSearch1.Should().NotBeNull();
 			methodToSearch1!.ContainsReferenceTo(memberToLookFor!).Should().BeTrue();
+			methodToSearch1!.ContainsReferenceTo(new MemberReferenceMatchInfo(memberToLookFor!, false, false)).Should().BeTrue();
 
 
 			var methodToSearch2 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues_Of_7_And_14_Using_Delegate_Function), BindingFlags.Public | BindingFlags.Static);
@@ -69,16 +71,26 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 				.Where(methodInfo => methodInfo.Name == nameof(System.Console.Write))
 				.ToList();
 
-			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(null!, consoleWriteMethods.First()))
+			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(null!, memberReferenceToLookFor: consoleWriteMethods.First()))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*methodBase*");
+
+			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(null!, memberReferenceMatchInfoToLookFor: new MemberReferenceMatchInfo(consoleWriteMethods.First(), false, false)))
 				.Should()
 				.Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null*methodBase*");
 
 			var methodToSearch1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues), BindingFlags.Public | BindingFlags.Static);
-			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(methodToSearch1!, null!))
+			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(methodToSearch1!, memberReferenceToLookFor: null!))
 				.Should()
 				.Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null*memberReferenceToLookFor*");
+
+			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(methodToSearch1!, memberReferenceMatchInfoToLookFor: null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*memberReferenceMatchInfoToLookFor*");
 		}
 
 		[TestMethod]
@@ -139,21 +151,34 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 			methodToSearch2!.ContainsReferencesToAll(membersToLookFor1).Should().BeTrue(); // bool and char, true
 			methodToSearch2!.ContainsReferencesToAll(membersToLookFor2).Should().BeTrue(); // bool and char and int, true
 			methodToSearch2!.ContainsReferencesToAll(membersToLookFor3).Should().BeFalse(); // bool and char but not string, false
+
+			// Test the method overload that directly takes the IMemberReferenceMatchInfo objects
+			methodToSearch2!.ContainsReferencesToAll(membersToLookFor1.Select(member => new MemberReferenceMatchInfo(member, false, false))).Should().BeTrue(); // bool and char, true
 		}
 
 		[TestMethod]
-		public void ContainsMethodToAll_throw_ArgmentNullException_for_the_required_parameters()
+		public void ContainsReferencesToAll_throw_ArgmentNullException_for_the_required_parameters()
 		{
-			Invoking(() => MethodBaseExtensions.ContainsReferencesToAll(null!, Array.Empty<MemberInfo>()))
+			Invoking(() => MethodBaseExtensions.ContainsReferencesToAll(null!, memberReferencesToLookFor: Array.Empty<MemberInfo>()))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*methodBase*");
+
+			Invoking(() => MethodBaseExtensions.ContainsReferencesToAll(null!, memberReferencesMatchInfoToLookFor: Array.Empty<IMemberReferenceMatchInfo>()))
 				.Should()
 				.Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null*methodBase*");
 
 			var methodToSearch1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues), BindingFlags.Public | BindingFlags.Static);
-			Invoking(() => MethodBaseExtensions.ContainsReferencesToAll(methodToSearch1!, null!))
+			Invoking(() => MethodBaseExtensions.ContainsReferencesToAll(methodToSearch1!, memberReferencesToLookFor: null!))
 				.Should()
 				.Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null*memberReferencesToLookFor*");
+
+			Invoking(() => MethodBaseExtensions.ContainsReferencesToAll(methodToSearch1!, memberReferencesMatchInfoToLookFor: null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*memberReferencesMatchInfoToLookFor*");
 		}
 
 		[TestMethod]
@@ -203,21 +228,34 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 
 			methodToSearch2!.ContainsReferenceToAny(membersToLookFor1).Should().BeTrue();
 			methodToSearch2!.ContainsReferenceToAny(membersToLookFor2).Should().BeFalse();
+
+			// Test the method overload that directly takes the IMemberReferenceMatchInfo objects
+			methodToSearch2!.ContainsReferenceToAny(membersToLookFor1.Select(member => new MemberReferenceMatchInfo(member, false, false))).Should().BeTrue();
 		}
 
 		[TestMethod]
-		public void ContainsMethodToAny_throw_ArgmentNullException_for_the_required_parameters()
+		public void ContainsReferenceToAny_throw_ArgmentNullException_for_the_required_parameters()
 		{
-			Invoking(() => MethodBaseExtensions.ContainsReferenceToAny(null!, Array.Empty<MemberInfo>()))
+			Invoking(() => MethodBaseExtensions.ContainsReferenceToAny(null!, memberReferencesToLookFor: Array.Empty<MemberInfo>()))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*methodBase*");
+
+			Invoking(() => MethodBaseExtensions.ContainsReferenceToAny(null!, memberReferencesMatchInfoToLookFor: Array.Empty<IMemberReferenceMatchInfo>()))
 				.Should()
 				.Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null*methodBase*");
 
 			var methodToSearch1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues), BindingFlags.Public | BindingFlags.Static);
-			Invoking(() => MethodBaseExtensions.ContainsReferenceToAny(methodToSearch1!, null!))
+			Invoking(() => MethodBaseExtensions.ContainsReferenceToAny(methodToSearch1!, memberReferencesToLookFor: null!))
 				.Should()
 				.Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null*memberReferencesToLookFor*");
+
+			Invoking(() => MethodBaseExtensions.ContainsReferenceToAny(methodToSearch1!, memberReferencesMatchInfoToLookFor: null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*memberReferencesMatchInfoToLookFor*");
 		}
 
 		[TestMethod]
@@ -248,6 +286,15 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 		}
 
 		[TestMethod]
+		public void DescribeInstructions_throws_ArgumentNullException_for_required_parameters_that_are_null()
+		{
+			Invoking(() => MethodBaseExtensions.DescribeInstructions(methodBase: null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*methodBase*");
+		}
+
+		[TestMethod]
 		public void GetAccessLevel_returns_the_expected_result()
 		{
 			var methodToTest = typeof(ExampleAccessLevelMethods).GetMethod("DefaultAccessInstanceMethod", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
@@ -273,6 +320,9 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 			methodToTest = typeof(ExampleAccessLevelMethods).GetMethod(nameof(ExampleAccessLevelMethods.PublicInstanceMethod), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			methodToTest.Should().NotBeNull();
 			methodToTest!.GetAccessLevel().Should().Be("public");
+
+			var mockMethodBase = new MockMethodBase(null, "MockMethod");
+			mockMethodBase.GetAccessLevel().Should().BeEmpty();
 		}
 
 		[TestMethod]
@@ -310,6 +360,9 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 
 			methodToTest!.GetSignature().Should().Be("public override string GetSomething()");
 			methodToTest!.GetSignature(true).Should().Be("public override string Rhinobyte.Extensions.Reflection.Tests.Setup.SomethingSubclass.GetSomething()");
+
+			var mockMethodBase = new MockMethodBase(null, "MockMethod");
+			mockMethodBase.GetSignature().Should().Be("<ReturnType> MockMethod()");
 		}
 
 		[TestMethod]
@@ -443,6 +496,42 @@ where TSomethingElse : System.Enum");
 			methodToTest2.HasMatchingParameterTypes(new[] { typeof(int), typeof(float), typeof(int) }).Should().BeFalse();
 
 			methodToTest2.HasMatchingParameterTypes(new[] { typeof(int), typeof(int), typeof(float) }).Should().BeTrue();
+		}
+
+		[TestMethod]
+		public void HasMatchingParameterNamesAndTypes_returns_the_expected_result()
+		{
+			var methodToTest1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddLocalVariables_For_5_And_15), BindingFlags.Public | BindingFlags.Static);
+			var methodToTest2 = typeof(ExampleMethods)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.Single(methodInfo => methodInfo.Name == nameof(ExampleMethods.OverloadedMethod) && methodInfo.GetParameters().Length == 3);
+
+			methodToTest1!.HasMatchingParameterNamesAndTypes(methodToTest2).Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void HasMatchingParameterNamesAndTypes_throws_ArgumentNullException_for_the_required_arguments()
+		{
+			var methodBase = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddLocalVariables_For_5_And_15), BindingFlags.Public | BindingFlags.Static);
+			Invoking(() => MethodBaseExtensions.HasMatchingParameterNamesAndTypes(null!, methodToCompareTo: methodBase!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*methodBase*");
+
+			Invoking(() => MethodBaseExtensions.HasMatchingParameterNamesAndTypes(null!, methodParametersToCompareTo: Array.Empty<ParameterInfo>()))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*methodBase*");
+
+			Invoking(() => MethodBaseExtensions.HasMatchingParameterNamesAndTypes(methodBase!, methodToCompareTo: null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*methodToCompareTo*");
+
+			Invoking(() => MethodBaseExtensions.HasMatchingParameterNamesAndTypes(methodBase!, methodParametersToCompareTo: null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null.*methodParametersToCompareTo*");
 		}
 
 		[TestMethod]

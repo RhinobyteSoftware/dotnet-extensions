@@ -59,7 +59,112 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			var methodReferencesToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).ToList();
 
 			var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
-			methodBodyParser.ContainsReferencesToAll(methodReferencesToSearchFor).Should().BeFalse();
+			methodBodyParser.ContainsReferencesToAll(methodReferencesToSearchFor, false, false).Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void ContainsReferenceTo_correctly_matches_property_references1()
+		{
+			var baseProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.InheritedIntProperty), BindingFlags.Public | BindingFlags.Instance);
+			var inheritedProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.InheritedIntProperty), BindingFlags.Public | BindingFlags.Instance);
+
+			var methodThatReferencesBaseThroughInheritedType = typeof(ExampleInheritedMemberStaticClass)
+				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesTheInheritedPublicProperty), BindingFlags.Static | BindingFlags.Public);
+
+			methodThatReferencesBaseThroughInheritedType!.ContainsReferenceTo(baseProperty!).Should().BeTrue();
+			methodThatReferencesBaseThroughInheritedType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: true).Should().BeTrue();
+			methodThatReferencesBaseThroughInheritedType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: false).Should().BeFalse();
+
+			var methodThatReferencesBaseThroughBaseType = typeof(ExampleInheritedMemberStaticClass)
+				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesTheBasePublicProperty), BindingFlags.Static | BindingFlags.Public);
+
+			methodThatReferencesBaseThroughBaseType!.ContainsReferenceTo(baseProperty!).Should().BeTrue();
+			methodThatReferencesBaseThroughBaseType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: true).Should().BeTrue();
+			methodThatReferencesBaseThroughBaseType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: false).Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void ContainsReferenceTo_correctly_matches_property_references2()
+		{
+			var baseVirtualProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicVirtualBoolProperty), BindingFlags.Public | BindingFlags.Instance);
+			var baseVirtualReadOnlyProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicVirtualBoolReadOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
+			var baseVirtualWriteOnlyProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicVirtualBoolWriteOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
+
+			var overridenVirtualProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicVirtualBoolProperty), BindingFlags.Public | BindingFlags.Instance);
+			var overridenVirtualReadOnlyProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicVirtualBoolReadOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
+			var overridenVirtualWriteOnlyProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicVirtualBoolWriteOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
+
+			var methodThatReferencesBaseVirtualProperties = typeof(ExampleInheritedMemberStaticClass)
+				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesBaseVirtualProperties), BindingFlags.Static | BindingFlags.Public);
+
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+
+			var methodThatReferencesOverrideVirtualProperties = typeof(ExampleInheritedMemberStaticClass)
+				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesOverrideVirtualProperties), BindingFlags.Static | BindingFlags.Public);
+
+			// For override members the IL reference is to the base member with a CALLVIRT op code, so the reference will still match the base property
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		}
+
+		[TestMethod]
+		public void ContainsReferenceTo_correctly_matches_property_references3()
+		{
+			var basePropertyThatWillBeHidden = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicPropertyOnBaseThatWillBeHidden), BindingFlags.Public | BindingFlags.Instance);
+			basePropertyThatWillBeHidden!.DeclaringType.Should().Be(basePropertyThatWillBeHidden.ReflectedType);
+			basePropertyThatWillBeHidden.DeclaringType.Should().Be<ExampleInheritedMemberBaseClass>();
+
+			var subclassPropertyThatHidesBase = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicPropertyOnBaseThatWillBeHidden), BindingFlags.Public | BindingFlags.Instance);
+			subclassPropertyThatHidesBase!.DeclaringType.Should().Be(subclassPropertyThatHidesBase.ReflectedType);
+			subclassPropertyThatHidesBase.DeclaringType.Should().Be<ExampleInheritedMemberSubClass>();
+
+			var methodThatReferencesBaseProperty = typeof(ExampleInheritedMemberStaticClass)
+				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesBasePropertyNotYetHidden), BindingFlags.Static | BindingFlags.Public);
+
+			methodThatReferencesBaseProperty!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+			methodThatReferencesBaseProperty!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+
+			methodThatReferencesBaseProperty!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+
+			// When match against base class members is true, it will find the base class member with the same name so the contains reference result will be true
+			methodThatReferencesBaseProperty!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+
+			var methodThatReferencesSubclassPropertyThatHidesBase = typeof(ExampleInheritedMemberStaticClass)
+				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesSubclassPropertyThatHidesBaseClassProperty), BindingFlags.Static | BindingFlags.Public);
+
+			// For the hidden property reference it should not have an IL instruction that references the base property
+			methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+			methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: true).Should().BeFalse();
+
+			methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+			methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: true).Should().BeTrue();
 		}
 
 		[TestMethod]
@@ -68,7 +173,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			var methodReferenceToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).First(method => method.Name == "WriteLine");
 
 			var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
-			methodBodyParser.ContainsReferenceTo(methodReferenceToSearchFor).Should().BeFalse();
+			methodBodyParser.ContainsReferenceTo(methodReferenceToSearchFor, false, false).Should().BeFalse();
 		}
 
 		[TestMethod]
@@ -77,7 +182,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			var methodReferencesToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).ToList();
 
 			var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
-			methodBodyParser.ContainsReferenceToAny(methodReferencesToSearchFor).Should().BeFalse();
+			methodBodyParser.ContainsReferenceToAny(methodReferencesToSearchFor, false, false).Should().BeFalse();
 		}
 
 		[TestMethod]
