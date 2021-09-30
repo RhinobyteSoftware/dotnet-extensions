@@ -9,7 +9,7 @@ namespace Rhinobyte.Extensions.DataAnnotations
 	/// 	<see href="https://docs.microsoft.com/en-us/sql/t-sql/data-types/date-transact-sql?view=sql-server-ver15">Sql Server date</see> data type.
 	/// </summary>
 	/// <remarks>
-	/// 	Eliminates the thread safety problems with using the <see cref="RangeAttribute(Type, string string)"/> constructor overload.
+	/// 	Eliminates the thread safety problems with using the <see cref="RangeAttribute(Type, string, string)"/> constructor overload.
 	/// 	See <see href="https://github.com/dotnet/runtime/issues/1143"/>
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]

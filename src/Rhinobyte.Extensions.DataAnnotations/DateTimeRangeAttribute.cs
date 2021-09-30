@@ -8,7 +8,7 @@ namespace Rhinobyte.Extensions.DataAnnotations
 	/// 	Specify a <see cref="DateTime"/> range constraint. Requires a minimum and maximum date value specified in string format.
 	/// </summary>
 	/// <remarks>
-	/// 	Eliminates the thread safety problems with using the <see cref="RangeAttribute(Type, string string)"/> constructor overload.
+	/// 	Eliminates the thread safety problems with using the <see cref="RangeAttribute(Type, string, string)"/> constructor overload.
 	/// 	See <see href="https://github.com/dotnet/runtime/issues/1143"/>
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
@@ -21,6 +21,9 @@ namespace Rhinobyte.Extensions.DataAnnotations
 		private readonly string? _maximumStringValue;
 		private readonly string? _minimumStringValue;
 
+		/// <summary>
+		/// Constructor available for subclass support
+		/// </summary>
 		protected DateTimeRangeAttribute(DateTime minimum, DateTime maximum)
 		{
 			_minimum = minimum;
@@ -106,6 +109,9 @@ namespace Rhinobyte.Extensions.DataAnnotations
 			}
 		}
 
+		/// <summary>
+		/// Ensures the minimum and maximum <see cref="DateTime"/> fields are set by parsing the minimum/maximum string values, if necessary.
+		/// </summary>
 		protected void ParseRangeValuesIfNecessary(string? displayName)
 		{
 			if (_minimum != null && _maximum != null)

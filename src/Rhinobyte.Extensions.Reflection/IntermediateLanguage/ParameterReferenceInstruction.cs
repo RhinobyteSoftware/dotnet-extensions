@@ -25,6 +25,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public ParameterInfo ParameterReference { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			if (ParameterReference is null)

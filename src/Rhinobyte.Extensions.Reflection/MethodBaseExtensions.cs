@@ -18,8 +18,8 @@ namespace Rhinobyte.Extensions.Reflection
 		/// <param name="methodBase">The <see cref="MethodBase"/> instance to search within</param>
 		/// <param name="memberReferencesToLookFor">The set of <see cref="MemberInfo"/> references to look for</param>
 		/// <param name="matchAgainstBaseClassMembers">When true checks any instruction member references against memberReferenceToLookFor base type members with the same name</param>
-		/// <param name="matchAgainstDeclaringTypeMember">When true and when the <paramref name="memberReferenceToLookFor"/> has a declaring type different than the reflected type, checks any instruction member references against the declaring type version of the member</param>
-		/// <returns><see cref="true"/> if at least one instruction reference to each of the search items is found, <see cref="false"/> otherwise</returns>
+		/// <param name="matchAgainstDeclaringTypeMember">When true and when the <paramref name="memberReferencesToLookFor"/> has a declaring type different than the reflected type, checks any instruction member references against the declaring type version of the member</param>
+		/// <returns>true if at least one instruction reference to each of the search items is found, false otherwise</returns>
 		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferencesToLookFor"/> are null</exception>
 		public static bool ContainsReferencesToAll(
 			this MethodBase methodBase,
@@ -33,12 +33,12 @@ namespace Rhinobyte.Extensions.Reflection
 		}
 
 		/// <summary>
-		/// Search the <paramref name="methodBase"/> body's intermediate language (IL) bytes for instruction references to all of the specified <paramref name="memberReferencesToLookFor"/>.
+		/// Search the <paramref name="methodBase"/> body's intermediate language (IL) bytes for instruction references to all of the specified <paramref name="memberReferencesMatchInfoToLookFor"/>.
 		/// </summary>
 		/// <param name="methodBase">The <see cref="MethodBase"/> instance to search within</param>
 		/// <param name="memberReferencesMatchInfoToLookFor">The set of <see cref="IMemberReferenceMatchInfo"/> references to look for</param>
-		/// <returns><see cref="true"/> if at least one instruction reference to each of the search items is found, <see cref="false"/> otherwise</returns>
-		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferencesToLookFor"/> are null</exception>
+		/// <returns>true if at least one instruction reference to each of the search items is found, false otherwise</returns>
+		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferencesMatchInfoToLookFor"/> are null</exception>
 		public static bool ContainsReferencesToAll(
 			this MethodBase methodBase,
 			IEnumerable<IMemberReferenceMatchInfo> memberReferencesMatchInfoToLookFor)
@@ -55,7 +55,7 @@ namespace Rhinobyte.Extensions.Reflection
 		/// <param name="memberReferenceToLookFor">The <see cref="MemberInfo"/> reference to look for</param>
 		/// <param name="matchAgainstBaseClassMembers">When true checks any instruction member references against memberReferenceToLookFor base type members with the same name</param>
 		/// <param name="matchAgainstDeclaringTypeMember">When true and when the <paramref name="memberReferenceToLookFor"/> has a declaring type different than the reflected type, checks any instruction member references against the declaring type version of the member</param>
-		/// <returns><see cref="true"/> if a reference is found, <see cref="false"/> otherwise</returns>
+		/// <returns>true if a reference is found, false otherwise</returns>
 		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferenceToLookFor"/> are null</exception>
 		public static bool ContainsReferenceTo(
 			this MethodBase methodBase,
@@ -69,12 +69,12 @@ namespace Rhinobyte.Extensions.Reflection
 		}
 
 		/// <summary>
-		/// Search the <paramref name="methodBase"/> body's intermediate language (IL) bytes for an instruction reference to the specified <paramref name="memberReferenceToLookFor"/>.
+		/// Search the <paramref name="methodBase"/> body's intermediate language (IL) bytes for an instruction reference to the specified <paramref name="memberReferenceMatchInfoToLookFor"/>.
 		/// </summary>
 		/// <param name="methodBase">The <see cref="MethodBase"/> instance to search within</param>
 		/// <param name="memberReferenceMatchInfoToLookFor">The <see cref="IMemberReferenceMatchInfo"/> reference to look for</param>
-		/// <returns><see cref="true"/> if a reference is found, <see cref="false"/> otherwise</returns>
-		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferenceToLookFor"/> are null</exception>
+		/// <returns>true if a reference is found, false otherwise</returns>
+		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferenceMatchInfoToLookFor"/> are null</exception>
 		public static bool ContainsReferenceTo(this MethodBase methodBase, IMemberReferenceMatchInfo memberReferenceMatchInfoToLookFor)
 		{
 			_ = methodBase ?? throw new ArgumentNullException(nameof(methodBase));
@@ -88,8 +88,8 @@ namespace Rhinobyte.Extensions.Reflection
 		/// <param name="methodBase">The <see cref="MethodBase"/> instance to search within</param>
 		/// <param name="memberReferencesToLookFor">The set of <see cref="MemberInfo"/> references to look for</param>
 		/// <param name="matchAgainstBaseClassMembers">When true checks any instruction member references against memberReferenceToLookFor base type members with the same name</param>
-		/// <param name="matchAgainstDeclaringTypeMember">When true and when the <paramref name="memberReferenceToLookFor"/> has a declaring type different than the reflected type, checks any instruction member references against the declaring type version of the member</param>
-		/// <returns><see cref="true"/> if a reference to any of the items is found, <see cref="false"/> otherwise</returns>
+		/// <param name="matchAgainstDeclaringTypeMember">When true and when the <paramref name="memberReferencesToLookFor"/> has a declaring type different than the reflected type, checks any instruction member references against the declaring type version of the member</param>
+		/// <returns>true if a reference to any of the items is found, false otherwise</returns>
 		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferencesToLookFor"/> are null</exception>
 		public static bool ContainsReferenceToAny(
 			this MethodBase methodBase,
@@ -103,12 +103,12 @@ namespace Rhinobyte.Extensions.Reflection
 		}
 
 		/// <summary>
-		/// Search the <paramref name="methodBase"/> body's intermediate language (IL) bytes for an instruction reference to any of the specified <paramref name="memberReferencesToLookFor"/>.
+		/// Search the <paramref name="methodBase"/> body's intermediate language (IL) bytes for an instruction reference to any of the specified <paramref name="memberReferencesMatchInfoToLookFor"/>.
 		/// </summary>
 		/// <param name="methodBase">The <see cref="MethodBase"/> instance to search within</param>
 		/// <param name="memberReferencesMatchInfoToLookFor">The set of <see cref="IMemberReferenceMatchInfo"/> references to look for</param>
-		/// <returns><see cref="true"/> if a reference to any of the items is found, <see cref="false"/> otherwise</returns>
-		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferencesToLookFor"/> are null</exception>
+		/// <returns>true if a reference to any of the items is found, false otherwise</returns>
+		/// <exception cref="ArgumentNullException">Thrown if either <paramref name="methodBase"/> or <paramref name="memberReferencesMatchInfoToLookFor"/> are null</exception>
 		public static bool ContainsReferenceToAny(
 			this MethodBase methodBase,
 			IEnumerable<IMemberReferenceMatchInfo> memberReferencesMatchInfoToLookFor)
@@ -313,7 +313,7 @@ namespace Rhinobyte.Extensions.Reflection
 		/// </summary>
 		/// <param name="methodBase">The <see cref="MethodBase"/> instance to check</param>
 		/// <param name="parameterTypes">The array of parameter <see cref="Type"/>s to compare against</param>
-		/// <returns><see cref="true"/> if the method parameters match <paramref name="parameterTypes"/>, <see cref="false"/> otherwise</returns>
+		/// <returns>true if the method parameters match <paramref name="parameterTypes"/>, false otherwise</returns>
 		/// <exception cref="ArgumentNullException">Thrown if either of the <paramref name="methodBase"/> or <paramref name="parameterTypes"/> arguments are null</exception>
 		public static bool HasMatchingParameterTypes(this MethodBase methodBase, Type[] parameterTypes)
 		{
@@ -342,7 +342,7 @@ namespace Rhinobyte.Extensions.Reflection
 		/// </summary>
 		/// <param name="methodBase">The <see cref="MethodBase"/> instance to check</param>
 		/// <param name="methodToCompareTo">The <see cref="MethodBase"/> to compare against</param>
-		/// <returns><see cref="true"/> if the method parameters match <paramref name="methodToCompareTo"/>, <see cref="false"/> otherwise</returns>
+		/// <returns>true if the method parameters match <paramref name="methodToCompareTo"/>, false otherwise</returns>
 		/// <exception cref="ArgumentNullException">Thrown if either of the <paramref name="methodBase"/> or <paramref name="methodToCompareTo"/> arguments are null</exception>
 		public static bool HasMatchingParameterNamesAndTypes(this MethodBase methodBase, MethodBase methodToCompareTo)
 		{
@@ -358,7 +358,7 @@ namespace Rhinobyte.Extensions.Reflection
 		/// </summary>
 		/// <param name="methodBase">The <see cref="MethodBase"/> instance to check</param>
 		/// <param name="methodParametersToCompareTo">The <see cref="ParameterInfo"/> array to compare against</param>
-		/// <returns><see cref="true"/> if the method parameters match <paramref name="methodToCompareTo"/>, <see cref="false"/> otherwise</returns>
+		/// <returns>true if the method parameters match <paramref name="methodParametersToCompareTo"/>, false otherwise</returns>
 		/// <exception cref="ArgumentNullException">Thrown if either of the <paramref name="methodBase"/> or <paramref name="methodParametersToCompareTo"/> arguments are null</exception>
 		public static bool HasMatchingParameterNamesAndTypes(this MethodBase methodBase, ParameterInfo[] methodParametersToCompareTo)
 		{
@@ -384,7 +384,7 @@ namespace Rhinobyte.Extensions.Reflection
 		/// Convenience extension method to check if <paramref name="methodBase"/> has parameters.
 		/// </summary>
 		/// <param name="methodBase">The <see cref="MethodBase"/> instance to check</param>
-		/// <returns><see cref="true"/> if the method has zero parameters, <see cref="false"/> otherwise</returns>
+		/// <returns>true if the method has zero parameters, false otherwise</returns>
 		/// <exception cref="ArgumentNullException">Thrown if the <paramref name="methodBase"/> is null</exception>
 		public static bool HasNoParameters(this MethodBase methodBase)
 		{

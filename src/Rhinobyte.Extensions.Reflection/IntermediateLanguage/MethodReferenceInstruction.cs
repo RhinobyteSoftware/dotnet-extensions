@@ -20,6 +20,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public MethodBase? MethodReference { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			if (MethodReference is null)

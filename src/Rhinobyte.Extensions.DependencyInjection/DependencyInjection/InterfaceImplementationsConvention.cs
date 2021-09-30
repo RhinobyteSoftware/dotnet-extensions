@@ -10,6 +10,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// </summary>
 	public class InterfaceImplementationsConvention : ServiceRegistrationConventionBase
 	{
+		/// <summary>
+		/// Construct an instance of the registration convention with the specified configuration values.
+		/// </summary>
 		public InterfaceImplementationsConvention(
 			ConstructorSelectionType defaultConstructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly,
 			ServiceLifetime defaultLifetime = ServiceLifetime.Scoped,
@@ -24,6 +27,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			SkipAlreadyRegistered = skipAlreadyRegistered;
 		}
 
+		/// <summary>
+		/// The <see cref="InterfaceImplementationResolutionStrategy"/> this convention will use to select implementation types to use for registration
+		/// against any discovered interface types.
+		/// </summary>
 		public InterfaceImplementationResolutionStrategy ResolutionStrategy { get; protected set; }
 
 		/// <summary>
@@ -36,6 +43,13 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		public bool SkipAlreadyRegistered { get; protected set; }
 
 #pragma warning disable CA1062 // Validate arguments of public methods
+		/// <summary>
+		/// Implementation of the <see cref="ServiceRegistrationConventionBase.GetServiceRegistrationParameters(Type, IAssemblyScanResult, ServiceRegistrationCache)"/> base method.
+		/// <para>
+		/// This implementation checks if <paramref name="discoveredType"/> is an interface. If so it attempts to find one or more concrete types in the <paramref name="scanResult"/>
+		/// that implement the interface and conform to the configured <see cref="ResolutionStrategy"/>.
+		/// </para>
+		/// </summary>
 		public override ServiceRegistrationParameters? GetServiceRegistrationParameters(
 			Type discoveredType,
 			IAssemblyScanResult scanResult,

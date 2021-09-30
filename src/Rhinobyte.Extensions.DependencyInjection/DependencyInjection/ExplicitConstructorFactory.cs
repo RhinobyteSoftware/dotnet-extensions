@@ -7,18 +7,31 @@ using System.Runtime.ExceptionServices;
 
 namespace Rhinobyte.Extensions.DependencyInjection
 {
+	/// <summary>
+	/// Constructor factory used by <see cref="ExplicitConstructorFactory{TImplementationType}"/>
+	/// </summary>
+	/// <typeparam name="TImplementationType">The implementation type returned by the factory</typeparam>
 	public class ExplicitConstructorFactory<TImplementationType>
 		where TImplementationType : class
 	{
 		private readonly ConstructorInfo _explicitConstructorToUse;
 
+		/// <summary>
+		/// Construct a factory instance for the provided <paramref name="explicitConstructorToUse"/>
+		/// </summary>
 		public ExplicitConstructorFactory(ConstructorInfo explicitConstructorToUse)
 		{
 			_explicitConstructorToUse = explicitConstructorToUse ?? throw new ArgumentNullException(nameof(explicitConstructorToUse));
 		}
 
+		/// <summary>
+		/// See the <see cref="Func{T, TResult}"/> to use for the <see cref="ServiceDescriptor.ImplementationFactory"/>
+		/// </summary>
 		public Func<IServiceProvider, TImplementationType> FactoryMethod => CallConstructor;
 
+		/// <summary>
+		/// The factory method that will call the explicitly selected constructor and return the constructed instance of <typeparamref name="TImplementationType"/>
+		/// </summary>
 		public TImplementationType CallConstructor(IServiceProvider serviceProvider)
 		{
 			var parameterDetails = _explicitConstructorToUse.GetParameters();

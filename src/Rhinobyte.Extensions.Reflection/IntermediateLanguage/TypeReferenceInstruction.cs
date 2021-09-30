@@ -19,6 +19,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public Type TypeReference { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			if (TypeReference is null)

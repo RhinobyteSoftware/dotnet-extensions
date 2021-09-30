@@ -12,6 +12,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	public class ExplicitConstructorServiceDescriptor<TImplementationType> : ServiceDescriptor, ICustomServiceDescriptor
 		where TImplementationType : class
 	{
+		/// <summary>
+		/// Constructor an <see cref="ExplicitConstructorFactory{TImplementationType}"/> that will use an <see cref="ServiceDescriptor.ImplementationFactory"/>
+		/// that calls the provided <paramref name="explicitConstructorToUse"/> when constructing an instance of <typeparamref name="TImplementationType"/>.
+		/// </summary>
 		public ExplicitConstructorServiceDescriptor(
 			Type serviceType,
 			ConstructorInfo explicitConstructorToUse,
@@ -21,9 +25,13 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			OriginalImplementationType = typeof(TImplementationType);
 		}
 
+		/// <summary>
+		/// The <typeparamref name="TImplementationType"/> of the instance that the explicit constructor factory will return.
+		/// </summary>
 		public Type OriginalImplementationType { get; }
 
 #pragma warning disable CA1721 // Property names should not match get methods	- Reason: The property name ImplementationType in the base ServiceDescriptor class can be null when an explicit implementation or factory is used
+		/// <inheritdoc/>
 		public Type GetImplementationType() => OriginalImplementationType;
 #pragma warning restore CA1721 // Property names should not match get methods
 	}
@@ -65,11 +73,18 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return descriptorInstance;
 		}
 
+		/// <summary>
+		/// Convenience method to construct a <see cref="ServiceLifetime.Scoped"/> descriptor that explicitly calls the provided <paramref name="constructorInfo"/>
+		/// </summary>
 		public static ExplicitConstructorServiceDescriptor<TImplementationType> CreateScoped<TServiceType, TImplementationType>(ConstructorInfo constructorInfo)
 			where TServiceType : class
 			where TImplementationType : class, TServiceType
 			=> new ExplicitConstructorServiceDescriptor<TImplementationType>(typeof(TServiceType), constructorInfo, ServiceLifetime.Scoped);
 
+		/// <summary>
+		/// Convenience method to construct a <see cref="ServiceLifetime.Scoped"/> descriptor that will use an explicitly selected constructor based
+		/// on the <paramref name="constructorSelectionType"/>.
+		/// </summary>
 		public static ServiceDescriptor CreateScoped<TServiceType, TImplementationType>(ConstructorSelectionType constructorSelectionType)
 			where TServiceType : class
 			where TImplementationType : class, TServiceType
@@ -80,11 +95,18 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				: CreateScoped<TServiceType, TImplementationType>(constructorInfo);
 		}
 
+		/// <summary>
+		/// Convenience method to construct a <see cref="ServiceLifetime.Singleton"/> descriptor that explicitly calls the provided <paramref name="constructorInfo"/>
+		/// </summary>
 		public static ExplicitConstructorServiceDescriptor<TImplementationType> CreateSingleton<TServiceType, TImplementationType>(ConstructorInfo constructorInfo)
 			where TServiceType : class
 			where TImplementationType : class, TServiceType
 			=> new ExplicitConstructorServiceDescriptor<TImplementationType>(typeof(TServiceType), constructorInfo, ServiceLifetime.Singleton);
 
+		/// <summary>
+		/// Convenience method to construct a <see cref="ServiceLifetime.Singleton"/> descriptor that will use an explicitly selected constructor based
+		/// on the <paramref name="constructorSelectionType"/>.
+		/// </summary>
 		public static ServiceDescriptor CreateSingleton<TServiceType, TImplementationType>(ConstructorSelectionType constructorSelectionType)
 			where TServiceType : class
 			where TImplementationType : class, TServiceType
@@ -95,11 +117,18 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				: CreateSingleton<TServiceType, TImplementationType>(constructorInfo);
 		}
 
+		/// <summary>
+		/// Convenience method to construct a <see cref="ServiceLifetime.Transient"/> descriptor that explicitly calls the provided <paramref name="constructorInfo"/>
+		/// </summary>
 		public static ExplicitConstructorServiceDescriptor<TImplementationType> CreateTransient<TServiceType, TImplementationType>(ConstructorInfo constructorInfo)
 			where TServiceType : class
 			where TImplementationType : class, TServiceType
 			=> new ExplicitConstructorServiceDescriptor<TImplementationType>(typeof(TServiceType), constructorInfo, ServiceLifetime.Transient);
 
+		/// <summary>
+		/// Convenience method to construct a <see cref="ServiceLifetime.Transient"/> descriptor that will use an explicitly selected constructor based
+		/// on the <paramref name="constructorSelectionType"/>.
+		/// </summary>
 		public static ServiceDescriptor CreateTransient<TServiceType, TImplementationType>(ConstructorSelectionType constructorSelectionType)
 			where TServiceType : class
 			where TImplementationType : class, TServiceType
@@ -110,6 +139,14 @@ namespace Rhinobyte.Extensions.DependencyInjection
 				: CreateTransient<TServiceType, TImplementationType>(constructorInfo);
 		}
 
+		/// <summary>
+		/// Potentially returns an explicit <see cref="ConstructorInfo"/> to use for constructing instances of <paramref name="implementationType"/>.
+		/// <para>
+		/// The constructor selection is determined based on a number of factors including the <paramref name="constructorSelectionType"/>, the number
+		/// of available constructors, the constructor parameter types, the presence of <see cref="DependencyInjectionConstructorAttribute"/>
+		/// and whether or not the constructor dependencies are potentially ambiguous
+		/// </para>
+		/// </summary>
 		public static ConstructorInfo? SelectCustomConstructor(Type implementationType, ConstructorSelectionType constructorSelectionType)
 		{
 			_ = implementationType ?? throw new ArgumentNullException(nameof(implementationType));

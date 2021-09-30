@@ -19,6 +19,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public LocalVariableInfo LocalVariable { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			if (LocalVariable is null)

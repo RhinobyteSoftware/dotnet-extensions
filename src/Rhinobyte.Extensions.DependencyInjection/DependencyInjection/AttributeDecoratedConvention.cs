@@ -10,6 +10,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// </summary>
 	public class AttributeDecoratedConvention : ServiceRegistrationConventionBase
 	{
+		/// <summary>
+		/// Construct an instance of the registration convention with the specified configuration values.
+		/// </summary>
 		public AttributeDecoratedConvention(
 			ConstructorSelectionType defaultConstructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly,
 			ServiceLifetime defaultLifetime = ServiceLifetime.Scoped,
@@ -33,6 +36,11 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 
 #pragma warning disable CA1062 // Validate arguments of public methods
+		/// <summary>
+		/// Implementation of the <see cref="ServiceRegistrationConventionBase.GetServiceRegistrationParameters(Type, IAssemblyScanResult, ServiceRegistrationCache)"/> base method.
+		/// <para>This implementation checks the discovered type for an <see cref="RegisterForDependencyInjectionAttribute"/> decorator.</para>
+		/// <para>If the attribute is present the <see cref="RegisterForDependencyInjectionAttribute.ImplementationType"/> value is used to construct the registration parameters.</para>
+		/// </summary>
 		public override ServiceRegistrationParameters? GetServiceRegistrationParameters(
 			Type discoveredType,
 			IAssemblyScanResult scanResult,

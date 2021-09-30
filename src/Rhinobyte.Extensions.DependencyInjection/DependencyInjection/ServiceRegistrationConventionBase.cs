@@ -15,6 +15,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// </summary>
 	public abstract class ServiceRegistrationConventionBase : IServiceRegistrationConvention
 	{
+		/// <summary>
+		/// Construct an instance of the registration convention with the specified configuration values.
+		/// </summary>
 		protected ServiceRegistrationConventionBase(
 			ConstructorSelectionType defaultConstructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly,
 			ServiceLifetime defaultLifetime = ServiceLifetime.Scoped,
@@ -29,10 +32,25 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			SkipImplementationTypesAlreadyInUse = skipImplementationTypesAlreadyInUse;
 		}
 
+		/// <summary>
+		/// The default <see cref="ConstructorSelectionType"/> to use when calling the
+		/// <see cref="BuildServiceDescriptor(Type, Type, ServiceRegistrationCache, ConstructorSelectionType?, ServiceLifetime?, bool?)"/> method.
+		/// </summary>
 		public ConstructorSelectionType DefaultConstructorSelectionType { get; protected set; } = ConstructorSelectionType.DefaultBehaviorOnly;
 
+		/// <summary>
+		/// The default <see cref="ServiceLifetime"/> to use when calling the
+		/// <see cref="BuildServiceDescriptor(Type, Type, ServiceRegistrationCache, ConstructorSelectionType?, ServiceLifetime?, bool?)"/> method.
+		/// </summary>
 		public ServiceLifetime DefaultLifetime { get; protected set; } = ServiceLifetime.Scoped;
 
+		/// <summary>
+		/// The default <see cref="ServiceRegistrationOverwriteBehavior"/> for the <see cref="HandleType(Type, IAssemblyScanResult, ServiceRegistrationCache)"/> implementation to use.
+		/// <para>
+		/// Subclasses can supercede the default for an individual registration by returning a non-null <see cref="ServiceRegistrationParameters.OverwriteBehavior"/>
+		/// value in their implementation of the <see cref="GetServiceRegistrationParameters(Type, IAssemblyScanResult, ServiceRegistrationCache)"/> method.
+		/// </para>
+		/// </summary>
 		public ServiceRegistrationOverwriteBehavior DefaultOverwriteBehavior { get; protected set; } = ServiceRegistrationOverwriteBehavior.TryAdd;
 
 		/// <summary>
@@ -58,6 +76,14 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 
 #pragma warning disable CA1062 // Validate arguments of public methods
+		/// <summary>
+		/// Helper that subclasses can use to build a service descriptor in their implementation of the
+		/// <see cref="GetServiceRegistrationParameters(Type, IAssemblyScanResult, ServiceRegistrationCache)"/> method.
+		/// <para>
+		/// Provides logic to skip implementation types already in use and to handle explicit constructor selection
+		/// based on the property/parameter values provided.
+		/// </para>
+		/// </summary>
 		protected ServiceDescriptor? BuildServiceDescriptor(
 			Type discoveredServiceType,
 			Type implementationType,
@@ -85,12 +111,23 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		}
 #pragma warning restore CA1062 // Validate arguments of public methods
 
+		/// <summary>
+		/// Abstract method that subclasses need to implement to select one or more implementation types to use for the <paramref name="discoveredType"/>
+		/// </summary>
 		public abstract ServiceRegistrationParameters? GetServiceRegistrationParameters(
 			Type discoveredType,
 			IAssemblyScanResult scanResult,
 			ServiceRegistrationCache serviceRegistrationCache
 		);
 
+		/// <summary>
+		/// Implementation of the <see cref="IServiceRegistrationConvention.HandleType(Type, IAssemblyScanResult, ServiceRegistrationCache)"/> method.
+		/// <para>This implementation provides logic for deciding on when/how to register a service decriptor based on the specified property values.</para>
+		/// <para>
+		/// Subclasses should override <see cref="GetServiceRegistrationParameters(Type, IAssemblyScanResult, ServiceRegistrationCache)"/> to provide the logic for selecting
+		/// a specific implementation type to use for the <paramref name="discoveredType"/>
+		/// </para>
+		/// </summary>
 		public virtual bool HandleType(
 			Type discoveredType,
 			IAssemblyScanResult scanResult,
@@ -124,6 +161,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			);
 		}
 
+		/// <summary>
+		/// Attempt to register the <paramref name="serviceDescriptor"/> against the <see cref="ServiceRegistrationCache"/>
+		/// </summary>
 		public static bool TryRegister(
 			ServiceRegistrationOverwriteBehavior overwriteBehavior,
 			ServiceDescriptor serviceDescriptor,
@@ -183,6 +223,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return true;
 		}
 
+		/// <summary>
+		/// Attempt to register the collection of <paramref name="serviceDescriptors"/> against the <see cref="ServiceRegistrationCache"/>
+		/// </summary>
 		public static bool TryRegisterMultiple(
 			Type discoveredType,
 			ServiceRegistrationOverwriteBehavior overwriteBehavior,

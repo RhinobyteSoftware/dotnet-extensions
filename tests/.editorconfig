@@ -58,6 +58,9 @@ dotnet_diagnostic.CA2007.severity       = none
 # Rule: (CA2234) Use Uri in lieu of string
 dotnet_diagnostic.CA2234.severity       = suggestion
 
+# Rule: (CS1591) Missing XML comment for publicly visible type      - Reason Don't care in example libraries or test projects
+dotnet_diagnostic.CS1591.severity       = none
+
 # Rule: (IDE0028) Collection initialization can be simplified
 dotnet_diagnostic.IDE0028.severity      = suggestion
 

@@ -18,6 +18,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public byte Value { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 			=> $"{base.ToString()}  [Byte Value: {Value}]";
 	}

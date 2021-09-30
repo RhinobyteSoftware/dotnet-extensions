@@ -9,6 +9,9 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 	{
 		private readonly Func<AssemblyInclude, IAssemblyScanner, IAssemblyScanResult, bool> _filter;
 
+		/// <summary>
+		/// Construct a filter instance that will use the provided <paramref name="filter"/> function.
+		/// </summary>
 		public LambdaAssemblyFilter(Func<AssemblyInclude, IAssemblyScanner, IAssemblyScanResult, bool> filter)
 		{
 			_filter = filter ?? throw new ArgumentNullException(nameof(filter));

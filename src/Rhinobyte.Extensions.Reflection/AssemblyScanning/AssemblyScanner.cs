@@ -18,6 +18,9 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 		private readonly HashSet<IScannedAssemblyFilter> _scannedAssemblyFilters;
 		private readonly HashSet<IScannedTypeFilter> _scannedTypeFilters;
 
+		/// <summary>
+		/// Constructs a new blank assembly scanner with instantiated <see cref="HashSet{T}"/> for the filter fields
+		/// </summary>
 		protected AssemblyScanner()
 		{
 			_scannedAssemblyFilters = new HashSet<IScannedAssemblyFilter>();
@@ -50,13 +53,22 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 				.AddTypeFilter(ignoredAttributeFilter);
 		}
 
+		/// <inheritdoc/>
 		public IReadOnlyCollection<AssemblyInclude> AssembliesToScan => _assembliesToScan;
+		/// <inheritdoc/>
 		public IReadOnlyCollection<Type> ExplicitTypeExcludes => _excludedTypes;
+		/// <inheritdoc/>
 		public IReadOnlyCollection<Type> ExplicitTypeIncludes => _includedTypes;
+		/// <inheritdoc/>
 		public IReadOnlyCollection<IScannedAssemblyFilter> ScannedAssemblyFilters => _scannedAssemblyFilters;
+		/// <inheritdoc/>
 		public IReadOnlyCollection<IScannedTypeFilter> ScannedTypeFilters => _scannedTypeFilters;
 
 
+		/// <summary>
+		/// Adds the specified <paramref name="assembly"/> to the collection of assemblies to scan, if not already present.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner Add(Assembly assembly, bool areNonExportedTypesIncluded = false)
 		{
 			if (assembly is null)
@@ -65,6 +77,10 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return Add(new AssemblyInclude(assembly, areNonExportedTypesIncluded));
 		}
 
+		/// <summary>
+		/// Adds the specified <paramref name="assemblyInclude"/> to the collection of assemblies to scan, if not already present.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner Add(AssemblyInclude assemblyInclude)
 		{
 			var hasChanged = _assembliesToScan.Add(assemblyInclude);
@@ -74,6 +90,10 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return this;
 		}
 
+		/// <summary>
+		/// Adds the provided <paramref name="scannedAssemblyFilter"/> to the <see cref="ScannedAssemblyFilters"/> collection.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner AddAssemblyFilter(IScannedAssemblyFilter scannedAssemblyFilter)
 		{
 			if (scannedAssemblyFilter is null)
@@ -86,15 +106,31 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return this;
 		}
 
+		/// <summary>
+		/// Adds the provided <paramref name="filter"/> to the <see cref="ScannedAssemblyFilters"/> collection.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner AddAssemblyFilter(Func<AssemblyInclude, IAssemblyScanner, IAssemblyScanResult, bool> filter)
 			=> AddAssemblyFilter(new LambdaAssemblyFilter(filter));
 
+		/// <summary>
+		/// Adds the assembly for the specified <paramref name="typeInAssembly"/> to the assemblies to scan, if not already present.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner AddForType(Type typeInAssembly, bool areNonExportedTypesIncluded = false)
 			=> Add(typeInAssembly?.Assembly!, areNonExportedTypesIncluded);
 
+		/// <summary>
+		/// Adds the assembly for the specified <typeparamref name="TType"/> to the assemblies to scan, if not already present.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner AddForType<TType>(bool areNonExportedTypesIncluded = false)
 			=> AddForType(typeof(TType), areNonExportedTypesIncluded);
 
+		/// <summary>
+		/// Adds the provided <paramref name="scannedTypeFilter"/> to the <see cref="ScannedTypeFilters"/> collection.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner AddTypeFilter(IScannedTypeFilter scannedTypeFilter)
 		{
 			if (scannedTypeFilter is null)
@@ -107,9 +143,16 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return this;
 		}
 
+		/// <summary>
+		/// Adds the provided <paramref name="filter"/> to the <see cref="ScannedTypeFilters"/> collection.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner AddTypeFilter(Func<AssemblyInclude, Type, IAssemblyScanner, IAssemblyScanResult, bool> filter)
 			=> AddTypeFilter(new LambdaTypeFilter(filter));
 
+		/// <summary>
+		/// Find and return the registered <see cref="AssemblyInclude"/> that matches <paramref name="assemblyToLookFor"/>, if it exists
+		/// </summary>
 		public AssemblyInclude? FindAssemblyInclude(Assembly assemblyToLookFor)
 		{
 			foreach (var assemblyInclude in _assembliesToScan)
@@ -121,9 +164,17 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return null;
 		}
 
+		/// <summary>
+		/// Adds the <typeparamref name="TType"/> type to the <see cref="ExplicitTypeExcludes"/> collection.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner ExcludeType<TType>()
 			=> ExcludeType(typeof(TType));
 
+		/// <summary>
+		/// Adds the <paramref name="typeToExclude"/> type to the <see cref="ExplicitTypeExcludes"/> collection.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner ExcludeType(Type typeToExclude)
 		{
 			var hasChanged = _excludedTypes.Add(typeToExclude);
@@ -134,6 +185,10 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return this;
 		}
 
+		/// <summary>
+		/// Adds the <paramref name="typesToExclude"/> type to the <see cref="ExplicitTypeExcludes"/> collection.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner ExcludeTypes(IEnumerable<Type> typesToExclude)
 		{
 			if (typesToExclude != null)
@@ -145,9 +200,17 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return this;
 		}
 
+		/// <summary>
+		/// Adds the <typeparamref name="TType"/> type to the <see cref="ExplicitTypeIncludes"/> collection.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner IncludeType<TType>()
 			=> IncludeType(typeof(TType));
 
+		/// <summary>
+		/// Adds the <paramref name="typeToInclude"/> to the <see cref="ExplicitTypeIncludes"/> collection.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner IncludeType(Type typeToInclude)
 		{
 			if (typeToInclude is null)
@@ -160,6 +223,10 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return this;
 		}
 
+		/// <summary>
+		/// Adds the <paramref name="typesToInclude"/> to the <see cref="ExplicitTypeIncludes"/> collection.
+		/// <para>If the registration state changes, the cached scan result is cleared if there is one</para>
+		/// </summary>
 		public AssemblyScanner IncludeTypes(IEnumerable<Type> typesToInclude)
 		{
 			if (typesToInclude != null)
@@ -171,6 +238,10 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return this;
 		}
 
+		/// <summary>
+		/// Remove the <paramref name="assembly"/> from the registered assemblies to scan.
+		/// <para>If assembly is removed and there is a cached scan result, the cached scan result is cleared</para>
+		/// </summary>
 		public AssemblyScanner Remove(Assembly assembly)
 		{
 			if (assembly is null)
@@ -183,6 +254,10 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return Remove(matchedAssemblyInclude.Value);
 		}
 
+		/// <summary>
+		/// Remove the <paramref name="assemblyInclude"/> from the registered assemblies to scan.
+		/// <para>If assemblyInclude is removed and there is a cached scan result, the cached scan result is cleared</para>
+		/// </summary>
 		public AssemblyScanner Remove(AssemblyInclude assemblyInclude)
 		{
 			var hasChanged = _assembliesToScan.Remove(assemblyInclude);
@@ -192,6 +267,10 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return this;
 		}
 
+		/// <summary>
+		/// Remove the <paramref name="scannedAssemblyFilter"/> from the registered filters.
+		/// <para>If scannedAssemblyFilter is removed and there is a cached scan result, the cached scan result is cleared</para>
+		/// </summary>
 		public AssemblyScanner RemoveAssemblyFilter(IScannedAssemblyFilter scannedAssemblyFilter)
 		{
 			if (scannedAssemblyFilter is null)
@@ -204,6 +283,10 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
 			return this;
 		}
 
+		/// <summary>
+		/// Remove the <paramref name="scannedTypeFilter"/> from the registered filters.
+		/// <para>If scannedTypeFilter is removed and there is a cached scan result, the cached scan result is cleared</para>
+		/// </summary>
 		public AssemblyScanner RemoveTypeFilter(IScannedTypeFilter scannedTypeFilter)
 		{
 			if (scannedTypeFilter is null)

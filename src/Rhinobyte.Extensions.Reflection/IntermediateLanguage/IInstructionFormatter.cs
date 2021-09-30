@@ -7,7 +7,13 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 	/// </summary>
 	public interface IInstructionFormatter
 	{
+		/// <summary>
+		/// Return a string description for the specified <paramref name="instruction"/>
+		/// </summary>
 		string DescribeInstruction(InstructionBase instruction);
+		/// <summary>
+		/// Return a string description for the specified collection of <paramref name="instructionsToDescribe"/>
+		/// </summary>
 		string DescribeInstructions(IEnumerable<InstructionBase> instructionsToDescribe);
 	}
 }

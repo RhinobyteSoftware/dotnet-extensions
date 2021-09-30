@@ -19,6 +19,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public MethodBase Method { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 			=> $"{base.ToString()}  [this keyword]";
 	}

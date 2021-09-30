@@ -20,6 +20,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// <remarks>Property type is <see cref="short"/> to ensure common language specification compliance</remarks>
 		public short Value { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 			=> $"{base.ToString()}  [SByte Value: {Value}]";
 	}

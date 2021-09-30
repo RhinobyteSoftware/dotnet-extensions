@@ -27,6 +27,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 				: (byte[])_signatureBlob.Clone();
 		}
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			if (_signatureBlob is null)

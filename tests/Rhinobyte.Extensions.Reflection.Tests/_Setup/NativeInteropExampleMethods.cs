@@ -7,9 +7,8 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 	internal static class NativeInteropExampleMethods
 	{
 		/// <summary>
-		/// Process access flags used in conjunction with the StandardAccessFlags for process access. Used, for example, in the <see cref="ProcessHelper64Bit.OpenProcess(ProcessAccessFlags, bool, int)" /> method.
-		/// 
-		/// <seealso cref="https://docs.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights" />
+		/// Process access flags used in conjunction with the StandardAccessFlags for process access.
+		/// <seealso href="https://docs.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights" />
 		/// </summary>
 		[Flags]
 		internal enum ProcessAccessFlags : uint
@@ -43,8 +42,8 @@ namespace Rhinobyte.Extensions.Reflection.Tests.Setup
 			/// Required to retrieve certain information about a process (see GetExitCodeProcess, GetPriorityClass,
 			/// IsProcessInJob, QueryFullProcessImageName).
 			/// 
-			/// A handle that has the <see cref="QUERY_INFORMATION" /> access right
-			/// is automatically granted <see cref="QUERY_LIMITED_INFORMATION" />.
+			/// A handle that has the <see cref="ProcessAccessFlags.QueryInformation" /> access right
+			/// is automatically granted <see cref="ProcessAccessFlags.QueryLimitedInformation" />.
 			/// </summary>
 			/// <remarks>Windows Server 2003 and Windows XP:  This access right is not supported.</remarks>
 			QueryLimitedInformation = 0x00001000,

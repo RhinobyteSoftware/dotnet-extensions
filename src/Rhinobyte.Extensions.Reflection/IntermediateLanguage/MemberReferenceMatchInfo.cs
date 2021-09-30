@@ -13,6 +13,9 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 	/// </summary>
 	public sealed class MemberReferenceMatchInfo : IMemberReferenceMatchInfo
 	{
+		/// <summary>
+		/// Construct a <see cref="MemberReferenceMatchInfo"/> instance that represents the specified <paramref name="memberInfoToLookFor"/>
+		/// </summary>
 		public MemberReferenceMatchInfo(
 			MemberInfo memberInfoToLookFor,
 			bool matchAgainstBaseClassMembers,
@@ -23,17 +26,54 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			MatchAgainstDeclaringTypeMember = matchAgainstDeclaringTypeMember;
 		}
 
+		/// <summary>
+		/// Collection of base class members to check against.
+		/// <para>Populated by the <see cref="Initialize"/> call based on the value of <see cref="MatchAgainstBaseClassMembers"/>.</para>
+		/// </summary>
 		public IReadOnlyCollection<MemberReferenceMatchInfo>? BaseClassMembersToCheck { get; private set; }
+		/// <summary>
+		/// Representation of the member to look for on the declaring type.
+		/// <para>Populated by the <see cref="Initialize"/> call based on the value of <see cref="MatchAgainstDeclaringTypeMember"/>.</para>
+		/// </summary>
 		public MemberReferenceMatchInfo? DeclaringTypeMemberToCheck { get; private set; }
+		/// <summary>
+		/// Property that tracks if the <see cref="Initialize"/> call swallowed any exceptions while attempting to inspect the <see cref="MemberInfoToLookFor"/>
+		/// and determine what related references to compare against.
+		/// </summary>
 		public bool DidSwallowException { get; private set; }
+		/// <summary>
+		/// Has the <see cref="Initialize"/> call been executed.
+		/// </summary>
 		public bool IsInitialized { get; private set; }
+		/// <summary>
+		/// Is <see cref="DeclaringTypeMemberToCheck"/> a static member.
+		/// </summary>
 		public bool IsStaticMember { get; private set; }
+		/// <summary>
+		/// Should the instruction member references be compared against members in base types that have the same signature as <see cref="MemberInfoToLookFor"/>
+		/// </summary>
 		public bool MatchAgainstBaseClassMembers { get; }
+		/// <summary>
+		/// Should the instruction member references be compared against the member from the declared type if <see cref="MemberInfoToLookFor"/> has a
+		/// <see cref="MemberInfo.ReflectedType"/> that is different than the <see cref="MemberInfo.DeclaringType"/>.
+		/// </summary>
 		public bool MatchAgainstDeclaringTypeMember { get; }
+		/// <summary>
+		///  The member that this match info represents.
+		/// </summary>
 		public MemberInfo MemberInfoToLookFor { get; }
+		/// <summary>
+		/// The <see cref="PropertyInfo.GetMethod"/> for <see cref="MemberInfoToLookFor"/>.
+		/// </summary>
 		public MethodInfo? PropertyGetMethod { get; private set; }
+		/// <summary>
+		/// The <see cref="PropertyInfo.SetMethod"/> for <see cref="MemberInfoToLookFor"/>
+		/// </summary>
 		public MethodInfo? PropertySetMethod { get; private set; }
 
+		/// <summary>
+		/// Determine if the <paramref name="ilInstruction"/> contains a member reference that matches the member info represented by this match info instance.
+		/// </summary>
 		public bool DoesInstructionReferenceMatch(InstructionBase ilInstruction)
 		{
 			if (ilInstruction is null)
@@ -58,6 +98,9 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			}
 		}
 
+		/// <summary>
+		/// Determine if the <paramref name="instructionMemberReference"/> matches the member info represented by this match info instance.
+		/// </summary>
 		public bool DoesInstructionReferenceMatch(MemberInfo? instructionMemberReference)
 		{
 			if (instructionMemberReference == null)
@@ -89,6 +132,10 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			return false;
 		}
 
+		/// <summary>
+		/// Initialize the match info. Called by the DoesInstructionReferenceMatch methods to ensure the logic to expand the <see cref="MemberInfoToLookFor"/> using reflection
+		/// is only executed once.
+		/// </summary>
 		public void Initialize()
 		{
 			if (IsInitialized)

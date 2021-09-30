@@ -23,6 +23,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public MemberInfo? MemberReference { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			if (MemberReference is null)

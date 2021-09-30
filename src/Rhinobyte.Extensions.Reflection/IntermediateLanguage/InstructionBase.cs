@@ -7,6 +7,13 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 	/// </summary>
 	public abstract class InstructionBase
 	{
+		/// <summary>
+		/// Constructs an <see cref="InstructionBase"/> instance with the specified <paramref name="index"/>, <paramref name="offset"/>, <paramref name="opcode"/>, and instruction <paramref name="size"/>
+		/// </summary>
+		/// <param name="index">The instruction index within the collection of instructions for a set of IL bytes</param>
+		/// <param name="offset">The offset of the instruction within the IL byte[]</param>
+		/// <param name="opcode">The specific <see cref="OpCode"/> for this instruction</param>
+		/// <param name="size">The size in bytes of the instruction</param>
 		protected InstructionBase(int index, int offset, OpCode opcode, int size)
 		{
 			Index = index;
@@ -45,6 +52,9 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public virtual int Size { get; }
 
+		/// <summary>
+		/// Returns a string the represents the IL instruction with a human readable description for the <see cref="OpCode"/> and corresponding operands
+		/// </summary>
 		public override string ToString()
 		{
 			if (OpCodeHelper.ShortDescriptionLookup.TryGetValue(OpCode.Value, out var description))

@@ -3,13 +3,16 @@ using System.Reflection;
 
 namespace Rhinobyte.Extensions.Reflection
 {
+	/// <summary>
+	/// <see cref="ParameterInfo"/> extension methods
+	/// </summary>
 	public static class ParameterInfoExtensions
 	{
 		/// <summary>
 		/// Returns true if the <paramref name="parameterInfo"/> represents a nullable reference type, false otherwise.
 		/// </summary>
 		/// <remarks>
-		/// Returns false for a <see cref="Nullable{}"/> value type. Use this method when you want to check explicitly for a
+		/// Returns false for a <see cref="Nullable{T}"/> value type. Use this method when you want to check explicitly for a
 		/// nullable <c>reference</c> type.
 		/// </remarks>
 		/// <param name="parameterInfo">The parameterInfo to check for a nullable type</param>
@@ -20,7 +23,7 @@ namespace Rhinobyte.Extensions.Reflection
 		}
 
 		/// <summary>
-		/// Returns true if the <paramref name="parameterInfo"/> represents a <see cref="Nullable{}"/> value type or a nullable reference type, false otherwise.
+		/// Returns true if the <paramref name="parameterInfo"/> represents a <see cref="Nullable{T}"/> value type or a nullable reference type, false otherwise.
 		/// </summary>
 		/// <param name="parameterInfo">The parameterInfo to check for a nullable type</param>
 		public static bool IsNullableType(this ParameterInfo parameterInfo)

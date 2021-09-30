@@ -26,7 +26,7 @@ namespace ExampleLibrary
 			return assemblyScanner
 				.Add(typeof(DependencyInjectionExtensions).Assembly)
 				.ExcludeType<IManuallyConfiguredType>()
-				.ExcludeType<ManuallyConfiguredType>()
+				.ExcludeType<ManuallyConfiguredType>();
 		}
 
 		public static IServiceCollection AddExampleLibrary(this IServiceCollection services, AssemblyScanner assemblyScanner)

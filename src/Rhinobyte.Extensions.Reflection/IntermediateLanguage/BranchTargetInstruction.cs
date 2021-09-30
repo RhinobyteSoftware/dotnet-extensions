@@ -25,6 +25,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public int TargetOffset { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 			=> $"{base.ToString()}  [TargetInstruction: {TargetInstruction?.Index.ToString(CultureInfo.CurrentCulture) ?? "null"}]";
 	}

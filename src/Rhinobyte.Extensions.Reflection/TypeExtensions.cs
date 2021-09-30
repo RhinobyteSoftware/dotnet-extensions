@@ -7,6 +7,9 @@ using System.Text;
 
 namespace Rhinobyte.Extensions.Reflection
 {
+	/// <summary>
+	/// <see cref="Type"/> extension methods
+	/// </summary>
 	public static class TypeExtensions
 	{
 		internal static string BuildGenericConstraintDisplayValue(string typeArgumentName, Type[] typeConstraints, bool useFullTypeName)
@@ -62,6 +65,9 @@ namespace Rhinobyte.Extensions.Reflection
 			return GetCommonTypeNameInternal(type);
 		}
 
+		/// <summary>
+		/// Get the common type name
+		/// </summary>
 		public static string? GetCommonTypeNameInternal(Type type)
 		{
 			if (type == typeof(void))
@@ -115,6 +121,9 @@ namespace Rhinobyte.Extensions.Reflection
 			return null;
 		}
 
+		/// <summary>
+		/// Attempt to get the declaring member for a type
+		/// </summary>
 		public static MemberInfo? GetDeclaringMember(this Type? type)
 		{
 			if (type is null) return null;
@@ -151,6 +160,9 @@ namespace Rhinobyte.Extensions.Reflection
 #endif
 		}
 
+		/// <summary>
+		/// Get a display name for a type that more closely resembles the how the type would appear in code
+		/// </summary>
 		public static string GetDisplayName(
 			this Type? type,
 			IEnumerable<CustomAttributeData>? customAttributes = null,
@@ -161,6 +173,9 @@ namespace Rhinobyte.Extensions.Reflection
 			return GetDisplayName(type, customAttributes ?? type?.CustomAttributes, declaringMember ?? type?.GetDeclaringMember(), null, useFullTypeName, ref nullableAttributeIndex);
 		}
 
+		/// <summary>
+		/// Get a display name for a type that more closely resembles the how the type would appear in code
+		/// </summary>
 		public static string GetDisplayName(
 			this Type? type,
 			IEnumerable<CustomAttributeData>? customAttributes,
@@ -297,7 +312,7 @@ namespace Rhinobyte.Extensions.Reflection
 		/// See <see href="https://stackoverflow.com/questions/58453972/how-to-use-net-reflection-to-check-for-nullable-reference-type#58454489"/>
 		/// </summary>
 		/// <param name="customAttributes">The custom attribute data of the member</param>
-		/// <param name="declaringType">The declaring type to check a NullableContextAttribute</param>
+		/// <param name="declaringMember">The declaring member to check a NullableContextAttribute</param>
 		/// <param name="memberType">The type of the member</param>
 		/// <param name="nullableAttributeIndex">The index of the generic argument in the NullableAttribute byte[]</param>
 		internal static bool IsNullableReferenceType(IEnumerable<CustomAttributeData>? customAttributes, MemberInfo? declaringMember, Type memberType, int nullableAttributeIndex)

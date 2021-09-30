@@ -27,6 +27,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public IReadOnlyCollection<int> TargetOffsets { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			if (TargetInstructions is null)

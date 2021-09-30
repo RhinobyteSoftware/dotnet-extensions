@@ -19,6 +19,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		public FieldInfo? FieldReference { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 			=> $"{base.ToString()}  [FieldReference: {FieldReference?.Name}]";
 	}

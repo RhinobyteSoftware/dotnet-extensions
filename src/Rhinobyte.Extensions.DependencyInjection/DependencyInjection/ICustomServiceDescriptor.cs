@@ -11,6 +11,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// </remarks>
 	public interface ICustomServiceDescriptor
 	{
+		/// <summary>
+		/// Contract method to return the implementation <see cref="Type"/> that a custom <see cref="Microsoft.Extensions.DependencyInjection.ServiceDescriptor"/>
+		/// represents.
+		/// </summary>
 		Type GetImplementationType();
 	}
 }

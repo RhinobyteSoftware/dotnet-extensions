@@ -8,6 +8,9 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// </summary>
 	public interface IServiceRegistrationConvention
 	{
+		/// <summary>
+		/// Contract method that is called for the <paramref name="discoveredType"/> to perform the convention's registration logic.
+		/// </summary>
 		bool HandleType(Type discoveredType, IAssemblyScanResult scanResult, ServiceRegistrationCache serviceRegistrationCache);
 	}
 }

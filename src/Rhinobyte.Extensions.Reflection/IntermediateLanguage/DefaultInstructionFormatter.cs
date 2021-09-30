@@ -10,9 +10,11 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 	/// </summary>
 	public class DefaultInstructionFormatter : IInstructionFormatter
 	{
+		/// <inheritdoc/>
 		public virtual string DescribeInstruction(InstructionBase instruction)
 			=> instruction?.ToString() ?? string.Empty;
 
+		/// <inheritdoc/>
 		public virtual string DescribeInstructions(IEnumerable<InstructionBase> instructionsToDescribe)
 			=> string.Join(Environment.NewLine, instructionsToDescribe.Select(instruction => DescribeInstruction(instruction)));
 	}

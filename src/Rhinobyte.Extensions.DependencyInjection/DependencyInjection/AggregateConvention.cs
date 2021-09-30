@@ -29,7 +29,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 
 		/// <summary>
 		/// When true the <see cref="HandleType(Type, IAssemblyScanResult, ServiceRegistrationCache)"/> method will short circuit and return true
-		/// if the service collection contains any items where the <see cref="ServiceDescriptor.ServiceType"/> matches the discovered type.
+		/// if the service collection contains any items where the <see cref="Microsoft.Extensions.DependencyInjection.ServiceDescriptor.ServiceType"/> matches the discovered type.
 		/// This happens before any of the child conventions are checked
 		/// <para>
 		/// Defaults to true
@@ -46,6 +46,7 @@ namespace Rhinobyte.Extensions.DependencyInjection
 		/// </summary>
 		public bool TryAllConventions { get; protected set; }
 
+		/// <inheritdoc/>
 		public bool HandleType(Type discoveredType, IAssemblyScanResult scanResult, ServiceRegistrationCache serviceRegistrationCache)
 		{
 			_ = discoveredType ?? throw new ArgumentNullException(nameof(discoveredType));

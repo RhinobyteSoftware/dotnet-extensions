@@ -12,6 +12,13 @@ namespace Rhinobyte.Extensions.DependencyInjection
 	/// </summary>
 	public static class RhinobyteServiceCollectionExtensions
 	{
+		/// <summary>
+		/// Add a <see cref="ServiceLifetime.Scoped"/> service registration to the collection for the specified types.
+		/// <para>
+		/// If an explicit constructor is matched for the provided <paramref name="constructorSelectionType"/> then the registration will use
+		/// an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection AddScopedWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorSelectionType constructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly)
@@ -28,6 +35,13 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Add a <see cref="ServiceLifetime.Scoped"/>  service registration to the collection for the specified types.
+		/// <para>
+		/// The registration will use an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>
+		/// to ensure the provided <paramref name="explicitConstructorToUse"/> is called to construct the instance.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection AddScopedWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorInfo explicitConstructorToUse)
@@ -40,6 +54,13 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Add a <see cref="ServiceLifetime.Singleton"/> service registration to the collection for the specified types.
+		/// <para>
+		/// If an explicit constructor is matched for the provided <paramref name="constructorSelectionType"/> then the registration will use
+		/// an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection AddSingletonWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorSelectionType constructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly)
@@ -56,6 +77,13 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Add a <see cref="ServiceLifetime.Singleton"/>  service registration to the collection for the specified types.
+		/// <para>
+		/// The registration will use an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>
+		/// to ensure the provided <paramref name="explicitConstructorToUse"/> is called to construct the instance.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection AddSingletonWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorInfo explicitConstructorToUse)
@@ -68,6 +96,13 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Add a <see cref="ServiceLifetime.Transient"/> service registration to the collection for the specified types.
+		/// <para>
+		/// If an explicit constructor is matched for the provided <paramref name="constructorSelectionType"/> then the registration will use
+		/// an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection AddTransientWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorSelectionType constructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly)
@@ -84,6 +119,13 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Add a <see cref="ServiceLifetime.Transient"/>  service registration to the collection for the specified types.
+		/// <para>
+		/// The registration will use an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>
+		/// to ensure the provided <paramref name="explicitConstructorToUse"/> is called to construct the instance.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection AddTransientWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorInfo explicitConstructorToUse)
@@ -96,6 +138,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Apply a <see cref="AttributeDecoratedConvention"/> to register types discovered by the <paramref name="scanner"/>
+		/// against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterAttributeDecoratedTypes(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanner scanner)
@@ -104,11 +150,19 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return RegisterAttributeDecoratedTypes(serviceCollection, scanner.ScanAssemblies());
 		}
 
+		/// <summary>
+		/// Apply a <see cref="AttributeDecoratedConvention"/> to register the discovered types in the <paramref name="scanResult"/>
+		/// against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterAttributeDecoratedTypes(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanResult scanResult)
 			=> RegisterTypes(serviceCollection, scanResult, new AttributeDecoratedConvention());
 
+		/// <summary>
+		/// Apply a <see cref="ConcreteTypeAsSelfConvention"/> to register types discovered by the <paramref name="scanner"/>
+		/// against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterConcreteTypesAsSelf(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanner scanner,
@@ -118,12 +172,20 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return RegisterConcreteTypesAsSelf(serviceCollection, scanner.ScanAssemblies(), skipImplementationTypesAlreadyInUse);
 		}
 
+		/// <summary>
+		/// Apply a <see cref="ConcreteTypeAsSelfConvention"/> to register the discovered types in the <paramref name="scanResult"/>
+		/// against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterConcreteTypesAsSelf(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanResult scanResult,
 			bool skipImplementationTypesAlreadyInUse = true)
 			=> RegisterTypes(serviceCollection, scanResult, new ConcreteTypeAsSelfConvention(skipImplementationTypesAlreadyInUse: skipImplementationTypesAlreadyInUse));
 
+		/// <summary>
+		/// Apply an <see cref="InterfaceImplementationsConvention"/> to register types discovered by the <paramref name="scanner"/>
+		/// against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterInterfaceImplementations(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanner scanner,
@@ -133,12 +195,20 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return RegisterInterfaceImplementations(serviceCollection, scanner.ScanAssemblies(), resolutionStrategy);
 		}
 
+		/// <summary>
+		/// Apply an <see cref="InterfaceImplementationsConvention"/> to register the discovered types in the <paramref name="scanResult"/>
+		/// against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterInterfaceImplementations(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanResult scanResult,
 			InterfaceImplementationResolutionStrategy resolutionStrategy)
 			=> RegisterTypes(serviceCollection, scanResult, new InterfaceImplementationsConvention(resolutionStrategy: resolutionStrategy));
 
+		/// <summary>
+		/// Executed the provided <paramref name="serviceRegistrationConvention"/> to register types discovered by the <paramref name="scanner"/>
+		/// against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterTypes(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanner scanner,
@@ -148,6 +218,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return RegisterTypes(serviceCollection, scanner.ScanAssemblies(), serviceRegistrationConvention);
 		}
 
+		/// <summary>
+		/// Executed the provided <paramref name="serviceRegistrationConvention"/> to register the <paramref name="discoveredTypes"/>
+		/// against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterTypes(
 			this IServiceCollection serviceCollection,
 			IEnumerable<Type> discoveredTypes,
@@ -159,6 +233,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return RegisterTypes(serviceCollection, assemblyScanner.ScanAssemblies(), serviceRegistrationConvention);
 		}
 
+		/// <summary>
+		/// Executed the provided <paramref name="serviceRegistrationConvention"/> to register the discovered types in the <paramref name="scanResult"/>
+		/// against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterTypes(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanResult scanResult,
@@ -180,6 +258,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceRegistrationCache;
 		}
 
+		/// <summary>
+		/// Executed the provided collection of <paramref name="serviceRegistrationConventions"/> to register the types discovered by
+		/// the <paramref name="scanner"/> against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterTypes(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanner scanner,
@@ -190,6 +272,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return RegisterTypes(serviceCollection, scanner.ScanAssemblies(), serviceRegistrationConventions, tryAllConventions);
 		}
 
+		/// <summary>
+		/// Executed the provided collection of <paramref name="serviceRegistrationConventions"/> to register the
+		/// <paramref name="discoveredTypes"/> against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterTypes(
 			this IServiceCollection serviceCollection,
 			IEnumerable<Type> discoveredTypes,
@@ -202,6 +288,10 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return RegisterTypes(serviceCollection, assemblyScanner.ScanAssemblies(), serviceRegistrationConventions, tryAllConventions);
 		}
 
+		/// <summary>
+		/// Executed the provided collection of <paramref name="serviceRegistrationConventions"/> to register the discovered types in
+		/// the <paramref name="scanResult"/> against the <paramref name="serviceCollection" />.
+		/// </summary>
 		public static IServiceCollection RegisterTypes(
 			this IServiceCollection serviceCollection,
 			IAssemblyScanResult scanResult,
@@ -230,6 +320,14 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceRegistrationCache;
 		}
 
+		/// <summary>
+		/// Try adding a <see cref="ServiceLifetime.Scoped"/> service registration to the collection for the specified types, only if
+		/// an existing descriptor for <typeparamref name="TServiceType"/> does not already exist.
+		/// <para>
+		/// If an explicit constructor is matched for the provided <paramref name="constructorSelectionType"/> then the registration will use
+		/// an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection TryAddScopedWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorSelectionType constructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly)
@@ -249,6 +347,14 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Try adding a <see cref="ServiceLifetime.Scoped"/>  service registration to the collection for the specified types, only if
+		/// an existing descriptor for <typeparamref name="TServiceType"/> does not already exist.
+		/// <para>
+		/// The registration will use an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>
+		/// to ensure the provided <paramref name="explicitConstructorToUse"/> is called to construct the instance.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection TryAddScopedWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorInfo explicitConstructorToUse)
@@ -261,6 +367,14 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Try adding a <see cref="ServiceLifetime.Singleton"/> service registration to the collection for the specified types, only if
+		/// an existing descriptor for <typeparamref name="TServiceType"/> does not already exist.
+		/// <para>
+		/// If an explicit constructor is matched for the provided <paramref name="constructorSelectionType"/> then the registration will use
+		/// an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection TryAddSingletonWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorSelectionType constructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly)
@@ -280,6 +394,14 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Try adding a <see cref="ServiceLifetime.Singleton"/>  service registration to the collection for the specified types, only if
+		/// an existing descriptor for <typeparamref name="TServiceType"/> does not already exist.
+		/// <para>
+		/// The registration will use an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>
+		/// to ensure the provided <paramref name="explicitConstructorToUse"/> is called to construct the instance.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection TryAddSingletonWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorInfo explicitConstructorToUse)
@@ -292,6 +414,14 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Try adding a <see cref="ServiceLifetime.Transient"/> service registration to the collection for the specified types, only if
+		/// an existing descriptor for <typeparamref name="TServiceType"/> does not already exist.
+		/// <para>
+		/// If an explicit constructor is matched for the provided <paramref name="constructorSelectionType"/> then the registration will use
+		/// an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection TryAddTransientWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorSelectionType constructorSelectionType = ConstructorSelectionType.DefaultBehaviorOnly)
@@ -311,6 +441,14 @@ namespace Rhinobyte.Extensions.DependencyInjection
 			return serviceCollection;
 		}
 
+		/// <summary>
+		/// Try adding a <see cref="ServiceLifetime.Transient"/>  service registration to the collection for the specified types, only if
+		/// an existing descriptor for <typeparamref name="TServiceType"/> does not already exist.
+		/// <para>
+		/// The registration will use an <see cref="ExplicitConstructorServiceDescriptor{TImplementationType}"/>
+		/// to ensure the provided <paramref name="explicitConstructorToUse"/> is called to construct the instance.
+		/// </para>
+		/// </summary>
 		public static IServiceCollection TryAddTransientWithConstructorSelection<TServiceType, TImplementationType>(
 			this IServiceCollection serviceCollection,
 			ConstructorInfo explicitConstructorToUse)

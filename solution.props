@@ -21,6 +21,7 @@
         <Company>Rhinobyte Software</Company>
         <Copyright>Copyright © Ryan Thomas $([System.DateTime]::Now.ToString("yyyy"))</Copyright>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <IncludeSymbols>true</IncludeSymbols>
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageIcon>Icon.png</PackageIcon>
