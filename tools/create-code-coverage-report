@@ -1,7 +1,7 @@
 #!/bin/sh
 
-allTestProjectNames=("Rhinobyte.Extensions.DataAnnotations.Tests" "Rhinobyte.Extensions.DependencyInjection.Tests" "Rhinobyte.Extensions.Reflection.Tests");
-allTestProjectsCount=${#allTestProjectNames[@]}
+allLibraryNames=("Rhinobyte.Extensions.DataAnnotations" "Rhinobyte.Extensions.DependencyInjection" "Rhinobyte.Extensions.Reflection" "Rhinobyte.Extensions.TestTools");
+allLibraryNamesCount=${#allLibraryNames[@]}
 
 
 testProjectNames=()
@@ -72,17 +72,14 @@ do
 				assemblyFilters="-ExampleLibrary*";
 
 				if [ $reportForIndividualProjectOnly = "true" ]; then
-					for (( testProjectIndexTwo=0; testProjectIndexTwo<${allTestProjectsCount}; testProjectIndexTwo++ ));
+					for (( testProjectIndexTwo=0; testProjectIndexTwo<${allLibraryNamesCount}; testProjectIndexTwo++ ));
 					do
-						projectNameToFilter="${allTestProjectNames[$testProjectIndexTwo]}"
-						if [ "$projectNameToFilter" = "$testProjectName" ]; then
+						projectNameToFilter="${allLibraryNames[$testProjectIndexTwo]}"
+						if [ "$projectNameToFilter.Tests" = "$testProjectName" ]; then
 							continue;
 						fi;
 
-						projectNameToFilterTwo="${projectNameToFilter%.Tests}"
-						#echo "ProjectNameToFilter:  $projectNameToFilterTwo"
-
-						assemblyFilters="$assemblyFilters;-$projectNameToFilterTwo";
+						assemblyFilters="$assemblyFilters;-$projectNameToFilter";
 					done;
 				fi;
 

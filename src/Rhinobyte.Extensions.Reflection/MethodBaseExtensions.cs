@@ -79,7 +79,7 @@ namespace Rhinobyte.Extensions.Reflection
 		{
 			_ = methodBase ?? throw new ArgumentNullException(nameof(methodBase));
 			_ = memberReferenceMatchInfoToLookFor ?? throw new ArgumentNullException(nameof(memberReferenceMatchInfoToLookFor));
-			return new MethodBodyParser(methodBase).ContainsReferenceTo(memberReferenceMatchInfoToLookFor);
+			return new MethodBodyParser(methodBase).ContainsReferenceTo(false, memberReferenceMatchInfoToLookFor);
 		}
 
 		/// <summary>
@@ -115,7 +115,7 @@ namespace Rhinobyte.Extensions.Reflection
 		{
 			_ = methodBase ?? throw new ArgumentNullException(nameof(methodBase));
 			_ = memberReferencesMatchInfoToLookFor ?? throw new ArgumentNullException(nameof(memberReferencesMatchInfoToLookFor));
-			return new MethodBodyParser(methodBase).ContainsReferenceToAny(memberReferencesMatchInfoToLookFor);
+			return new MethodBodyParser(methodBase).ContainsReferenceToAny(false, memberReferencesMatchInfoToLookFor);
 		}
 
 		/// <summary>
@@ -348,6 +348,9 @@ namespace Rhinobyte.Extensions.Reflection
 		{
 			_ = methodBase ?? throw new ArgumentNullException(nameof(methodBase));
 			_ = methodToCompareTo ?? throw new ArgumentNullException(nameof(methodToCompareTo));
+
+			if (methodBase == methodToCompareTo)
+				return true;
 
 			var methodParametersToCompareTo = methodToCompareTo.GetParameters();
 			return HasMatchingParameterNamesAndTypes(methodBase, methodParametersToCompareTo);

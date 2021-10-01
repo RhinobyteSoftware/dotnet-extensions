@@ -40,7 +40,15 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			_declaringTypeGenericArguments = method.DeclaringType?.GetGenericArguments();
 			_isStaticMethod = method.IsStatic;
 			_localVariables = methodBody.LocalVariables;
-			_methodGenericArguments = method.GetGenericArguments();
+
+			try
+			{
+				_methodGenericArguments = method.GetGenericArguments();
+			}
+#pragma warning disable CA1031 // Do not catch general exception types
+			catch (Exception) { }
+#pragma warning restore CA1031 // Do not catch general exception types
+
 			_parameters = method.GetParameters();
 		}
 
@@ -64,9 +72,30 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 		/// </summary>
 		internal bool ContainsReferencesToAll(IEnumerable<IMemberReferenceMatchInfo> memberReferencesToLookFor)
 		{
-			_bytePosition = 0;
-
 			var referencesNotFoundYet = new List<IMemberReferenceMatchInfo>(memberReferencesToLookFor);
+			return ContainsReferencesToAll(false, ref referencesNotFoundYet);
+		}
+
+		/// <summary>
+		/// Returns true if a reference to each of the remaining <paramref name="referencesNotFoundYet"/> members is found. Returns false otherwise.
+		/// <para>
+		/// Modifies the referencesNotFoundYet list in situ so that recursive calls into an async state machine MoveNext method can continue removing
+		/// matched references.
+		/// </para>
+		/// </summary>
+		private bool ContainsReferencesToAll(bool isCheckingStateMachineMethod, ref List<IMemberReferenceMatchInfo> referencesNotFoundYet)
+		{
+			// TODO: Next Major Release
+			// * Update the public api to include parameters to allow the consumer to skip the logic that searches inside
+			// the generated state machine MoveNext methods
+			// * Update the public api to include parameters that allow searching recursively ??
+
+			var isAsyncMethod = !isCheckingStateMachineMethod && _method.IsAsync();
+			var stateMachineTypesToSearch = isAsyncMethod
+				? new HashSet<Type>()
+				: null;
+
+			_bytePosition = 0;
 
 			while (_bytePosition < _ilBytes.Length)
 			{
@@ -84,6 +113,8 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					case OperandType.InlineType:
 					case OperandType.InlineTok:
 						var instructionMemberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
+						if (instructionMemberReference is null)
+							break;
 
 						var nextReferenceIndex = 0;
 						while (nextReferenceIndex < referencesNotFoundYet.Count)
@@ -97,6 +128,15 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 
 						if (referencesNotFoundYet.Count == 0)
 							return true;
+
+						if (isAsyncMethod
+							&& currentOpcode == OpCodes.Newobj
+							&& instructionMemberReference.DeclaringType != null
+							&& typeof(System.Runtime.CompilerServices.IAsyncStateMachine).IsAssignableFrom(instructionMemberReference.DeclaringType)
+							&& instructionMemberReference.DeclaringType.Name.IndexOf(_method.Name, StringComparison.Ordinal) > -1)
+						{
+							_ = stateMachineTypesToSearch!.Add(instructionMemberReference.DeclaringType);
+						}
 
 						break;
 
@@ -113,6 +153,31 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 				}
 			}
 
+			if (isAsyncMethod)
+			{
+				foreach (var stateMachineType in stateMachineTypesToSearch!)
+				{
+					var stateMachineMethods = stateMachineType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+					foreach (var stateMachineMethod in stateMachineMethods)
+					{
+						if (stateMachineMethod.Name != "MoveNext")
+							continue;
+
+						// TODO: Next major release/public api udpate...
+						// Add configurable parameter on whether or not to catch exceptions here?
+						try
+						{
+							// Make sure we only check one level deep for now
+							if (new MethodBodyParser(stateMachineMethod).ContainsReferencesToAll(true, ref referencesNotFoundYet))
+								return true;
+						}
+#pragma warning disable CA1031 // Do not catch general exception types
+						catch (Exception) { }
+#pragma warning restore CA1031 // Do not catch general exception types
+					}
+				}
+			}
+
 			return false;
 		}
 
@@ -123,13 +188,23 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			MemberInfo memberReferenceToLookFor,
 			bool matchAgainstBaseClassMembers,
 			bool matchAgainstDeclaringTypeMember)
-			=> ContainsReferenceTo(new MemberReferenceMatchInfo(memberReferenceToLookFor, matchAgainstBaseClassMembers, matchAgainstDeclaringTypeMember));
+			=> ContainsReferenceTo(false, new MemberReferenceMatchInfo(memberReferenceToLookFor, matchAgainstBaseClassMembers, matchAgainstDeclaringTypeMember));
 
 		/// <summary>
 		/// Returns true if a reference to the <paramref name="memberReferenceToLookFor"/> is found. Returns false otherwise.
 		/// </summary>
-		internal bool ContainsReferenceTo(IMemberReferenceMatchInfo memberReferenceToLookFor)
+		internal bool ContainsReferenceTo(bool isCheckingStateMachineMethod, IMemberReferenceMatchInfo memberReferenceToLookFor)
 		{
+			// TODO: Next Major Release
+			// * Update the public api to include parameters to allow the consumer to skip the logic that searches inside
+			// the generated state machine MoveNext methods
+			// * Update the public api to include parameters that allow searching recursively ??
+
+			var isAsyncMethod = !isCheckingStateMachineMethod && _method.IsAsync();
+			var stateMachineTypesToSearch = isAsyncMethod
+				? new HashSet<Type>()
+				: null;
+
 			_bytePosition = 0;
 
 			while (_bytePosition < _ilBytes.Length)
@@ -148,10 +223,21 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					case OperandType.InlineType:
 					case OperandType.InlineTok:
 						var instructionMemberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
+						if (instructionMemberReference is null)
+							break;
+
 						if (memberReferenceToLookFor.DoesInstructionReferenceMatch(instructionMemberReference))
-						{
 							return true;
+
+						if (isAsyncMethod
+							&& currentOpcode == OpCodes.Newobj
+							&& instructionMemberReference.DeclaringType != null
+							&& typeof(System.Runtime.CompilerServices.IAsyncStateMachine).IsAssignableFrom(instructionMemberReference.DeclaringType)
+							&& instructionMemberReference.DeclaringType.Name.IndexOf(_method.Name, StringComparison.Ordinal) > -1)
+						{
+							_ = stateMachineTypesToSearch!.Add(instructionMemberReference.DeclaringType);
 						}
+
 						break;
 
 					case OperandType.InlineSwitch:
@@ -164,6 +250,31 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					default:
 						_bytePosition += OpCodeHelper.GetOperandSize(currentOpcode.OperandType);
 						break;
+				}
+			}
+
+			if (isAsyncMethod)
+			{
+				foreach (var stateMachineType in stateMachineTypesToSearch!)
+				{
+					var stateMachineMethods = stateMachineType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+					foreach (var stateMachineMethod in stateMachineMethods)
+					{
+						if (stateMachineMethod.Name != "MoveNext")
+							continue;
+
+						// TODO: Next major release/public api udpate...
+						// Add configurable parameter on whether or not to catch exceptions here?
+						try
+						{
+							// Make sure we only check one level deep for now
+							if (new MethodBodyParser(stateMachineMethod).ContainsReferenceTo(true, memberReferenceToLookFor))
+								return true;
+						}
+#pragma warning disable CA1031 // Do not catch general exception types
+						catch (Exception) { }
+#pragma warning restore CA1031 // Do not catch general exception types
+					}
 				}
 			}
 
@@ -182,14 +293,24 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			foreach (var memberInfo in memberReferencesToLookFor)
 				referencesMatchInfo.Add(new MemberReferenceMatchInfo(memberInfo, matchAgainstBaseClassMembers, matchAgainstDeclaringTypeMember));
 
-			return ContainsReferenceToAny(referencesMatchInfo);
+			return ContainsReferenceToAny(false, referencesMatchInfo);
 		}
 
 		/// <summary>
 		/// Returns true if a reference to any of the <paramref name="memberReferencesToLookFor"/> is found. Returns false otherwise.
 		/// </summary>
-		internal bool ContainsReferenceToAny(IEnumerable<IMemberReferenceMatchInfo> memberReferencesToLookFor)
+		internal bool ContainsReferenceToAny(bool isCheckingStateMachineMethod, IEnumerable<IMemberReferenceMatchInfo> memberReferencesToLookFor)
 		{
+			// TODO: Next Major Release
+			// * Update the public api to include parameters to allow the consumer to skip the logic that searches inside
+			// the generated state machine MoveNext methods
+			// * Update the public api to include parameters that allow searching recursively ??
+
+			var isAsyncMethod = !isCheckingStateMachineMethod && _method.IsAsync();
+			var stateMachineTypesToSearch = isAsyncMethod
+				? new HashSet<Type>()
+				: null;
+
 			_bytePosition = 0;
 
 			while (_bytePosition < _ilBytes.Length)
@@ -208,11 +329,24 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					case OperandType.InlineType:
 					case OperandType.InlineTok:
 						var instructionMemberReference = _module.ResolveMember(ReadInt32(), _declaringTypeGenericArguments, _methodGenericArguments);
+						if (instructionMemberReference is null)
+							break;
+
 						foreach (var referenceToLookFor in memberReferencesToLookFor)
 						{
 							if (referenceToLookFor.DoesInstructionReferenceMatch(instructionMemberReference))
 								return true;
 						}
+
+						if (isAsyncMethod
+							&& currentOpcode == OpCodes.Newobj
+							&& instructionMemberReference.DeclaringType != null
+							&& typeof(System.Runtime.CompilerServices.IAsyncStateMachine).IsAssignableFrom(instructionMemberReference.DeclaringType)
+							&& instructionMemberReference.DeclaringType.Name.IndexOf(_method.Name, StringComparison.Ordinal) > -1)
+						{
+							_ = stateMachineTypesToSearch!.Add(instructionMemberReference.DeclaringType);
+						}
+
 						break;
 
 					case OperandType.InlineSwitch:
@@ -225,6 +359,31 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 					default:
 						_bytePosition += OpCodeHelper.GetOperandSize(currentOpcode.OperandType);
 						break;
+				}
+			}
+
+			if (isAsyncMethod)
+			{
+				foreach (var stateMachineType in stateMachineTypesToSearch!)
+				{
+					var stateMachineMethods = stateMachineType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+					foreach (var stateMachineMethod in stateMachineMethods)
+					{
+						if (stateMachineMethod.Name != "MoveNext")
+							continue;
+
+						// TODO: Next major release/public api udpate...
+						// Add configurable parameter on whether or not to catch exceptions here?
+						try
+						{
+							// Make sure we only check one level deep for now
+							if (new MethodBodyParser(stateMachineMethod).ContainsReferenceToAny(true, memberReferencesToLookFor))
+								return true;
+						}
+#pragma warning disable CA1031 // Do not catch general exception types
+						catch (Exception) { }
+#pragma warning restore CA1031 // Do not catch general exception types
+					}
 				}
 			}
 
@@ -269,7 +428,96 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			throw new InvalidOperationException($"Failed to locate the target instruction for target offset {targetOffset}. [SourceInstruction: {sourceInstruction}]");
 		}
 
-		internal IReadOnlyCollection<InstructionBase> ParseInstructions()
+		/// <summary>
+		/// Attempts to find the method on <paramref name="constrainedVirtualType"/> with the same signature as <paramref name="methodToLookFor"/>.
+		/// </summary>
+		internal static MethodInfo? FindMethodOnConstrainingType(Type constrainedVirtualType, MethodBase methodToLookFor)
+		{
+			if (constrainedVirtualType is null || methodToLookFor is null || methodToLookFor.ReflectedType == constrainedVirtualType)
+				return null;
+
+			try
+			{
+				var isOriginalMethodForAnInterface = methodToLookFor.DeclaringType?.IsInterface == true;
+
+				var expectedParameterTypes = methodToLookFor.GetParameters().Select(param => param.ParameterType).ToArray();
+				Type? expectedReturnType = null;
+				MethodInfo? methodToLookForBaseDefinition = null;
+				if (methodToLookFor is MethodInfo methodToLookForInfo)
+				{
+					expectedReturnType = methodToLookForInfo.ReturnType;
+					if (!isOriginalMethodForAnInterface)
+						methodToLookForBaseDefinition = methodToLookForInfo.GetBaseDefinition();
+				}
+
+				var constrainedMethodMatches = new List<MethodInfo>();
+				foreach (var possibleConstrainedMethod in constrainedVirtualType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+				{
+					if (possibleConstrainedMethod.Name != methodToLookFor.Name || !possibleConstrainedMethod.HasMatchingParameterTypes(expectedParameterTypes))
+						continue;
+
+					if (expectedReturnType != null && possibleConstrainedMethod.ReturnType != expectedReturnType)
+						continue;
+
+					if (isOriginalMethodForAnInterface)
+					{
+						if (possibleConstrainedMethod.DeclaringType != null && !methodToLookFor.DeclaringType!.IsAssignableFrom(possibleConstrainedMethod.DeclaringType))
+							continue;
+					}
+					else
+					{
+						try
+						{
+							var possibleContrainedBaseDefintion = possibleConstrainedMethod.GetBaseDefinition();
+							if (possibleContrainedBaseDefintion == methodToLookFor)
+								return possibleConstrainedMethod;
+
+							if (methodToLookForBaseDefinition != null && possibleContrainedBaseDefintion == methodToLookForBaseDefinition)
+								return possibleConstrainedMethod;
+						}
+#pragma warning disable CA1031 // Do not catch general exception types
+						catch (Exception) { }
+#pragma warning restore CA1031 // Do not catch general exception types
+					}
+
+					constrainedMethodMatches.Add(possibleConstrainedMethod);
+				}
+
+				if (constrainedMethodMatches.Count == 0)
+					return null;
+
+				if (constrainedMethodMatches.Count == 1)
+					return constrainedMethodMatches[0];
+
+				MethodInfo? preferredMatch = null;
+				// New keyword was used and we have multiple possible matches...
+				// Choose the method closest to the root type that is still valid
+				foreach (var possibleMatch in constrainedMethodMatches)
+				{
+					if (possibleMatch.DeclaringType == null)
+						continue;
+
+					if (preferredMatch == null)
+					{
+						preferredMatch = possibleMatch;
+						continue;
+					}
+
+					if (possibleMatch.DeclaringType != preferredMatch.DeclaringType && possibleMatch.DeclaringType.IsAssignableFrom(preferredMatch.DeclaringType))
+						preferredMatch = possibleMatch;
+				}
+
+				return preferredMatch;
+			}
+#pragma warning disable CA1031 // Do not catch general exception types
+			catch (Exception) { }
+#pragma warning restore CA1031 // Do not catch general exception types
+
+			// TODO: Decide if we should be filtering further, throwing, returning null, etc
+			return null;
+		}
+
+		internal IReadOnlyList<InstructionBase> ParseInstructions()
 		{
 			_bytePosition = 0;
 			var instructions = new List<InstructionBase>();

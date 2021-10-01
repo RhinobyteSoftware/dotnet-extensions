@@ -62,8 +62,12 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 				var testMethods = testType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 				foreach (var testMethod in testMethods)
 				{
-					if (testMethod.IsDefined(typeof(TestMethodAttribute), true) || testMethod.IsDefined(typeof(NotATestMethodAttribute), false))
+					if (testMethod.IsDefined(typeof(TestMethodAttribute), true)
+						|| testMethod.IsDefined(typeof(NotATestMethodAttribute), false)
+						|| testMethod.IsDefined(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false))
+					{
 						continue;
+					}
 
 					missingTestMethodAttributes.Add($"{testType.Name}.{testMethod.Name}");
 				}

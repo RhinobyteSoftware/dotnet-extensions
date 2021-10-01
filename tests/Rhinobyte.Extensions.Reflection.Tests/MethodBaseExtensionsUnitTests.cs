@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Rhinobyte.Extensions.Reflection.IntermediateLanguage;
 using Rhinobyte.Extensions.Reflection.Tests.Setup;
 using System;
@@ -14,83 +15,48 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 	[TestClass]
 	public class MethodBaseExtensionsUnitTests
 	{
+		public TestContext TestContext { get; set; } = null!;
 
 		[TestMethod]
-		public void ContainsReferenceTo_correctly_differentiates_method_overloads()
+		public void ContainsReferencesToAll_finds_the_references_in_an_async_method()
 		{
-			var memberToLookFor = typeof(ExampleMethods)
-				.GetMethods(BindingFlags.Public | BindingFlags.Static)
-				.Single(methodInfo => methodInfo.Name == nameof(ExampleMethods.OverloadedMethod) && methodInfo.GetParameters().Length == 3);
+			var fieldThatIsReferenced1 = typeof(AsyncContainsReferenceTestClass).GetField("_field1", BindingFlags.NonPublic | BindingFlags.Instance);
+			fieldThatIsReferenced1.Should().NotBeNull();
+			var fieldThatIsReferenced2 = typeof(AsyncContainsReferenceTestClass).GetField("_field2", BindingFlags.NonPublic | BindingFlags.Instance);
+			fieldThatIsReferenced2.Should().NotBeNull();
+			var fieldThatIsNotReferenced = typeof(AsyncContainsReferenceTestClass).GetField("_field3", BindingFlags.Public | BindingFlags.Instance);
+			fieldThatIsNotReferenced.Should().NotBeNull();
 
-			memberToLookFor.Should().NotBeNull();
+			var methodThatIsReferenced = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.MethodThatIsReferenced));
+			methodThatIsReferenced.Should().NotBeNull();
+			var methodThatIsNotReferenced1 = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.MethodThatIsNotReferenced1));
+			methodThatIsNotReferenced1.Should().NotBeNull();
+			var methodThatIsNotReferenced2 = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.MethodThatIsNotReferenced1));
+			methodThatIsNotReferenced2.Should().NotBeNull();
 
+			var propertyThatIsReferenced1 = typeof(AsyncContainsReferenceTestClass).GetProperty(nameof(AsyncContainsReferenceTestClass.Property1));
+			propertyThatIsReferenced1.Should().NotBeNull();
+			var propertyThatIsReferenced2 = typeof(AsyncContainsReferenceTestClass).GetProperty(nameof(AsyncContainsReferenceTestClass.Property2));
+			propertyThatIsReferenced2.Should().NotBeNull();
+			var propertyThatIsNotReferenced = typeof(AsyncContainsReferenceTestClass).GetProperty(nameof(AsyncContainsReferenceTestClass.Property3));
+			propertyThatIsNotReferenced.Should().NotBeNull();
 
-			var methodToSearch1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.UsesOverloadedMethod1), BindingFlags.Public | BindingFlags.Static);
-			methodToSearch1.Should().NotBeNull();
-			methodToSearch1!.ContainsReferenceTo(memberToLookFor!).Should().BeFalse();
+			var asyncMethodToCheck = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.DoSomethingAsync));
 
+			// No references match should return false
+			var noMatchingReferences = new MemberInfo[] { fieldThatIsNotReferenced!, methodThatIsNotReferenced1!, methodThatIsNotReferenced2!, propertyThatIsNotReferenced! };
+			asyncMethodToCheck!.ContainsReferencesToAll(noMatchingReferences).Should().BeFalse();
 
-			var methodToSearch2 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.UsesOverloadedMethod2), BindingFlags.Public | BindingFlags.Static);
-			methodToSearch2.Should().NotBeNull();
-			methodToSearch2!.ContainsReferenceTo(memberToLookFor!).Should().BeFalse();
+			// Mix of matching and non-matching references should return false
+			var mixedReferences = new MemberInfo[] { fieldThatIsReferenced1!, fieldThatIsNotReferenced!, methodThatIsReferenced!, propertyThatIsReferenced1! };
+			asyncMethodToCheck!.ContainsReferencesToAll(mixedReferences).Should().BeFalse();
 
+			// Matching references
+			var successfulMatchReferences1 = new MemberInfo[] { fieldThatIsReferenced1!, methodThatIsReferenced! };
+			asyncMethodToCheck!.ContainsReferencesToAll(successfulMatchReferences1).Should().BeTrue();
 
-			var methodToSearch3 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.UsesOverloadedMethod3), BindingFlags.Public | BindingFlags.Static);
-			methodToSearch3.Should().NotBeNull();
-			methodToSearch3!.ContainsReferenceTo(memberToLookFor!).Should().BeTrue();
-		}
-
-		[TestMethod]
-		public void ContainsReferenceTo_returns_the_expected_result()
-		{
-			var memberToLookFor = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues), BindingFlags.Public | BindingFlags.Static);
-			memberToLookFor.Should().NotBeNull();
-
-
-			var methodToSearch1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues_Of_7_And_14), BindingFlags.Public | BindingFlags.Static);
-			methodToSearch1.Should().NotBeNull();
-			methodToSearch1!.ContainsReferenceTo(memberToLookFor!).Should().BeTrue();
-			methodToSearch1!.ContainsReferenceTo(new MemberReferenceMatchInfo(memberToLookFor!, false, false)).Should().BeTrue();
-
-
-			var methodToSearch2 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues_Of_7_And_14_Using_Delegate_Function), BindingFlags.Public | BindingFlags.Static);
-			methodToSearch2.Should().NotBeNull();
-			methodToSearch2!.ContainsReferenceTo(memberToLookFor!).Should().BeTrue();
-
-
-			var methodToSearch3 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddLocalVariables_For_5_And_15), BindingFlags.Public | BindingFlags.Static);
-			methodToSearch3.Should().NotBeNull();
-			methodToSearch3!.ContainsReferenceTo(memberToLookFor!).Should().BeFalse();
-		}
-
-		[TestMethod]
-		public void ContainsReferenceTo_throw_ArgmentNullException_for_the_required_parameters()
-		{
-			var consoleWriteMethods = typeof(System.Console)
-				.GetMethods(BindingFlags.Public | BindingFlags.Static)
-				.Where(methodInfo => methodInfo.Name == nameof(System.Console.Write))
-				.ToList();
-
-			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(null!, memberReferenceToLookFor: consoleWriteMethods.First()))
-				.Should()
-				.Throw<ArgumentNullException>()
-				.WithMessage("Value cannot be null*methodBase*");
-
-			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(null!, memberReferenceMatchInfoToLookFor: new MemberReferenceMatchInfo(consoleWriteMethods.First(), false, false)))
-				.Should()
-				.Throw<ArgumentNullException>()
-				.WithMessage("Value cannot be null*methodBase*");
-
-			var methodToSearch1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues), BindingFlags.Public | BindingFlags.Static);
-			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(methodToSearch1!, memberReferenceToLookFor: null!))
-				.Should()
-				.Throw<ArgumentNullException>()
-				.WithMessage("Value cannot be null*memberReferenceToLookFor*");
-
-			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(methodToSearch1!, memberReferenceMatchInfoToLookFor: null!))
-				.Should()
-				.Throw<ArgumentNullException>()
-				.WithMessage("Value cannot be null*memberReferenceMatchInfoToLookFor*");
+			var successfulMatchReferences2 = new MemberInfo[] { fieldThatIsReferenced1!, fieldThatIsReferenced2!, methodThatIsReferenced!, propertyThatIsReferenced1!, propertyThatIsReferenced2! };
+			asyncMethodToCheck!.ContainsReferencesToAll(successfulMatchReferences2).Should().BeTrue();
 		}
 
 		[TestMethod]
@@ -182,6 +148,145 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 		}
 
 		[TestMethod]
+		public void ContainsReferenceTo_correctly_differentiates_method_overloads()
+		{
+			var memberToLookFor = typeof(ExampleMethods)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.Single(methodInfo => methodInfo.Name == nameof(ExampleMethods.OverloadedMethod) && methodInfo.GetParameters().Length == 3);
+
+			memberToLookFor.Should().NotBeNull();
+
+
+			var methodToSearch1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.UsesOverloadedMethod1), BindingFlags.Public | BindingFlags.Static);
+			methodToSearch1.Should().NotBeNull();
+			methodToSearch1!.ContainsReferenceTo(memberToLookFor!).Should().BeFalse();
+
+
+			var methodToSearch2 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.UsesOverloadedMethod2), BindingFlags.Public | BindingFlags.Static);
+			methodToSearch2.Should().NotBeNull();
+			methodToSearch2!.ContainsReferenceTo(memberToLookFor!).Should().BeFalse();
+
+
+			var methodToSearch3 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.UsesOverloadedMethod3), BindingFlags.Public | BindingFlags.Static);
+			methodToSearch3.Should().NotBeNull();
+			methodToSearch3!.ContainsReferenceTo(memberToLookFor!).Should().BeTrue();
+		}
+
+		[TestMethod]
+		public void ContainsReferenceTo_finds_the_reference_in_an_async_method()
+		{
+			var methodThatIsReferenced = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.MethodThatIsReferenced));
+			var methodThatIsNotReferenced = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.MethodThatIsNotReferenced1));
+			var asyncMethodToCheck = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.DoSomethingAsync));
+
+			asyncMethodToCheck!.ContainsReferenceTo(methodThatIsNotReferenced!).Should().BeFalse();
+
+			asyncMethodToCheck!.ContainsReferenceTo(methodThatIsReferenced!).Should().BeTrue();
+		}
+
+		[TestMethod]
+		public void ContainsReferenceTo_returns_the_expected_result()
+		{
+			var memberToLookFor = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues), BindingFlags.Public | BindingFlags.Static);
+			memberToLookFor.Should().NotBeNull();
+
+
+			var methodToSearch1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues_Of_7_And_14), BindingFlags.Public | BindingFlags.Static);
+			methodToSearch1.Should().NotBeNull();
+			methodToSearch1!.ContainsReferenceTo(memberToLookFor!).Should().BeTrue();
+			methodToSearch1!.ContainsReferenceTo(new MemberReferenceMatchInfo(memberToLookFor!, false, false)).Should().BeTrue();
+
+
+			var methodToSearch2 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues_Of_7_And_14_Using_Delegate_Function), BindingFlags.Public | BindingFlags.Static);
+			methodToSearch2.Should().NotBeNull();
+			methodToSearch2!.ContainsReferenceTo(memberToLookFor!).Should().BeTrue();
+
+
+			var methodToSearch3 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddLocalVariables_For_5_And_15), BindingFlags.Public | BindingFlags.Static);
+			methodToSearch3.Should().NotBeNull();
+			methodToSearch3!.ContainsReferenceTo(memberToLookFor!).Should().BeFalse();
+		}
+
+		[TestMethod]
+		public void ContainsReferenceTo_throw_ArgmentNullException_for_the_required_parameters()
+		{
+			var consoleWriteMethods = typeof(System.Console)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.Where(methodInfo => methodInfo.Name == nameof(System.Console.Write))
+				.ToList();
+
+			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(null!, memberReferenceToLookFor: consoleWriteMethods.First()))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*methodBase*");
+
+			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(null!, memberReferenceMatchInfoToLookFor: new MemberReferenceMatchInfo(consoleWriteMethods.First(), false, false)))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*methodBase*");
+
+			var methodToSearch1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues), BindingFlags.Public | BindingFlags.Static);
+			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(methodToSearch1!, memberReferenceToLookFor: null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*memberReferenceToLookFor*");
+
+			Invoking(() => MethodBaseExtensions.ContainsReferenceTo(methodToSearch1!, memberReferenceMatchInfoToLookFor: null!))
+				.Should()
+				.Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null*memberReferenceMatchInfoToLookFor*");
+		}
+
+		[TestMethod]
+		public void ContainsReferencesToAny_finds_the_references_in_an_async_method()
+		{
+			var fieldThatIsReferenced1 = typeof(AsyncContainsReferenceTestClass).GetField("_field1", BindingFlags.NonPublic | BindingFlags.Instance);
+			fieldThatIsReferenced1.Should().NotBeNull();
+			var fieldThatIsReferenced2 = typeof(AsyncContainsReferenceTestClass).GetField("_field2", BindingFlags.NonPublic | BindingFlags.Instance);
+			fieldThatIsReferenced2.Should().NotBeNull();
+			var fieldThatIsNotReferenced = typeof(AsyncContainsReferenceTestClass).GetField("_field3", BindingFlags.Public | BindingFlags.Instance);
+			fieldThatIsNotReferenced.Should().NotBeNull();
+
+			var methodThatIsReferenced = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.MethodThatIsReferenced));
+			methodThatIsReferenced.Should().NotBeNull();
+			var methodThatIsNotReferenced1 = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.MethodThatIsNotReferenced1));
+			methodThatIsNotReferenced1.Should().NotBeNull();
+			var methodThatIsNotReferenced2 = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.MethodThatIsNotReferenced1));
+			methodThatIsNotReferenced2.Should().NotBeNull();
+
+			var propertyThatIsReferenced1 = typeof(AsyncContainsReferenceTestClass).GetProperty(nameof(AsyncContainsReferenceTestClass.Property1));
+			propertyThatIsReferenced1.Should().NotBeNull();
+			var propertyThatIsReferenced2 = typeof(AsyncContainsReferenceTestClass).GetProperty(nameof(AsyncContainsReferenceTestClass.Property2));
+			propertyThatIsReferenced2.Should().NotBeNull();
+			var propertyThatIsNotReferenced = typeof(AsyncContainsReferenceTestClass).GetProperty(nameof(AsyncContainsReferenceTestClass.Property3));
+			propertyThatIsNotReferenced.Should().NotBeNull();
+
+			var asyncMethodToCheck = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.DoSomethingAsync));
+
+			// No references match should return false
+			var noMatchingReferences1 = new MemberInfo[] { fieldThatIsNotReferenced!, methodThatIsNotReferenced1!, methodThatIsNotReferenced2!, propertyThatIsNotReferenced! };
+			asyncMethodToCheck!.ContainsReferenceToAny(noMatchingReferences1).Should().BeFalse();
+
+			var noMatchingReferences2 = new MemberInfo[] { fieldThatIsNotReferenced! };
+			asyncMethodToCheck!.ContainsReferenceToAny(noMatchingReferences2).Should().BeFalse();
+
+			var noMatchingReferences3 = new MemberInfo[] { methodThatIsNotReferenced2!, propertyThatIsNotReferenced! };
+			asyncMethodToCheck!.ContainsReferenceToAny(noMatchingReferences3).Should().BeFalse();
+
+
+			// Mix of matching and non-matching references should return true
+			var mixedReferences = new MemberInfo[] { fieldThatIsReferenced1!, fieldThatIsNotReferenced!, methodThatIsReferenced!, propertyThatIsReferenced1! };
+			asyncMethodToCheck!.ContainsReferenceToAny(mixedReferences).Should().BeTrue();
+
+			// Matching references
+			var successfulMatchReferences1 = new MemberInfo[] { fieldThatIsReferenced1!, methodThatIsReferenced! };
+			asyncMethodToCheck!.ContainsReferenceToAny(successfulMatchReferences1).Should().BeTrue();
+
+			var successfulMatchReferences2 = new MemberInfo[] { fieldThatIsReferenced1!, fieldThatIsReferenced2!, methodThatIsReferenced!, propertyThatIsReferenced1!, propertyThatIsReferenced2! };
+			asyncMethodToCheck!.ContainsReferenceToAny(successfulMatchReferences2).Should().BeTrue();
+		}
+
+		[TestMethod]
 		public void ContainsReferenceToAny_returns_the_expected_result()
 		{
 			var consoleWriteMethods = typeof(System.Console)
@@ -259,7 +364,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 		}
 
 		[TestMethod]
-		public void DescribeInstructions_returns_the_expected_result()
+		public void DescribeInstructions_returns_the_expected_result1()
 		{
 			// Release/optimized build will have different IL causing our test expectations will fail
 			var debuggableAttribute = typeof(ExampleMethods).Assembly.GetCustomAttribute<System.Diagnostics.DebuggableAttribute>();
@@ -283,6 +388,15 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 (9) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 10]
 (10) LOAD LOCAL VARIABLE (Index 2)  [Of type Int32]
 (11) RETURN");
+		}
+
+		[TestMethod]
+		public void DescribeInstructions_returns_the_expected_result2()
+		{
+			var asyncMethodToCheck = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.DoSomethingAsync));
+			var description = asyncMethodToCheck!.DescribeInstructions(new RecursiveInstructionFormatter(maxTraversalDepth: 3));
+
+			description.Should().ContainAll(new[] { "START OF METHOD", "MIDDLE OF METHOD", "END OF METHOD" });
 		}
 
 		[TestMethod]
@@ -499,7 +613,7 @@ where TSomethingElse : System.Enum");
 		}
 
 		[TestMethod]
-		public void HasMatchingParameterNamesAndTypes_returns_the_expected_result()
+		public void HasMatchingParameterNamesAndTypes_returns_the_expected_result1()
 		{
 			var methodToTest1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddLocalVariables_For_5_And_15), BindingFlags.Public | BindingFlags.Static);
 			var methodToTest2 = typeof(ExampleMethods)
@@ -507,6 +621,44 @@ where TSomethingElse : System.Enum");
 				.Single(methodInfo => methodInfo.Name == nameof(ExampleMethods.OverloadedMethod) && methodInfo.GetParameters().Length == 3);
 
 			methodToTest1!.HasMatchingParameterNamesAndTypes(methodToTest2).Should().BeFalse();
+
+			var methodToTes1Parameters = methodToTest1!.GetParameters();
+			methodToTest1!.HasMatchingParameterNamesAndTypes(methodToTes1Parameters!).Should().BeTrue();
+		}
+
+		[TestMethod]
+		public void HasMatchingParameterNamesAndTypes_returns_the_expected_result2()
+		{
+			var methodToTest1 = typeof(ExampleMethods)
+				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.Single(methodInfo => methodInfo.Name == nameof(ExampleMethods.OverloadedMethod) && methodInfo.GetParameters().Length == 3);
+
+			methodToTest1!.HasMatchingParameterNamesAndTypes(methodToTest1).Should().BeTrue();
+
+			var testParameters1 = methodToTest1!.GetParameters();
+			methodToTest1!.HasMatchingParameterNamesAndTypes(testParameters1).Should().BeTrue();
+
+			var testParameters2 = new ParameterInfo[testParameters1.Length];
+			testParameters2[0] = testParameters1[0];
+			testParameters2[1] = testParameters1[1];
+
+			var mockParameter1 = new Mock<ParameterInfo>();
+			mockParameter1.Setup(x => x.ParameterType).Returns(typeof(IServiceProvider));
+			mockParameter1.Setup(x => x.Name).Returns(testParameters1[2].Name);
+			testParameters2[2] = mockParameter1.Object;
+			methodToTest1!.HasMatchingParameterNamesAndTypes(testParameters2).Should().BeFalse();
+
+			var testParameters3 = new ParameterInfo[testParameters1.Length];
+			testParameters3[0] = testParameters1[0];
+
+			var mockParameter2 = new Mock<ParameterInfo>();
+			mockParameter1.Setup(x => x.ParameterType).Returns(testParameters1[1].ParameterType);
+			mockParameter1.Setup(x => x.Name).Returns("mockParameterName");
+			testParameters3[1] = mockParameter1.Object;
+
+			testParameters3[2] = testParameters1[2];
+
+			methodToTest1!.HasMatchingParameterNamesAndTypes(testParameters3).Should().BeFalse();
 		}
 
 		[TestMethod]

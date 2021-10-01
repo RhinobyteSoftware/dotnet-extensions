@@ -186,6 +186,114 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 		}
 
 		[TestMethod]
+		public void FindMethodOnConstrainingType_handles_overloads_reasonably_well1()
+		{
+			var interfaceMethods = typeof(IInheritedExampleType).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomethingElse1FromInterface = interfaceMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
+			var doSomethingElse2FromInterface = interfaceMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
+			doSomethingElse1FromInterface.GetMethodBody().Should().BeNull();
+			doSomethingElse2FromInterface.GetMethodBody().Should().BeNull();
+
+			var abstractBaseMethods = typeof(InheritedAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomethingElse1FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
+			var doSomethingElse2FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
+			doSomethingElse1FromAbstractBase.GetMethodBody().Should().BeNull();
+			doSomethingElse2FromAbstractBase.GetMethodBody().Should().NotBeNull();
+
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(InheritedAbstractClass), doSomethingElse1FromInterface).Should().BeSameAs(doSomethingElse1FromAbstractBase);
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(InheritedAbstractClass), doSomethingElse2FromInterface).Should().BeSameAs(doSomethingElse2FromAbstractBase);
+
+			var childMethods = typeof(ChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomethingElse1FromChild = childMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
+			var doSomethingElse2FromChild = childMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
+			doSomethingElse1FromChild.GetMethodBody().Should().NotBeNull();
+			doSomethingElse2FromChild.GetMethodBody().Should().NotBeNull();
+
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomethingElse1FromInterface).Should().BeSameAs(doSomethingElse1FromChild);
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomethingElse2FromInterface).Should().BeSameAs(doSomethingElse2FromChild);
+
+			var grandChildMethods = typeof(GrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomethingElse1FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(ChildOfAbstractClass));
+			var doSomethingElse2FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
+			var doSomethingElseThatHidesOtherMethod = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(GrandChildOfAbstractClass));
+			doSomethingElse1FromGrandChild.GetMethodBody().Should().NotBeNull();
+			doSomethingElse2FromGrandChild.GetMethodBody().Should().NotBeNull();
+			doSomethingElseThatHidesOtherMethod.GetMethodBody().Should().NotBeNull();
+
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomethingElse1FromInterface).Should().BeSameAs(doSomethingElse1FromGrandChild);
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomethingElse2FromInterface).Should().BeSameAs(doSomethingElse2FromGrandChild);
+		}
+
+		[TestMethod]
+		public void FindMethodOnConstrainingType_handles_overloads_reasonably_well2()
+		{
+			var abstractBaseMethods = typeof(InheritedAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomething1FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length == 0);
+			var doSomething2FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length > 0);
+			var doSomething3FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingOverridenInGrandchildButNotChild));
+			doSomething1FromAbstractBase.GetMethodBody().Should().BeNull();
+			doSomething2FromAbstractBase.GetMethodBody().Should().NotBeNull();
+			doSomething3FromAbstractBase.GetMethodBody().Should().NotBeNull();
+
+			var childMethods = typeof(ChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomething1FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length == 0);
+			var doSomething2FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length > 0);
+			var doSomething3FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingOverridenInGrandchildButNotChild));
+			doSomething1FromChild.GetMethodBody().Should().NotBeNull();
+			doSomething2FromChild.GetMethodBody().Should().NotBeNull();
+			doSomething3FromChild.GetMethodBody().Should().NotBeNull();
+
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomething1FromAbstractBase).Should().BeSameAs(doSomething1FromChild);
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomething2FromAbstractBase).Should().BeSameAs(doSomething2FromChild);
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomething3FromAbstractBase).Should().BeSameAs(doSomething3FromChild);
+
+			var grandChildMethods = typeof(GrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomething1FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length == 0);
+			var doSomething2FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length > 0);
+			var doSomething3FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingOverridenInGrandchildButNotChild));
+			doSomething1FromGrandChild.GetMethodBody().Should().NotBeNull();
+			doSomething2FromGrandChild.GetMethodBody().Should().NotBeNull();
+			doSomething3FromGrandChild.GetMethodBody().Should().NotBeNull();
+
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomething1FromAbstractBase).Should().BeSameAs(doSomething1FromGrandChild);
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomething2FromAbstractBase).Should().BeSameAs(doSomething2FromGrandChild);
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomething3FromAbstractBase).Should().BeSameAs(doSomething3FromGrandChild);
+		}
+
+		[TestMethod]
+		public void FindMethodOnConstrainingType_handles_overloads_reasonably_well3()
+		{
+			var abstractBaseMethods = typeof(InheritedAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomethingElse1FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingElse1));
+			doSomethingElse1FromAbstractBase.GetMethodBody().Should().BeNull();
+
+			var childMethods = typeof(ChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomethingElse1FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingElse1));
+			doSomethingElse1FromChild.GetMethodBody().Should().NotBeNull();
+
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomethingElse1FromAbstractBase).Should().BeSameAs(doSomethingElse1FromChild);
+
+			var grandChildMethods = typeof(GrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomethingElse1FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(ChildOfAbstractClass));
+			doSomethingElse1FromGrandChild.GetMethodBody().Should().NotBeNull();
+
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomethingElse1FromAbstractBase).Should().BeSameAs(doSomethingElse1FromGrandChild);
+
+
+			var doSomethingElseThatHidesOtherMethodFromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(GrandChildOfAbstractClass));
+			doSomethingElseThatHidesOtherMethodFromGrandChild.GetMethodBody().Should().NotBeNull();
+
+			var greatGrandChildMethods = typeof(GreatGrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+			var doSomethingElseThatHidesOtherMethodFromGreatGrandChild = greatGrandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
+			doSomethingElseThatHidesOtherMethodFromGreatGrandChild.GetMethodBody().Should().NotBeNull();
+
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(GreatGrandChildOfAbstractClass), doSomethingElseThatHidesOtherMethodFromGrandChild).Should().BeSameAs(doSomethingElseThatHidesOtherMethodFromGreatGrandChild);
+
+			// As the test says, it handles it 'reasonably' well... for hiding via the new keyword we don't bother looking back at the base types so the hidden value would be found in this case
+			MethodBodyParser.FindMethodOnConstrainingType(typeof(GreatGrandChildOfAbstractClass), doSomethingElse1FromAbstractBase).Should().BeSameAs(doSomethingElseThatHidesOtherMethodFromGreatGrandChild);
+		}
+
+		[TestMethod]
 		public void ParseInstructions_handles_instance_method_parameters_correctly()
 		{
 			var testMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.InstanceMethodWithLotsOfParameters), BindingFlags.Public | BindingFlags.Instance);

@@ -45,7 +45,7 @@
         <DependencyInjectionPackageVersion>1.0.0</DependencyInjectionPackageVersion>
         <DependencyInjectionPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DependencyInjectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DependencyInjectionPackageConsumerDependencyVersion>
 
-        <ReflectionPackageVersion>1.0.0</ReflectionPackageVersion>
+        <ReflectionPackageVersion>1.0.1</ReflectionPackageVersion>
         <ReflectionPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(ReflectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</ReflectionPackageConsumerDependencyVersion>
 
         <TestToolsPackageVersion>1.0.0</TestToolsPackageVersion>
