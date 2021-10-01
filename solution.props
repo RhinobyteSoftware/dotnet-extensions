@@ -137,4 +137,13 @@ LocalPackagesPath: '$(LocalPackagesPath)'
         <WriteLinesToFile File="$(RepoRoot)\development.props" Lines="$(DevelopmentPropsFileLines)" Overwrite="True" ContinueOnError="true" />
     </Target>
 
+    <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec" Condition="Exists('$(ReleaseNotesTextFilePath)')">
+        <ReadLinesFromFile File="$(ReleaseNotesTextFilePath)" >
+            <Output TaskParameter="Lines" ItemName="ReleaseNoteLines"/>
+        </ReadLinesFromFile>
+        <PropertyGroup>
+            <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
+        </PropertyGroup>
+    </Target>
+
 </Project>

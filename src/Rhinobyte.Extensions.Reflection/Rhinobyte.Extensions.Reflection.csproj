@@ -17,6 +17,7 @@
         <Title>$(PackageId)</Title>
         <PackageTags>reflection IL parsing</PackageTags>
 
+        <ReleaseNotesTextFilePath>$(MSBuildProjectDirectory)\RELEASE-NOTES.txt</ReleaseNotesTextFilePath>
         <Summary>Extensions for .NET reflection including assembly scanning/type discovery extensions and support for parsing IL (intermediate-language) instructions</Summary>
         <Description>$(Summary)
 

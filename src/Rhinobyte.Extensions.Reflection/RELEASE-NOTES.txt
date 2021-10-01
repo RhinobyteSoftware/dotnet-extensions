@@ -1,0 +1,2 @@
+﻿v1.0.1
+- Updated method base ContainsReferenceTo / ContainsReferenceToAny / ContainsReferencesToAll extension methods with support for searching the generated IAsyncStateMachine of an async method
