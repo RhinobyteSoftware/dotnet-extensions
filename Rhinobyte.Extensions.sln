@@ -24,9 +24,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{40E9ED1D
 		tests\directory.build.props = tests\directory.build.props
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{A72ED641-E520-4E40-920F-A8C005663859}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "devops", "devops", "{A72ED641-E520-4E40-920F-A8C005663859}"
 	ProjectSection(SolutionItems) = preProject
-		tools\create-code-coverage-report = tools\create-code-coverage-report
+		devops\create-code-coverage-report = devops\create-code-coverage-report
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.DataAnnotations", "src\Rhinobyte.Extensions.DataAnnotations\Rhinobyte.Extensions.DataAnnotations.csproj", "{28B1C78B-7143-46DA-B5E1-126213392446}"
@@ -41,15 +41,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.Reflec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.Reflection.Tests", "tests\Rhinobyte.Extensions.Reflection.Tests\Rhinobyte.Extensions.Reflection.Tests.csproj", "{1FCF049D-29EB-4E60-83CC-946C3C3A8E44}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.TestTools", "src\Rhinobyte.Extensions.TestTools\Rhinobyte.Extensions.TestTools.csproj", "{E55FF57C-E8ED-4D60-90AB-97A62567E616}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhinobyte.Extensions.TestTools.Tests", "tests\Rhinobyte.Extensions.TestTools.Tests\Rhinobyte.Extensions.TestTools.Tests.csproj", "{58E1712C-4270-4BB1-8DC5-503AEA25AAB6}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.SolutionIntegrationTests", "tests\Rhinobyte.Extensions.SolutionIntegrationTests\Rhinobyte.Extensions.SolutionIntegrationTests.csproj", "{01A7860D-5999-4C55-80D8-70688758673E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleIgnoredAttributeAssembly", "tests\ExampleIgnoredAttributeAssembly\ExampleIgnoredAttributeAssembly.csproj", "{E6E61601-7C9F-4A53-9450-667C976A8895}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleLibrary1", "tests\ExampleLibrary1\ExampleLibrary1.csproj", "{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.TestTools", "src\Rhinobyte.Extensions.TestTools\Rhinobyte.Extensions.TestTools.csproj", "{E55FF57C-E8ED-4D60-90AB-97A62567E616}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhinobyte.Extensions.TestTools.Tests", "tests\Rhinobyte.Extensions.TestTools.Tests\Rhinobyte.Extensions.TestTools.Tests.csproj", "{58E1712C-4270-4BB1-8DC5-503AEA25AAB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
