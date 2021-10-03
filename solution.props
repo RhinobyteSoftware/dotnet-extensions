@@ -2,17 +2,20 @@
 
     <!-- SOLUTION WIDE CUSTOMIZATIONS HERE-->
     <PropertyGroup>
-        <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
         <SolutionPropsIsImported>true</SolutionPropsIsImported>
-
+        <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+        <SolutionSummary>Extension libraries for the .NET</SolutionSummary>
+        
         <!-- Set RunOnlyOnceBeforeBuildTarget to 'BeforeBuild' for single target projects and 'DispatchToInnerBuilds' for cross taretting projects -->
         <RunOnlyOnceBeforeBuildTarget Condition=" '$(TargetFrameworks)' == '' AND '$(TargetFramework)' != '' ">BeforeBuild</RunOnlyOnceBeforeBuildTarget>
         <RunOnlyOnceBeforeBuildTarget Condition=" '$(TargetFrameworks)' != '' AND '$(TargetFramework)' == '' ">DispatchToInnerBuilds</RunOnlyOnceBeforeBuildTarget>
 
         <DefaultTargetFrameworks>netstandard2.0;netstandard2.1;net48;netcoreapp3.1;net5.0</DefaultTargetFrameworks>
         <InternalMsbuildMessageImportance>normal</InternalMsbuildMessageImportance>
-        <SolutionSummary>Extension libraries for the .NET</SolutionSummary>
+        <UseProjectReferences Condition=" '$(UseProjectReferences)' == '' ">true</UseProjectReferences>
 
+
+        <!-- General Compiler / Msbuild Settings -->
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
