@@ -5,6 +5,10 @@
         <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
         <SolutionPropsIsImported>true</SolutionPropsIsImported>
 
+        <!-- Set RunOnlyOnceBeforeBuildTarget to 'BeforeBuild' for single target projects and 'DispatchToInnerBuilds' for cross taretting projects -->
+        <RunOnlyOnceBeforeBuildTarget Condition=" '$(TargetFrameworks)' == '' AND '$(TargetFramework)' != '' ">BeforeBuild</RunOnlyOnceBeforeBuildTarget>
+        <RunOnlyOnceBeforeBuildTarget Condition=" '$(TargetFrameworks)' != '' AND '$(TargetFramework)' == '' ">DispatchToInnerBuilds</RunOnlyOnceBeforeBuildTarget>
+
         <DefaultTargetFrameworks>netstandard2.0;netstandard2.1;net48;netcoreapp3.1;net5.0</DefaultTargetFrameworks>
         <InternalMsbuildMessageImportance>normal</InternalMsbuildMessageImportance>
         <SolutionSummary>Extension libraries for the .NET</SolutionSummary>
@@ -52,10 +56,14 @@
         <TestToolsPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(TestToolsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</TestToolsPackageConsumerDependencyVersion>
     </PropertyGroup>
 
-    <Import Condition="Exists('$(RepoRoot)\development.props')" Project="$(RepoRoot)\development.props"/>
+    <Import Condition="Exists('$(RepoRoot)\development.local.props')" Project="$(RepoRoot)\development.local.props"/>
 
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <PropertyGroup Condition="'$(Configuration)' == 'Release' OR '$(Configuration)' == 'ReleaseTesting'">
         <Optimize>true</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'ReleaseTesting' ">
+        <DefineConstants>IS_RELEASE_TESTING_BUILD</DefineConstants>
     </PropertyGroup>
 
 
@@ -67,7 +75,9 @@
         </PackageReference>
     </ItemGroup>
 
-    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+
+    <!-- ASSEMBLY ATTRIBUTE GENERATION -->
+    <ItemGroup Condition=" '$(Configuration)' == 'Debug' OR '$(Configuration)' == 'ReleaseTesting' ">
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>$(ProjectName).Tests</_Parameter1>
         </AssemblyAttribute>
@@ -76,13 +86,15 @@
         </AssemblyAttribute>
     </ItemGroup>
 
-    <ItemGroup Condition=" '$(IsPackable)' == 'true' AND '$(IsClsCompliant)' != 'false' ">
+    <ItemGroup Condition=" '$(IsClsCompliant)' == 'true' ">
         <AssemblyAttribute Include="System.CLSCompliant">
             <_Parameter1>true</_Parameter1>
             <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
         </AssemblyAttribute>
     </ItemGroup>
 
+
+    <!-- NUGET PACKAGE FILE INCLUDES -->
     <ItemGroup Condition="'$(IsPackable)' == 'true'">
         <None Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
         <None Include="$(RepoRoot)\RhinobytePackageIcon.png" Pack="true" PackagePath="Icon.png" />
@@ -90,6 +102,9 @@
     </ItemGroup>
 
 
+    <!-- SOLUTION WIDE CUSTOM TARGETS -->
+    
+    <!-- CopyToLocalPackages Target -->
     <Target Name="CopyToLocalPackages" AfterTargets="Pack" Condition="'$(OutputToDevelopmentPackages)' == 'true' AND '$(IsPackable)' == 'true'">
         <Message Text="Creating DevelopmentPackagesDirectory: $(DevelopmentPackagesDirectory)" Condition="!Exists('$(DevelopmentPackagesDirectory)')" Importance="$(InternalMsbuildMessageImportance)" />
         <MakeDir Directories="$(DevelopmentPackagesDirectory)" Condition="!Exists('$(DevelopmentPackagesDirectory)')" />
@@ -106,7 +121,9 @@ PackageVersion: $(PackageVersion)"  />
         <Copy SourceFiles="$(PackageOutputAbsolutePath)$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(DevelopmentPackagesDirectory)" />
     </Target>
 
-    <Target Name="CreateDevelopmentProps" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' != 'Release' AND Exists('$(RepoRoot)') AND !Exists('$(RepoRoot)\development.props')">
+    
+    <!-- CreateDevelopmentPropsFile Target -->
+    <Target Name="CreateDevelopmentPropsFile" BeforeTargets="$(RunOnlyOnceBeforeBuildTarget)" Condition="'$(Configuration)' != 'Release' AND Exists('$(RepoRoot)') AND !Exists('$(RepoRoot)\development.local.props')">
         <PropertyGroup>
             <RepoRootParent>$([System.IO.Path]::GetFullPath('$([System.IO.Path]::Combine('$(RepoRoot)', '..'))'))</RepoRootParent>
             <LocalPackagesPath Condition="'$(LocalPackagesPath)' == ''">$(RepoRootParent)\localPackages</LocalPackagesPath>
@@ -125,7 +142,7 @@ PackageVersion: $(PackageVersion)"  />
 
         <Message Importance="$(InternalMsbuildMessageImportance)"
                  Text="
-Creating default development.props file...
+Creating default development.local.props file...
 
 $(DevelopmentPropsFileLines)
 
@@ -134,9 +151,37 @@ RepoRootParent: '$(RepoRootParent)'
 LocalPackagesPath: '$(LocalPackagesPath)'
                 " />
 
-        <WriteLinesToFile File="$(RepoRoot)\development.props" Lines="$(DevelopmentPropsFileLines)" Overwrite="True" ContinueOnError="true" />
+        <WriteLinesToFile File="$(RepoRoot)\development.local.props" Lines="$(DevelopmentPropsFileLines)" Overwrite="True" ContinueOnError="true" />
     </Target>
 
+
+    <!-- CreateDevelopmentTargetsFile Target -->
+    <Target Name="CreateDevelopmentTargetsFile" BeforeTargets="$(RunOnlyOnceBeforeBuildTarget)" Condition="'$(Configuration)' != 'Release' AND Exists('$(RepoRoot)') AND !Exists('$(RepoRoot)\development.local.targets')">
+        <PropertyGroup>
+            <DevelopmentTargetsFileLines>
+&lt;Project&gt;
+    &lt;PropertyGroup&gt;
+        <!-- Projects to temporarily disable optimization on to make debugging in the ReleaseTesting configuration easier -->
+        <!-- Each project name must end with a semicolon, even if there is only a single entry -->
+        &lt;ProjectsThatShouldNotBeOptimized&gt;
+        &lt;/ProjectsThatShouldNotBeOptimized&gt;
+    &lt;/PropertyGroup&gt;
+&lt;/Project&gt;
+            </DevelopmentTargetsFileLines>
+        </PropertyGroup>
+
+        <Message Importance="$(InternalMsbuildMessageImportance)"
+                 Text="
+Creating default development.local.targets file...
+
+$(DevelopmentTargetsFileLines)
+                " />
+
+        <WriteLinesToFile File="$(RepoRoot)\development.local.targets" Lines="$(DevelopmentTargetsFileLines)" Overwrite="True" ContinueOnError="true" />
+    </Target>
+
+
+    <!-- PreparePackageReleaseNotesFromFile Target -->
     <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec" Condition="Exists('$(ReleaseNotesTextFilePath)')">
         <ReadLinesFromFile File="$(ReleaseNotesTextFilePath)" >
             <Output TaskParameter="Lines" ItemName="ReleaseNoteLines"/>

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
-        <IsPackable>true</IsPackable>
+        <Configurations>Debug;Release;ReleaseTesting</Configurations>
 
         <!-- VERSION VALUES -->
         <AssemblyVersion>$(DependencyInjectionPackageVersion).0</AssemblyVersion>

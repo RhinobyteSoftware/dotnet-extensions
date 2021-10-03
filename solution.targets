@@ -1,0 +1,17 @@
+<Project>
+
+    <PropertyGroup>
+        <SolutionTargetsIsImported>true</SolutionTargetsIsImported>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'ReleaseTesting' ">
+        <IsPackable Condition=" '$(IsPackableInReleaseTestingConfiguration)' != 'true' ">false</IsPackable>
+    </PropertyGroup>
+
+    <Import Condition="Exists('$(RepoRoot)\development.local.targets')" Project="$(RepoRoot)\development.local.targets"/>
+
+    <!-- Check for the ProjectName; to see if we should skip optimizing-->
+    <PropertyGroup Condition=" '$(ProjectsThatShouldNotBeOptimized)' != '' AND $(ProjectsThatShouldNotBeOptimized.Contains('$(MSBuildProjectName);'))">
+        <Optimize>false</Optimize>
+    </PropertyGroup>
+</Project>

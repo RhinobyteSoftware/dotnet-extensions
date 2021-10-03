@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0</TargetFrameworks>
-        <IsPackable>true</IsPackable>
+        <Configurations>Debug;Release;ReleaseTesting</Configurations>
         
         <!-- VERSION VALUES -->
         <AssemblyVersion>$(DataAnnotationsPackageVersion).0</AssemblyVersion>
