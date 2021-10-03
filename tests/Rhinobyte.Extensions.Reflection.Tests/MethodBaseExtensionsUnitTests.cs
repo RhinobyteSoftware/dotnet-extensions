@@ -51,33 +51,12 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 			var mixedReferences = new MemberInfo[] { fieldThatIsReferenced1!, fieldThatIsNotReferenced!, methodThatIsReferenced!, propertyThatIsReferenced1! };
 			asyncMethodToCheck!.ContainsReferencesToAll(mixedReferences).Should().BeFalse();
 
-#if IS_RELEASE_TESTING_BUILD
-			var reflectionExtensionsDebuggableAttribute = typeof(MethodBaseExtensions).Assembly.GetCustomAttribute<System.Diagnostics.DebuggableAttribute>();
-			var isOptimized = reflectionExtensionsDebuggableAttribute?.IsJITOptimizerDisabled == false;
-			if (isOptimized)
-				Console.WriteLine($"Is Optimized: {isOptimized}");
-
-			var thisAssemblyDebuggableAttribute = typeof(AsyncContainsReferenceTestClass).Assembly.GetCustomAttribute<System.Diagnostics.DebuggableAttribute>();
-			var isOptimized2 = thisAssemblyDebuggableAttribute?.IsJITOptimizerDisabled == false;
-			if (isOptimized2)
-				Console.WriteLine($"Is Optimized2: {isOptimized2}");
-
-			// Matching references (fields only, the method liked gets inlined / optimized away in RELEASE_TESTING builds
-			var successfulMatchReferences1 = new MemberInfo[] { fieldThatIsReferenced1!, methodThatIsReferenced! };
-			asyncMethodToCheck!.ContainsReferencesToAll(successfulMatchReferences1).Should().BeTrue();
-#else
 			// Matching references
 			var successfulMatchReferences1 = new MemberInfo[] { fieldThatIsReferenced1!, methodThatIsReferenced! };
 			asyncMethodToCheck!.ContainsReferencesToAll(successfulMatchReferences1).Should().BeTrue();
-#endif
 
-#if IS_RELEASE_TESTING_BUILD
-			var successfulMatchReferences2 = new MemberInfo[] { fieldThatIsReferenced1!, fieldThatIsReferenced2!, propertyThatIsReferenced1!, propertyThatIsReferenced2! };
-			asyncMethodToCheck!.ContainsReferencesToAll(successfulMatchReferences2).Should().BeTrue();
-#else
 			var successfulMatchReferences2 = new MemberInfo[] { fieldThatIsReferenced1!, fieldThatIsReferenced2!, methodThatIsReferenced!, propertyThatIsReferenced1!, propertyThatIsReferenced2! };
 			asyncMethodToCheck!.ContainsReferencesToAll(successfulMatchReferences2).Should().BeTrue();
-#endif
 		}
 
 		[TestMethod]
