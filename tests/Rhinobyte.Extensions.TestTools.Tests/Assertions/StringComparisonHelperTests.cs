@@ -109,6 +109,54 @@ namespace Rhinobyte.Extensions.TestTools.Tests.Assertions
 			StringComparisonHelper.CompareLinesTo(sourceLines: emptyLinesArray, targetLines: emptyLinesArray, whitespaceNormalizationType).Should().BeNull();
 		}
 
+		[DataTestMethod]
+		[DataRow(WhitespaceNormalizationType.None)]
+		[DataRow(WhitespaceNormalizationType.RemoveCarriageReturns)]
+		[DataRow(WhitespaceNormalizationType.TrimTrailingWhitespace)]
+		public void CompareLinesTo_handles_null_lines(WhitespaceNormalizationType whitespaceNormalizationType)
+		{
+			var sourceLines = new[]
+			{
+				"Line 1",
+				"Line 2",
+				"Source Line 3",
+				string.Empty,
+				null,
+				"Line 6",
+				"Line 7",
+				null
+			};
+
+			var targetLines = new[]
+			{
+				"Line 1",
+				"Line 2",
+				null,
+				string.Empty,
+				null,
+				"Target Line 6",
+				"Line 7",
+				"Line 8"
+			};
+
+			var comparisonResult = StringComparisonHelper.CompareLinesTo(
+				sourceLines!,
+				targetLines!,
+				WhitespaceNormalizationType.TrimTrailingWhitespace,
+				maxComparisonOffset: 0
+			);
+
+			comparisonResult!.ComparisonRanges.Should().BeEquivalentTo(new[]
+			{
+				new StringComparisonRange(true, 0, 2, 0, 2),
+				new StringComparisonRange(false, 2, 3, 2, 3),
+				new StringComparisonRange(true, 3, 5, 3, 5),
+				new StringComparisonRange(false, 5, 6, 5, 6),
+				new StringComparisonRange(true, 6, 7, 6, 7),
+				new StringComparisonRange(false, 7, 8, 7, 8),
+			});
+		}
+
 		[TestMethod]
 		public void CompareLinesTo_handles_the_maxComparisonOffset_as_expected1()
 		{

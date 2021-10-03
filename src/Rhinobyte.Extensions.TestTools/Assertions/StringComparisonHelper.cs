@@ -108,6 +108,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 					targetBeginningLineNumber = targetIndex;
 					++sourceIndex;
 					++targetIndex;
+					continue;
 				}
 
 				if (skipLocalRangeComparisons)
@@ -204,8 +205,8 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 		}
 
 		private static bool DoLinesMatch(
-			string sourceLine,
-			string targetLine,
+			string? sourceLine,
+			string? targetLine,
 			WhitespaceNormalizationType whitespaceNormalizationType)
 		{
 			if (sourceLine is null)
@@ -256,7 +257,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 			WhitespaceNormalizationType whitespaceNormalizationTypeForLines = WhitespaceNormalizationType.TrimTrailingWhitespace)
 		{
 			var comparisonResult = CompareLinesTo(source, target, whitespaceNormalizationTypeForLines, maxComparisonOffset: maxComparisonOffset);
-			if (comparisonResult is null || comparisonResult.ComparisonRanges.Count < 1)
+			if (comparisonResult is null)
 				return string.Empty;
 
 			var comparisonRanges = comparisonResult.ComparisonRanges;
