@@ -16,6 +16,49 @@ namespace Rhinobyte.Extensions.TestTools.Tests
 	[TestClass]
 	public class ApartmentStateTestMethodAttributeTests
 	{
+		[TestMethod]
+		public void Constructors_do_not_throw_for_invalid_arguments()
+		{
+			// Attribute constructors should not throw to prevent unexpected exceptions by calls to GetCustomAttribute(s)
+			new ApartmentStateTestMethodAttribute(ApartmentState.Unknown).Should().NotBeNull();
+			new ApartmentStateTestMethodAttribute(ApartmentState.STA).Should().NotBeNull();
+			new ApartmentStateTestMethodAttribute(ApartmentState.MTA).Should().NotBeNull();
+			new ApartmentStateTestMethodAttribute(displayName: null, ApartmentState.Unknown).Should().NotBeNull();
+			new ApartmentStateTestMethodAttribute(ApartmentState.Unknown, testMethodAttribute: null!).Should().NotBeNull();
+		}
+
+		[DataTestMethod]
+		[DataRow(ApartmentState.STA)]
+		[DataRow(ApartmentState.MTA)]
+		public void Execute_gracefully_handles_a_null_array_result(ApartmentState apartmentStateToTest)
+		{
+			var expectedTestResult = new TestResult { };
+			var mockTestMethod = new Mock<ITestMethod>();
+			mockTestMethod.Setup(x => x.Invoke(It.IsAny<object[]>())).Returns(expectedTestResult);
+
+			var wrappedAttributeThatReturnsNullArrayResult = new StubTestMethodAttribute() { ShouldReturnNullArrayResult = true };
+			var systemUnderTest = new ApartmentStateTestMethodAttribute(apartmentStateToTest, wrappedAttributeThatReturnsNullArrayResult);
+			var testResults = systemUnderTest.Execute(mockTestMethod.Object);
+
+			if (wrappedAttributeThatReturnsNullArrayResult.ExecutedThreadId != Thread.CurrentThread.ManagedThreadId)
+			{
+				testResults.Should().NotBeNull();
+				testResults.Should().BeEmpty();
+			}
+		}
+
+		[TestMethod]
+		public void Execute_invokes_the_test_method_directly_when_not_wrapping_another_attribute()
+		{
+			var expectedTestResult = new TestResult { };
+			var mockTestMethod = new Mock<ITestMethod>();
+			mockTestMethod.Setup(x => x.Invoke(It.IsAny<object[]>())).Returns(expectedTestResult);
+
+			var systemUnderTest = new ApartmentStateTestMethodAttribute(ApartmentState.MTA);
+			var testResults = systemUnderTest.Execute(mockTestMethod.Object);
+			testResults.Should().HaveCount(1).And.Contain(expectedTestResult);
+		}
+
 		[DataTestMethod]
 		[DataRow(ApartmentState.STA)]
 		[DataRow(ApartmentState.MTA)]
@@ -31,6 +74,22 @@ namespace Rhinobyte.Extensions.TestTools.Tests
 			var testResults = systemUnderTest.Execute(mockTestMethod.Object);
 			testResults.Should().HaveCount(1).And.Contain(expectedTestResult);
 			stubTestMethodAttribute.Should().Match<StubTestMethodAttribute>(stubValues => stubValues.WasExecuteCalled && stubValues.ExecutedApartmentState == apartmentStateToTest);
+		}
+
+		[TestMethod]
+		public void Execute_throws_when_configured_with_an_invalid_ApartmentState_value()
+		{
+			var mockTestMethod = new Mock<ITestMethod>();
+			Invoking(() => new ApartmentStateTestMethodAttribute(ApartmentState.Unknown).Execute(mockTestMethod.Object))
+				.Should()
+				.Throw<InvalidOperationException>()
+				.WithMessage($@"{nameof(ApartmentStateTestMethodAttribute)} is configured to use an invalid {nameof(ApartmentState)} value of ""Unknown""*");
+
+			var stubTestMethodAttribute = new StubTestMethodAttribute();
+			Invoking(() => new ApartmentStateTestMethodAttribute(ApartmentState.Unknown, stubTestMethodAttribute).Execute(mockTestMethod.Object))
+				.Should()
+				.Throw<InvalidOperationException>()
+				.WithMessage($@"{nameof(ApartmentStateTestMethodAttribute)} is configured to use an invalid {nameof(ApartmentState)} value of ""Unknown""*");
 		}
 
 		[DataTestMethod]
@@ -157,20 +216,16 @@ namespace Rhinobyte.Extensions.TestTools.Tests
 			stubTestMethodAttributeForMta.ExecutedThreadId.Should().Be(mtaThread.ManagedThreadId);
 		}
 
-		[TestMethod]
-		public void Execute_throws_when_configured_with_an_invalid_ApartmentState_value()
+		[ApartmentStateTestMethod(ApartmentState.STA)]
+		public void TestMethod_decorated_with_the_ApartmentStateTestMethodAttribute_should_run_with_STA_apartment_state()
 		{
-			var mockTestMethod = new Mock<ITestMethod>();
-			Invoking(() => new ApartmentStateTestMethodAttribute(ApartmentState.Unknown).Execute(mockTestMethod.Object))
-				.Should()
-				.Throw<InvalidOperationException>()
-				.WithMessage($@"{nameof(ApartmentStateTestMethodAttribute)} is configured to use an invalid {nameof(ApartmentState)} value of ""Unknown""*");
+			Thread.CurrentThread.GetApartmentState().Should().Be(ApartmentState.STA);
+		}
 
-			var stubTestMethodAttribute = new StubTestMethodAttribute();
-			Invoking(() => new ApartmentStateTestMethodAttribute(ApartmentState.Unknown, stubTestMethodAttribute).Execute(mockTestMethod.Object))
-				.Should()
-				.Throw<InvalidOperationException>()
-				.WithMessage($@"{nameof(ApartmentStateTestMethodAttribute)} is configured to use an invalid {nameof(ApartmentState)} value of ""Unknown""*");
+		[TestMethod]
+		public void TestMethod_decorated_with_normal_TestMethodAttribute_should_run_with_MTA_apartment_state()
+		{
+			Thread.CurrentThread.GetApartmentState().Should().Be(ApartmentState.MTA);
 		}
 
 
@@ -181,6 +236,7 @@ namespace Rhinobyte.Extensions.TestTools.Tests
 		{
 			public ApartmentState ExecutedApartmentState { get; private set; }
 			public int ExecutedThreadId { get; private set; }
+			public bool ShouldReturnNullArrayResult { get; set; }
 			public bool WasExecuteCalled { get; private set; }
 
 			public override TestResult[] Execute(ITestMethod testMethod)
@@ -188,6 +244,10 @@ namespace Rhinobyte.Extensions.TestTools.Tests
 				WasExecuteCalled = true;
 				ExecutedApartmentState = Thread.CurrentThread.GetApartmentState();
 				ExecutedThreadId = Thread.CurrentThread.ManagedThreadId;
+
+				if (ShouldReturnNullArrayResult)
+					return null!;
+
 				return new[] { testMethod.Invoke(null) };
 			}
 		}

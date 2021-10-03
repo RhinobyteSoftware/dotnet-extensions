@@ -212,6 +212,9 @@ csharp_indent_case_contents_when_block  = false
 csharp_indent_labels                    = one_less_than_current
 csharp_indent_switch_labels             = true
 
+# Rule (IDE0056)    - Indexing can be simplified    - Reason: Suggestion only. Range operator not supported in older versions of .NET
+dotnet_diagnostic.IDE0056.severity      = suggestion
+
 # Rule (IDE0047)    - Remove unnecessary parentheses
 dotnet_diagnostic.IDE0047.severity                          = refactoring
 

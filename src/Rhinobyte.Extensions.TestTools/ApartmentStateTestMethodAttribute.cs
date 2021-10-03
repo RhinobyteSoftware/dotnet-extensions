@@ -29,11 +29,23 @@ namespace Rhinobyte.Extensions.TestTools
 		}
 
 		/// <summary>
+		/// Construct a new instance of the attribute with the specified <paramref name="displayName"/> and thread <see cref="ApartmentState"/> to use.
+		/// </summary>
+		public ApartmentStateTestMethodAttribute(string? displayName, ApartmentState testApartmentState)
+			: base(displayName)
+		{
+			TestApartmentState = testApartmentState;
+		}
+
+		/// <summary>
 		/// Wrap the provided <paramref name="testMethodAttribute"/> in a new instance of this attribute with the specified thread <see cref="ApartmentState"/> to use.
 		/// </summary>
-		/// <remarks>This constructor overload is used by <see cref="TestClassAttribute"/> implementations to wrap other test method attributes.</remarks>
+		/// <remarks>
+		/// This constructor overload can be used by subclasses of <see cref="TestClassAttribute"/> to wrap other test method attributes.
+		/// <para>For example: <see cref="ApartmentStateTestClassAttribute"/></para>
+		/// </remarks>
 		public ApartmentStateTestMethodAttribute(ApartmentState testApartmentState, TestMethodAttribute testMethodAttribute)
-			: this(testApartmentState)
+			: this(testMethodAttribute?.DisplayName, testApartmentState)
 		{
 			TestMethodAttribute = testMethodAttribute;
 		}
@@ -50,6 +62,7 @@ namespace Rhinobyte.Extensions.TestTools
 		/// </summary>
 		public TestMethodAttribute? TestMethodAttribute { get; }
 
+
 		/// <summary>
 		/// Execute the <paramref name="testMethod"/>. If the current thread's apartment state does not match
 		/// the configured <see cref="TestApartmentState"/> then a new thread is created to invoke the test method
@@ -65,6 +78,8 @@ namespace Rhinobyte.Extensions.TestTools
 
 			if (Thread.CurrentThread.GetApartmentState() == TestApartmentState)
 				return Invoke(testMethod);
+
+			// TODO: Find a clean way to pool / re-use STA threads without requiring a synchronization context ?
 
 			TestResult[]? result = null;
 			var thread = new Thread(() => result = Invoke(testMethod));
