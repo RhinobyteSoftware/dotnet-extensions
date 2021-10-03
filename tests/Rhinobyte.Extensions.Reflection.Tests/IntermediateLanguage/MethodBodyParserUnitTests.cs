@@ -300,13 +300,43 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			testMethodInfo.Should().NotBeNull();
 
 			var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
+#if IS_RELEASE_TESTING_BUILD
+			instructions.Count.Should().Be(23);
+#else
 			instructions.Count.Should().Be(29);
+#endif
 
 			var thisKeywordInstruction = instructions.FirstOrDefault(instruction => instruction is ThisKeywordInstruction) as ThisKeywordInstruction;
 			thisKeywordInstruction.Should().NotBeNull();
 			thisKeywordInstruction!.Method.Should().Be(testMethodInfo);
 
 			var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+#if IS_RELEASE_TESTING_BUILD
+			description.Should().Be(
+@"(0) LOAD ARGUMENT (Index 0)  [this keyword]
+(1) CALL METHOD  [ExampleMethods.get_LocalIntegerProperty]
+(2) LOAD ARGUMENT (Index 1)  [Parameter #0]  [ParameterReference: System.Int32 value1]
+(3) ADD
+(4) LOAD ARGUMENT (Index 2)  [Parameter #1]  [ParameterReference: System.Int32 value2]
+(5) ADD
+(6) LOAD ARGUMENT (Index 3)  [Parameter #2]  [ParameterReference: System.Int32 value3]
+(7) ADD
+(8) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #3]  [ParameterReference: System.Int32 value4]
+(9) ADD
+(10) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #4]  [ParameterReference: System.Int32 value5]
+(11) ADD
+(12) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #5]  [ParameterReference: System.Int32 value6]
+(13) ADD
+(14) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #6]  [ParameterReference: System.Int32 value7]
+(15) ADD
+(16) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #7]  [ParameterReference: System.Int32 value8]
+(17) ADD
+(18) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #8]  [ParameterReference: System.Int32 value9]
+(19) ADD
+(20) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #9]  [ParameterReference: System.Int32 value10]
+(21) ADD
+(22) RETURN");
+#else
 			description.Should().Be(
 @"(0) NO-OP
 (1) LOAD ARGUMENT (Index 0)  [this keyword]
@@ -337,6 +367,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 (26) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 27]
 (27) LOAD LOCAL VARIABLE (Index 1)  [Of type Int32]
 (28) RETURN");
+#endif
 		}
 
 		[TestMethod]
@@ -346,9 +377,37 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			testMethodInfo.Should().NotBeNull();
 
 			var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
+#if IS_RELEASE_TESTING_BUILD
+			instructions.Count.Should().Be(20);
+#else
 			instructions.Count.Should().Be(26);
+#endif
 
 			var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+
+#if IS_RELEASE_TESTING_BUILD
+			description.Should().Be(
+@"(0) LOAD ARGUMENT (Index 0)  [Parameter #0]  [ParameterReference: System.Int32 value1]
+(1) LOAD ARGUMENT (Index 1)  [Parameter #1]  [ParameterReference: System.Int32 value2]
+(2) ADD
+(3) LOAD ARGUMENT (Index 2)  [Parameter #2]  [ParameterReference: System.Int32 value3]
+(4) ADD
+(5) LOAD ARGUMENT (Index 3)  [Parameter #3]  [ParameterReference: System.Int32 value4]
+(6) ADD
+(7) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #4]  [ParameterReference: System.Int32 value5]
+(8) ADD
+(9) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #5]  [ParameterReference: System.Int32 value6]
+(10) ADD
+(11) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #6]  [ParameterReference: System.Int32 value7]
+(12) ADD
+(13) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #7]  [ParameterReference: System.Int32 value8]
+(14) ADD
+(15) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #8]  [ParameterReference: System.Int32 value9]
+(16) ADD
+(17) LOAD ARGUMENT (Specified Short Form Index)  [Parameter #9]  [ParameterReference: System.Int32 value10]
+(18) ADD
+(19) RETURN");
+#else
 			description.Should().Be(
 @"(0) NO-OP
 (1) LOAD ARGUMENT (Index 0)  [Parameter #0]  [ParameterReference: System.Int32 value1]
@@ -376,6 +435,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 (23) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 24]
 (24) LOAD LOCAL VARIABLE (Index 1)  [Of type Int32]
 (25) RETURN");
+#endif
 		}
 
 		[TestMethod]
@@ -385,7 +445,11 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			methodInfo.Should().NotBeNull();
 
 			var instructions = new MethodBodyParser(methodInfo!).ParseInstructions();
+#if IS_RELEASE_TESTING_BUILD
+			instructions.Count.Should().Be(6);
+#else
 			instructions.Count.Should().Be(12);
+#endif
 
 			//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
 			//results.Should().NotBeNullOrEmpty();
@@ -398,7 +462,11 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			nullCheckMethodInfo.Should().NotBeNull();
 
 			var instructions = new MethodBodyParser(nullCheckMethodInfo!).ParseInstructions();
+#if IS_RELEASE_TESTING_BUILD
+			instructions.Count.Should().Be(7);
+#else
 			instructions.Count.Should().Be(15);
+#endif
 
 			//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
 			//results.Should().NotBeNullOrEmpty();
@@ -411,7 +479,11 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			nullCheckMethodInfo.Should().NotBeNull();
 
 			var instructions = new MethodBodyParser(nullCheckMethodInfo!).ParseInstructions();
+#if IS_RELEASE_TESTING_BUILD
+			instructions.Count.Should().Be(7);
+#else
 			instructions.Count.Should().Be(11);
+#endif
 
 			//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
 			//results.Should().NotBeNullOrEmpty();
@@ -1105,9 +1177,44 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			testMethodInfo.Should().NotBeNull();
 
 			var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
+#if IS_RELEASE_TESTING_BUILD
+			instructions.Count.Should().Be(26);
+#else
 			instructions.Count.Should().Be(46);
+#endif
 
 			var instructionDescription = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+
+#if IS_RELEASE_TESTING_BUILD
+			instructionDescription.Should().Be(
+@"(0) LOAD INT LITERAL (0)
+(1) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
+(2) LOAD STRING  [String Value: First Label]
+(3) CALL METHOD  [Console.WriteLine]
+(4) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(5) LOAD INT LITERAL (1)
+(6) ADD
+(7) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
+(8) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(9) LOAD INT LITERAL (3)
+(10) BRANCH WHEN LESS THAN (Short Form)  [TargetInstruction: 2]
+(11) LOAD STRING  [String Value: Second Label]
+(12) CALL METHOD  [Console.WriteLine]
+(13) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(14) LOAD INT LITERAL (1)
+(15) ADD
+(16) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
+(17) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(18) LOAD INT LITERAL (6)
+(19) BRANCH WHEN LESS THAN (Short Form)  [TargetInstruction: 2]
+(20) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(21) LOAD INT VALUE (Int8)  [SByte Value: 9]
+(22) BRANCH WHEN LESS THAN (Short Form)  [TargetInstruction: 11]
+(23) LOAD STRING  [String Value: Last Label]
+(24) CALL METHOD  [Console.WriteLine]
+(25) RETURN");
+#else
+
 			instructionDescription.Should().Be(
 @"(0) NO-OP
 (1) LOAD INT LITERAL (0)
@@ -1155,6 +1262,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 (43) CALL METHOD  [Console.WriteLine]
 (44) NO-OP
 (45) RETURN");
+#endif
 		}
 
 		[TestMethod]
@@ -1190,7 +1298,11 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			methodToParse.Should().NotBeNull();
 
 			var instructions = new MethodBodyParser(methodToParse!).ParseInstructions();
+#if IS_RELEASE_TESTING_BUILD
+			instructions.Count.Should().Be(19);
+#else
 			instructions.Count.Should().Be(23);
+#endif
 		}
 
 		[TestMethod]
@@ -1200,7 +1312,11 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			methodToParse.Should().NotBeNull();
 
 			var instructions = new MethodBodyParser(methodToParse!).ParseInstructions();
+#if IS_RELEASE_TESTING_BUILD
+			instructions.Count.Should().Be(7);
+#else
 			instructions.Count.Should().Be(13);
+#endif
 		}
 
 		[TestMethod]

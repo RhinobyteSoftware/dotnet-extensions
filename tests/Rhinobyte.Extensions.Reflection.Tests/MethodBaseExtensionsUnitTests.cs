@@ -51,12 +51,33 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 			var mixedReferences = new MemberInfo[] { fieldThatIsReferenced1!, fieldThatIsNotReferenced!, methodThatIsReferenced!, propertyThatIsReferenced1! };
 			asyncMethodToCheck!.ContainsReferencesToAll(mixedReferences).Should().BeFalse();
 
+#if IS_RELEASE_TESTING_BUILD
+			var reflectionExtensionsDebuggableAttribute = typeof(MethodBaseExtensions).Assembly.GetCustomAttribute<System.Diagnostics.DebuggableAttribute>();
+			var isOptimized = reflectionExtensionsDebuggableAttribute?.IsJITOptimizerDisabled == false;
+			if (isOptimized)
+				Console.WriteLine($"Is Optimized: {isOptimized}");
+
+			var thisAssemblyDebuggableAttribute = typeof(AsyncContainsReferenceTestClass).Assembly.GetCustomAttribute<System.Diagnostics.DebuggableAttribute>();
+			var isOptimized2 = thisAssemblyDebuggableAttribute?.IsJITOptimizerDisabled == false;
+			if (isOptimized2)
+				Console.WriteLine($"Is Optimized2: {isOptimized2}");
+
+			// Matching references (fields only, the method liked gets inlined / optimized away in RELEASE_TESTING builds
+			var successfulMatchReferences1 = new MemberInfo[] { fieldThatIsReferenced1!, methodThatIsReferenced! };
+			asyncMethodToCheck!.ContainsReferencesToAll(successfulMatchReferences1).Should().BeTrue();
+#else
 			// Matching references
 			var successfulMatchReferences1 = new MemberInfo[] { fieldThatIsReferenced1!, methodThatIsReferenced! };
 			asyncMethodToCheck!.ContainsReferencesToAll(successfulMatchReferences1).Should().BeTrue();
+#endif
 
+#if IS_RELEASE_TESTING_BUILD
+			var successfulMatchReferences2 = new MemberInfo[] { fieldThatIsReferenced1!, fieldThatIsReferenced2!, propertyThatIsReferenced1!, propertyThatIsReferenced2! };
+			asyncMethodToCheck!.ContainsReferencesToAll(successfulMatchReferences2).Should().BeTrue();
+#else
 			var successfulMatchReferences2 = new MemberInfo[] { fieldThatIsReferenced1!, fieldThatIsReferenced2!, methodThatIsReferenced!, propertyThatIsReferenced1!, propertyThatIsReferenced2! };
 			asyncMethodToCheck!.ContainsReferencesToAll(successfulMatchReferences2).Should().BeTrue();
+#endif
 		}
 
 		[TestMethod]
@@ -366,15 +387,19 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 		[TestMethod]
 		public void DescribeInstructions_returns_the_expected_result1()
 		{
-			// Release/optimized build will have different IL causing our test expectations will fail
-			var debuggableAttribute = typeof(ExampleMethods).Assembly.GetCustomAttribute<System.Diagnostics.DebuggableAttribute>();
-			var assemblyIsDebugBuildWithoutOptimizations = debuggableAttribute?.IsJITOptimizerDisabled == true;
-			assemblyIsDebugBuildWithoutOptimizations.Should().BeTrue();
-
 			var methodToTest = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddLocalVariables_For_5_And_15), BindingFlags.Public | BindingFlags.Static);
 			methodToTest.Should().NotBeNull();
 
 			var methodBodyDescription = methodToTest!.DescribeInstructions();
+#if IS_RELEASE_TESTING_BUILD
+			methodBodyDescription.Should().Be(
+@"(0) LOAD INT LITERAL (5)
+(1) LOAD INT VALUE (Int8)  [SByte Value: 10]
+(2) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
+(3) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(4) ADD
+(5) RETURN");
+#else
 			methodBodyDescription.Should().Be(
 @"(0) NO-OP
 (1) LOAD INT LITERAL (5)
@@ -388,6 +413,7 @@ namespace Rhinobyte.Extensions.Reflection.Tests
 (9) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 10]
 (10) LOAD LOCAL VARIABLE (Index 2)  [Of type Int32]
 (11) RETURN");
+#endif
 		}
 
 		[TestMethod]
@@ -786,7 +812,12 @@ where TSomethingElse : System.Enum");
 			methodInfo.Should().NotBeNull();
 
 			var instructions = methodInfo!.ParseInstructions();
+
+#if IS_RELEASE_TESTING_BUILD
+			instructions.Count.Should().Be(6);
+#else
 			instructions.Count.Should().Be(12);
+#endif
 		}
 
 		[TestMethod]

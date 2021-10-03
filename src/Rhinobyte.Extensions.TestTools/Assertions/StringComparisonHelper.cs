@@ -221,15 +221,12 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 					break;
 
 				case WhitespaceNormalizationType.RemoveCarriageReturns:
-#if NETSTANDARD2_1_OR_GREATER
-					sourceLine = sourceLine.Replace("\r", string.Empty, StringComparison.Ordinal);
-					targetLine = targetLine.Replace("\r", string.Empty, StringComparison.Ordinal);
-#elif NETCOREAPP3_1_OR_GREATER
-					sourceLine = sourceLine.Replace("\r", string.Empty, StringComparison.Ordinal);
-					targetLine = targetLine.Replace("\r", string.Empty, StringComparison.Ordinal);
-#else
+#if NETFRAMEWORK || NETSTANDARD2_0
 					sourceLine = sourceLine.Replace("\r", string.Empty);
 					targetLine = targetLine.Replace("\r", string.Empty);
+#else
+					sourceLine = sourceLine.Replace("\r", string.Empty, StringComparison.Ordinal);
+					targetLine = targetLine.Replace("\r", string.Empty, StringComparison.Ordinal);
 #endif
 					break;
 
@@ -264,12 +261,10 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 			if (comparisonRanges.Count == 1 && comparisonRanges[0].IsMatch)
 				return string.Empty;
 
-#if NETSTANDARD2_1_OR_GREATER
-			var doesNewlineIncludeCarriageReturn = Environment.NewLine.IndexOf('\r', StringComparison.Ordinal) > -1;
-#elif NETCOREAPP3_1_OR_GREATER
-			var doesNewlineIncludeCarriageReturn = Environment.NewLine.IndexOf('\r', StringComparison.Ordinal) > -1;
-#else
+#if NETFRAMEWORK || NETSTANDARD2_0
 			var doesNewlineIncludeCarriageReturn = Environment.NewLine.IndexOf('\r') > -1;
+#else
+			var doesNewlineIncludeCarriageReturn = Environment.NewLine.IndexOf('\r', StringComparison.Ordinal) > -1;
 #endif
 
 
@@ -377,9 +372,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 		/// Return a copy of <paramref name="stringToNormalize"/> with any carriage return + new line sequences normalized to just the newline
 		/// character for consistent comparisons.
 		/// </summary>
-#if NETSTANDARD2_1_OR_GREATER
-		[return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("stringToNormalize")]
-#elif NETCOREAPP3_1_OR_GREATER
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 		[return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("stringToNormalize")]
 #endif
 		public static string? RemoveAllCarriageReturns(this string? stringToNormalize)
@@ -387,12 +380,10 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 			if (stringToNormalize is null)
 				return null;
 
-#if NETSTANDARD2_1_OR_GREATER
-			return stringToNormalize.Replace("\r", string.Empty, StringComparison.Ordinal);
-#elif NETCOREAPP3_1_OR_GREATER
-			return stringToNormalize.Replace("\r", string.Empty, StringComparison.Ordinal);
-#else
+#if NETFRAMEWORK || NETSTANDARD2_0
 			return stringToNormalize.Replace("\r", string.Empty);
+#else
+			return stringToNormalize.Replace("\r", string.Empty, StringComparison.Ordinal);
 #endif
 		}
 	}

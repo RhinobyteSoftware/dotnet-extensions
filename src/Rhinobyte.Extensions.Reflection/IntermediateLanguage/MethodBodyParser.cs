@@ -130,7 +130,6 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 							return true;
 
 						if (isAsyncMethod
-							&& currentOpcode == OpCodes.Newobj
 							&& instructionMemberReference.DeclaringType != null
 							&& typeof(System.Runtime.CompilerServices.IAsyncStateMachine).IsAssignableFrom(instructionMemberReference.DeclaringType)
 							&& instructionMemberReference.DeclaringType.Name.IndexOf(_method.Name, StringComparison.Ordinal) > -1)
@@ -230,7 +229,6 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 							return true;
 
 						if (isAsyncMethod
-							&& currentOpcode == OpCodes.Newobj
 							&& instructionMemberReference.DeclaringType != null
 							&& typeof(System.Runtime.CompilerServices.IAsyncStateMachine).IsAssignableFrom(instructionMemberReference.DeclaringType)
 							&& instructionMemberReference.DeclaringType.Name.IndexOf(_method.Name, StringComparison.Ordinal) > -1)
@@ -339,7 +337,6 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 						}
 
 						if (isAsyncMethod
-							&& currentOpcode == OpCodes.Newobj
 							&& instructionMemberReference.DeclaringType != null
 							&& typeof(System.Runtime.CompilerServices.IAsyncStateMachine).IsAssignableFrom(instructionMemberReference.DeclaringType)
 							&& instructionMemberReference.DeclaringType.Name.IndexOf(_method.Name, StringComparison.Ordinal) > -1)

@@ -67,15 +67,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 				&& other.TargetEndingLineNumber == this.TargetEndingLineNumber;
 		}
 
-#if NETSTANDARD2_1_OR_GREATER
-		/// <inheritdoc/>
-		public override int GetHashCode() =>
-			HashCode.Combine(this.IsMatch, this.SourceEndingLineNumber, this.SourceBeginningLineNumber, this.TargetEndingLineNumber, this.TargetBeginningLineNumber);
-#elif NETCOREAPP
-		/// <inheritdoc/>
-		public override int GetHashCode() =>
-			HashCode.Combine(this.IsMatch, this.SourceEndingLineNumber, this.SourceBeginningLineNumber, this.TargetEndingLineNumber, this.TargetBeginningLineNumber);
-#else
+#if NETFRAMEWORK || NETSTANDARD2_0
 		// TODO: If we every need to do this elsewhere, created a file to share across projects
 		// See: https://github.com/dotnet/runtime/blob/main/src/libraries/System.Private.CoreLib/src/System/HashCode.cs
 		private const uint Prime2 = 2246822519U;
@@ -104,6 +96,10 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 			mixedHash ^= mixedHash >> 16;
 			return (int)mixedHash;
 		}
+#else
+		/// <inheritdoc/>
+		public override int GetHashCode() =>
+			HashCode.Combine(this.IsMatch, this.SourceEndingLineNumber, this.SourceBeginningLineNumber, this.TargetEndingLineNumber, this.TargetBeginningLineNumber);
 #endif
 
 		/// <inheritdoc />
