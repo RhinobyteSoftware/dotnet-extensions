@@ -1,2 +1,4 @@
-﻿v1.0.1
-- Updated method base ContainsReferenceTo / ContainsReferenceToAny / ContainsReferencesToAll extension methods with support for searching the generated IAsyncStateMachine of an async method
+﻿v1.0.2
+- Adjusted method base ContainsReferenceTo / ContainsReferenceToAny / ContainsReferencesToAll extension methods so that they're 
+  able to inspect the compiler generated IAsyncStateMachine.MoveNext when the IL byte code has been optimized 
+  and does not contain a NEWOBJ opcode
