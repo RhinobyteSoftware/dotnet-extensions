@@ -3,7 +3,7 @@
 allLibraryNames=("Rhinobyte.Extensions.DataAnnotations" "Rhinobyte.Extensions.DependencyInjection" "Rhinobyte.Extensions.Reflection" "Rhinobyte.Extensions.TestTools");
 allLibraryNamesCount=${#allLibraryNames[@]}
 
-
+dotnetConfiguration=''
 testProjectNames=()
 testProjectIndex=0
 for (( paramIndex=1; paramIndex<=$#; paramIndex++ )); do
@@ -13,6 +13,14 @@ for (( paramIndex=1; paramIndex<=$#; paramIndex++ )); do
 		paramIndex=$((paramIndex+1));
 		testProjectNames[$testProjectIndex]="${!paramIndex}";
 		testProjectIndex=$((testProjectIndex+1));
+	fi;
+	if [ "$nextParam" = '-c' ] || [ "$nextParam" = '--configuration' ]; then
+		if [ ! -z "$dotnetConfiguration"]; then
+			echo '-c|--configuration parameter was specified more than once';
+			exit 1;
+		fi;
+		paramIndex=$((paramIndex+1));
+		dotnetConfiguration="${!paramIndex}";
 	fi;
 done;
 
@@ -47,11 +55,15 @@ do
 	rm -rf "tests/$testProjectName/TestResults";
 	echo "";
 
+	dotnetConfigurationFlag=''
+	if [ ! -z "$dotnetConfiguration" ]; then
+		dotnetConfigurationFlag="--configuration $dotnetConfiguration"
+	fi;
 	for (( frameworkIndex=0; frameworkIndex<${targetFrameworksCount}; frameworkIndex++ ));
 	do
 		targetTestFramework="${targetFrameworkNames[$frameworkIndex]}"
 		echo "Running dotnet test for target framework:  $targetTestFramework  ($frameworkIndex)"
-		echo "dotnet test --framework \"$targetTestFramework\" \"tests\\$testProjectName\\$testProjectName.csproj\" --collect:\"XPlat Code Coverage\" --results-directory:\"tests\\$testProjectName\\TestResults\\$targetTestFramework\"";
+		echo "dotnet test "$dotnetConfigurationFlag" --framework \"$targetTestFramework\" \"tests\\$testProjectName\\$testProjectName.csproj\" --collect:\"XPlat Code Coverage\" --results-directory:\"tests\\$testProjectName\\TestResults\\$targetTestFramework\"";
 		dotnet test --framework "$targetTestFramework" "tests\\$testProjectName\\$testProjectName.csproj" --collect:"XPlat Code Coverage" --results-directory:"tests\\$testProjectName\\TestResults\\$targetTestFramework"
 		echo "";
 	done;
@@ -85,8 +97,13 @@ do
 
 				echo "AssemblyFilters:  $assemblyFilters"
 
-				echo "dotnet ~/.nuget/packages/reportgenerator/4.8.12/tools/net5.0/ReportGenerator.dll -reports:\"$coverageFile\" -targetdir:\"TestResults\\CoverageReports\\$testProjectName\\$targetFramework\\$guidValue\" -reporttypes:Html -assemblyfilters:\"$assemblyFilters\" ";
-				dotnet ~/.nuget/packages/reportgenerator/4.8.12/tools/net5.0/ReportGenerator.dll -reports:"$coverageFile" -targetdir:"TestResults\\CoverageReports\\$testProjectName\\$targetFramework\\$guidValue" -reporttypes:Html -assemblyfilters:"$assemblyFilters";
+				nextCoverageReportTargetDirectory="TestResults\\CoverageReports\\$testProjectName\\Debug\\$targetFramework\\$guidValue"
+				if [ ! -z "$dotnetConfiguration" ]; then
+					nextCoverageReportTargetDirectory="TestResults\\CoverageReports\\$testProjectName\\$dotnetConfiguration\\$targetFramework\\$guidValue"
+				fi;
+
+				echo "dotnet ~/.nuget/packages/reportgenerator/4.8.12/tools/net5.0/ReportGenerator.dll -reports:\"$coverageFile\" -targetdir:\"$nextCoverageReportTargetDirectory\" -reporttypes:Html -assemblyfilters:\"$assemblyFilters\" ";
+				dotnet ~/.nuget/packages/reportgenerator/4.8.12/tools/net5.0/ReportGenerator.dll -reports:"$coverageFile" -targetdir:"$nextCoverageReportTargetDirectory" -reporttypes:Html -assemblyfilters:"$assemblyFilters";
 			fi;
 		done;
 	done;
