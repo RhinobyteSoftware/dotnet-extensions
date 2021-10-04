@@ -27,7 +27,7 @@ The IServiceCollection extension methods provide support for registering auto-di
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All" />
     </ItemGroup>
     
     <Choose>
@@ -38,7 +38,7 @@ The IServiceCollection extension methods provide support for registering auto-di
         </When>
         <Otherwise>
             <ItemGroup>
-                <PackageReference Include="Rhinobyte.Extensions.Reflection" Version="$(ReflectionPackageConsumerDependencyVersion)" />
+                <PackageReference Include="Rhinobyte.Extensions.Reflection" Version="$(ReflectionPackage_ConsumerDependencyVersion)" />
             </ItemGroup>
         </Otherwise>
     </Choose>

@@ -32,7 +32,7 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 		}
 
 		[TestMethod]
-		public void TestMethods_are_not_be_missing_the_TestMethod_attribute()
+		public void TestMethods_are_not_missing_the_TestMethod_attribute()
 		{
 			var discoveredTestTypes = typeof(ProjectStructureTests).Assembly.GetTypes();
 

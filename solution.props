@@ -47,16 +47,27 @@
 
         <!-- Subproject Package Versions -->
         <DataAnnotationsPackageVersion>1.0.1</DataAnnotationsPackageVersion>
-        <DataAnnotationsPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DataAnnotationsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DataAnnotationsPackageConsumerDependencyVersion>
+        <DataAnnotationsPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DataAnnotationsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DataAnnotationsPackage_ConsumerDependencyVersion>
 
         <DependencyInjectionPackageVersion>1.0.0</DependencyInjectionPackageVersion>
-        <DependencyInjectionPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DependencyInjectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DependencyInjectionPackageConsumerDependencyVersion>
+        <DependencyInjectionPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DependencyInjectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DependencyInjectionPackage_ConsumerDependencyVersion>
 
         <ReflectionPackageVersion>1.0.2</ReflectionPackageVersion>
-        <ReflectionPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(ReflectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</ReflectionPackageConsumerDependencyVersion>
+        <ReflectionPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(ReflectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</ReflectionPackage_ConsumerDependencyVersion>
 
-        <TestToolsPackageVersion>1.0.0</TestToolsPackageVersion>
-        <TestToolsPackageConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(TestToolsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</TestToolsPackageConsumerDependencyVersion>
+        <TestToolsPackageVersion>1.0.0-alpha-1</TestToolsPackageVersion>
+        <TestToolsPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(TestToolsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</TestToolsPackage_ConsumerDependencyVersion>
+
+        <Tools_ProjectStructureTestsPackageVersion>1.0.0-alpha-1</Tools_ProjectStructureTestsPackageVersion>
+        <Tools_ProjectStructureTestsPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(Tools_ProjectStructureTestsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</Tools_ProjectStructureTestsPackage_ConsumerDependencyVersion>
+
+        <!-- External Dependency Versions-->
+        <!-- I'm guessing the msbuild nuget package major version needs to match the available tools version? -->
+        <!-- If so I'll have to downgrade this to a 15.x version if I wan't to support VS 2017? -->
+        <MicrosoftBuildVersion>16.10.0</MicrosoftBuildVersion>
+        <MicrosoftBuildTasksCoreVersion>16.10.0</MicrosoftBuildTasksCoreVersion>
+        <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
+        <SystemCodeDomVersion>5.0.0</SystemCodeDomVersion>
     </PropertyGroup>
 
     <Import Condition="Exists('$(RepoRoot)\development.local.props')" Project="$(RepoRoot)\development.local.props"/>
@@ -103,95 +114,5 @@
         <None Include="$(RepoRoot)\RhinobytePackageIcon.png" Pack="true" PackagePath="Icon.png" />
         <None Include="$(MSBuildProjectDirectory)\README.md" Pack="true" PackagePath="README.md" />
     </ItemGroup>
-
-
-    <!-- SOLUTION WIDE CUSTOM TARGETS -->
-    
-    <!-- CopyToLocalPackages Target -->
-    <Target Name="CopyToLocalPackages" AfterTargets="Pack" Condition="'$(OutputToDevelopmentPackages)' == 'true' AND '$(IsPackable)' == 'true'">
-        <Message Text="Creating DevelopmentPackagesDirectory: $(DevelopmentPackagesDirectory)" Condition="!Exists('$(DevelopmentPackagesDirectory)')" Importance="$(InternalMsbuildMessageImportance)" />
-        <MakeDir Directories="$(DevelopmentPackagesDirectory)" Condition="!Exists('$(DevelopmentPackagesDirectory)')" />
-
-        <Message Importance="$(InternalMsbuildMessageImportance)"
-                 Text="
-DevelopmentPackagesDirectory: $(DevelopmentPackagesDirectory)
-PackageOutputPath: $(PackageOutputAbsolutePath)
-PackageId: $(PackageId)
-PackageVersion: $(PackageVersion)"  />
-
-        <Exec Command="del $(PackageId).$(PackageVersion).*" WorkingDirectory="$(DevelopmentPackagesDirectory)" />
-
-        <Copy SourceFiles="$(PackageOutputAbsolutePath)$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(DevelopmentPackagesDirectory)" />
-    </Target>
-
-    
-    <!-- CreateDevelopmentPropsFile Target -->
-    <Target Name="CreateDevelopmentPropsFile" BeforeTargets="$(RunOnlyOnceBeforeBuildTarget)" Condition="'$(Configuration)' != 'Release' AND Exists('$(RepoRoot)') AND !Exists('$(RepoRoot)\development.local.props')">
-        <PropertyGroup>
-            <RepoRootParent>$([System.IO.Path]::GetFullPath('$([System.IO.Path]::Combine('$(RepoRoot)', '..'))'))</RepoRootParent>
-            <LocalPackagesPath Condition="'$(LocalPackagesPath)' == ''">$(RepoRootParent)\localPackages</LocalPackagesPath>
-            <DevelopmentPropsFileLines>
-&lt;Project&gt;
-    &lt;PropertyGroup&gt;
-        &lt;DevelopmentPackagesDirectory&gt;$(LocalPackagesPath)&lt;/DevelopmentPackagesDirectory&gt;
-        &lt;!--  low, normal, or high --&gt;
-        &lt;InternalMsbuildMessageImportance&gt;high&lt;/InternalMsbuildMessageImportance&gt;
-        &lt;OutputToDevelopmentPackages&gt;false&lt;/OutputToDevelopmentPackages&gt;
-        &lt;UseProjectReferences&gt;true&lt;/UseProjectReferences&gt;
-    &lt;/PropertyGroup&gt;
-&lt;/Project&gt;
-            </DevelopmentPropsFileLines>
-        </PropertyGroup>
-
-        <Message Importance="$(InternalMsbuildMessageImportance)"
-                 Text="
-Creating default development.local.props file...
-
-$(DevelopmentPropsFileLines)
-
-RepoRoot: '$(RepoRoot)'
-RepoRootParent: '$(RepoRootParent)'
-LocalPackagesPath: '$(LocalPackagesPath)'
-                " />
-
-        <WriteLinesToFile File="$(RepoRoot)\development.local.props" Lines="$(DevelopmentPropsFileLines)" Overwrite="True" ContinueOnError="true" />
-    </Target>
-
-
-    <!-- CreateDevelopmentTargetsFile Target -->
-    <Target Name="CreateDevelopmentTargetsFile" BeforeTargets="$(RunOnlyOnceBeforeBuildTarget)" Condition="'$(Configuration)' != 'Release' AND Exists('$(RepoRoot)') AND !Exists('$(RepoRoot)\development.local.targets')">
-        <PropertyGroup>
-            <DevelopmentTargetsFileLines>
-&lt;Project&gt;
-    &lt;PropertyGroup&gt;
-        <!-- Projects to temporarily disable optimization on to make debugging in the ReleaseTesting configuration easier -->
-        <!-- Each project name must end with a semicolon, even if there is only a single entry -->
-        &lt;ProjectsThatShouldNotBeOptimized&gt;
-        &lt;/ProjectsThatShouldNotBeOptimized&gt;
-    &lt;/PropertyGroup&gt;
-&lt;/Project&gt;
-            </DevelopmentTargetsFileLines>
-        </PropertyGroup>
-
-        <Message Importance="$(InternalMsbuildMessageImportance)"
-                 Text="
-Creating default development.local.targets file...
-
-$(DevelopmentTargetsFileLines)
-                " />
-
-        <WriteLinesToFile File="$(RepoRoot)\development.local.targets" Lines="$(DevelopmentTargetsFileLines)" Overwrite="True" ContinueOnError="true" />
-    </Target>
-
-
-    <!-- PreparePackageReleaseNotesFromFile Target -->
-    <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec" Condition="Exists('$(ReleaseNotesTextFilePath)')">
-        <ReadLinesFromFile File="$(ReleaseNotesTextFilePath)" >
-            <Output TaskParameter="Lines" ItemName="ReleaseNoteLines"/>
-        </ReadLinesFromFile>
-        <PropertyGroup>
-            <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
-        </PropertyGroup>
-    </Target>
 
 </Project>

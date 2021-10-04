@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+    <PropertyGroup>
+        <_ProjectStructureTestsToolAssemblyFile Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net472\$(MSBuildThisFileName).dll</_ProjectStructureTestsToolAssemblyFile>
+        <_ProjectStructureTestsToolAssemblyFile Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net5.0\$($(MSBuildThisFileName)).dll</_ProjectStructureTestsToolAssemblyFile>
+
+        <ProjectStructureTestsGeneratedClassName Condition="'$(ProjectStructureTestsGeneratedClassName)' == ''">ProjectStructureTests</ProjectStructureTestsGeneratedClassName>
+        <ProjectStructureTestsGeneratedClassNamespaceToUse Condition="'$(ProjectStructureTestsGeneratedClassNamespaceToUse)' == ''">$(RootNamespace)</ProjectStructureTestsGeneratedClassNamespaceToUse>
+        <ProjectStructureTestsGeneratedClassNamespaceToUse Condition="'$(ProjectStructureTestsGeneratedClassNamespaceToUse)' == ''">$(DefaultNamespace)</ProjectStructureTestsGeneratedClassNamespaceToUse>
+        <ProjectStructureTestsGeneratedClassNamespaceToUse Condition="'$(ProjectStructureTestsGeneratedClassNamespaceToUse)' == ''">$(MSBuildProjectName)</ProjectStructureTestsGeneratedClassNamespaceToUse>
+        <ProjectStructureTestsOutputDirectory Condition="'$(ProjectStructureTestsOutputDirectory)' == ''">$(IntermediateOutputPath)</ProjectStructureTestsOutputDirectory>
+        <ProjectStructureTestsGeneratedOutputFile Condition="'$(ProjectStructureTestsGeneratedOutputFile)' == ''">$(IntermediateOutputPath)ProjectStructureTestsGeneratedClassName.generated$(DefaultLanguageSourceExtension)</ProjectStructureTestsGeneratedOutputFile>
+        <ProjectStructureTestsShouldGenerateMissingTestMethodAttributeTestCase Condition="'$(ProjectStructureTestsShouldGenerateMissingTestMethodAttributeTestCase)' == ''">true</ProjectStructureTestsShouldGenerateMissingTestMethodAttributeTestCase>
+    </PropertyGroup>
+
+    <UsingTask TaskName="Rhinobyte.Tools.ProjectStructureTests.Tasks.GenerateProjectStructureTestsTask" AssemblyFile="$(_ProjectStructureTestsToolAssemblyFile)"/>
+
+    <Target Name="_CreateProjectStructureTestsSettingsCacheFile">
+        <PropertyGroup>
+            <ProjectStructureTestsSettingsCacheFile>$(IntermediateOutputPath)$(MSBuildProjectName).ProjectStructureTests.cache</ProjectStructureTestsSettingsCacheFile>
+        </PropertyGroup>
+
+        <Hash Condition="'@(ProjectStructureTestsClassLibraryNamespaceValidationChecks)' != ''"
+              ItemsToHash="@(ProjectStructureTestsClassLibraryNamespaceValidationChecks->'%(Identity)%(FullTestMethodName)%(LibraryName)%(ValidNamespaces)')"
+        >
+            <Output TaskParameter="HashResult" PropertyName="_ProjectStructureTestsNamespaceValidationsHash" />
+        </Hash>
+
+        <WriteLinesToFile File="$(ProjectStructureTestsSettingsCacheFile)"
+                          Lines="$(_ProjectStructureTestsNamespaceValidationsHash);$(ProjectStructureTestsGeneratedClassName);$(ProjectStructureTestsGeneratedClassNamespaceToUse);$(Language);$(ProjectStructureTestsMissingTestMethodAttributeIgnoredMethodNames);$(ProjectStructureTestsOutputDirectory);$(ProjectStructureTestsGeneratedOutputFile);$(ProjectStructureTestsShouldGenerateMissingTestMethodAttributeTestCase)"
+                          Overwrite="True"
+                          WriteOnlyWhenDifferent="True" />
+
+        <ItemGroup>
+            <FileWrites Include="$(ProjectStructureTestsSettingsCacheFile)" />
+        </ItemGroup>
+    </Target>
+    
+    <Target Name="_GenerateProjectStructureTestsCodeFile"
+            BeforeTargets="$(_GenerateProjectStructureTestsCodeFileBeforeTargets)"
+            Condition=" '$(AutoGenerateProjectStructureTests)' == 'true'"
+            DependsOnTargets="$(_GenerateProjectStructureTestsCodeFileDependsOn);_CreateProjectStructureTestsSettingsCacheFile"
+            Inputs="$(ProjectStructureTestsSettingsCacheFile)"
+            Outputs="$(ProjectStructureTestsGeneratedOutputFile)"
+    >
+        <!--
+            The task generateds a ProjectStructureTests.generated.(cs,vb) test case file with test methods to discover types using
+            reflection and catch project structure issues such as test class method's that are missing a [TestMethod] attribute.
+        -->
+        <ItemGroup Condition="$(ProjectStructureTestsGeneratedOutputFile) != ''">
+            <!-- Ensure the generated assemblyinfo file is not already part of the Compile sources, as a workaround for https://github.com/dotnet/sdk/issues/114 -->
+            <Compile Remove="$(ProjectStructureTestsGeneratedOutputFile)" />
+        </ItemGroup>
+        
+        <Rhinobyte.Tools.ProjectStructureTests.Tasks.GenerateProjectStructureTestsTask
+            ClassLibraryNamespaceValidationChecks="@(ProjectStructureTestsClassLibraryNamespaceValidationChecks)"
+            GeneratedClassName="$(ProjectStructureTestsGeneratedClassName)"
+            GeneratedClassNamespaceToUse="$(ProjectStructureTestsGeneratedClassNamespaceToUse)"
+            Language="$(Language)"
+            LoggingMessageImportance="$(ProjectStructureTestsLoggingMessageImportance)"
+            MissingTestMethodAttributeIgnoredMethodNames="$(ProjectStructureTestsMissingTestMethodAttributeIgnoredMethodNames)"
+            OutputDirectory="$(ProjectStructureTestsOutputDirectory)"
+            OutputFile="$(ProjectStructureTestsGeneratedOutputFile)"
+            ShouldGenerateMissingTestMethodAttributeTestCase="$(ProjectStructureTestsShouldGenerateMissingTestMethodAttributeTestCase)"
+        >
+            <Output TaskParameter="OutputFile" ItemName="Compile"/>
+            <Output TaskParameter="OutputFile" ItemName="FileWrites"/>
+        </Rhinobyte.Tools.ProjectStructureTests.Tasks.GenerateProjectStructureTestsTask>
+    </Target>
+</Project>

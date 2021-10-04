@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+    <PropertyGroup>
+        <_GenerateProjectStructureTestsCodeFileBeforeTargets Condition=" '$(_GenerateProjectStructureTestsCodeFileBeforeTargets)' != ''">$(_GenerateProjectStructureTestsCodeFileBeforeTargets);BeforeCompile</_GenerateProjectStructureTestsCodeFileBeforeTargets>
+        <_GenerateProjectStructureTestsCodeFileBeforeTargets Condition=" '$(_GenerateProjectStructureTestsCodeFileBeforeTargets)' == ''">BeforeCompile</_GenerateProjectStructureTestsCodeFileBeforeTargets>
+
+        <_GenerateProjectStructureTestsCodeFileDependsOn Condition=" '$(_GenerateProjectStructureTestsCodeFileDependsOn)' != ''">$(_GenerateProjectStructureTestsCodeBeforeTargets);PrepareForBuild;GetReferenceAssemblyPaths</_GenerateProjectStructureTestsCodeFileDependsOn>
+        <_GenerateProjectStructureTestsCodeFileDependsOn Condition=" '$(_GenerateProjectStructureTestsCodeFileDependsOn)' == ''">PrepareForBuild;GetReferenceAssemblyPaths</_GenerateProjectStructureTestsCodeFileDependsOn>
+        
+        <AutoGenerateProjectStructureTests Condition=" '$(AutoGenerateProjectStructureTests)' == '' AND '$(IsTestProject)' == 'true' ">true</AutoGenerateProjectStructureTests>    
+    </PropertyGroup>
+</Project>

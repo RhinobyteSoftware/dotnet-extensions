@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <!-- TODO: Decide if I want to keep the tools / msbuild packages in this repo or if it makes more sense to put them in a separate repo.... -->
+    <!-- Mabye a dotnet-build-tools repo ? -->
+    <PropertyGroup>
+        <!-- Have to use specific target frameworks for MSBuild extension packages -->
+        <TargetFrameworks>net472;net5.0</TargetFrameworks>
+        <Configurations>Debug;Release;ReleaseTesting</Configurations>
+        <DevelopmentDependency>true</DevelopmentDependency>
+        <IsClsCompliant>false</IsClsCompliant>
+
+        <!-- VERSION VALUES -->
+        <AssemblyVersion>$(Tools_ProjectStructureTestsPackageVersion).0</AssemblyVersion>
+        <FileVersion>$(Tools_ProjectStructureTestsPackageVersion).0</FileVersion>
+        <InformationalVersion>$(Tools_ProjectStructureTestsPackageVersion)</InformationalVersion>
+        <PackageVersion>$(Tools_ProjectStructureTestsPackageVersion)</PackageVersion>
+        <Version>$(Tools_ProjectStructureTestsPackageVersion)</Version>
+
+        <PackageId>Rhinobyte.Tools.ProjectStructureTests</PackageId>
+        <AssemblyName>$(PackageId)</AssemblyName>
+        <RootNamespace>$(PackageId)</RootNamespace>
+        <Title>$(PackageId)</Title>
+        <PackageTags>tests unittesting msbuild extensions</PackageTags>
+
+        <Summary>MSBuild task/target extensions to auto-generate a ProjectStructureTests class file in configured unit testing projects</Summary>
+        <Description>$(Summary)</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+        <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+        <PackageReference Include="System.CodeDom" Version="$(SystemCodeDomVersion)" />
+    </ItemGroup>
+
+    <Choose>
+        <When Condition=" '$(Configuration)' == 'Debug' AND '$(UseProjectReferences)' == 'true'">
+            <ItemGroup>
+                <ProjectReference Include="../Rhinobyte.Extensions.Reflection/Rhinobyte.Extensions.Reflection.csproj" />
+                <ProjectReference Include="../Rhinobyte.Extensions.TestTools/Rhinobyte.Extensions.TestTools.csproj" />
+            </ItemGroup>
+        </When>
+        <Otherwise>
+            <ItemGroup>
+                <PackageReference Include="Rhinobyte.Extensions.Reflection" Version="$(ReflectionPackage_ConsumerDependencyVersion)" />
+                <PackageReference Include="Rhinobyte.Extensions.TestTools" Version="$(TestToolsPackage_ConsumerDependencyVersion)" />
+            </ItemGroup>
+        </Otherwise>
+    </Choose>
+
+</Project>
+

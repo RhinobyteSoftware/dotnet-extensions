@@ -1330,6 +1330,23 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 			instructions.Any(instruction => instruction is SignatureInstruction).Should().BeTrue();
 		}
 
+		[TestMethod]
+		public void ParseInstructions_returns_the_expected_result_with_for_loop_and_continue_statement()
+		{
+			var methodToTest = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.MethodWithForLoopAndContinueStatement), BindingFlags.Public | BindingFlags.Static);
+
+			var instructions = new MethodBodyParser(methodToTest!).ParseInstructions();
+#if IS_RELEASE_TESTING_BUILD
+			instructions.Count.Should().Be(95);
+#else
+			instructions.Count.Should().Be(119);
+#endif
+
+			//var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+		}
+
+
+
 		/******     TEST SETUP     *****************************
 		 *******************************************************/
 		private static Type _dynamicTypeWithJumpTableMethod = null!; // Nullability hacks, InitializeTestClass will always set these

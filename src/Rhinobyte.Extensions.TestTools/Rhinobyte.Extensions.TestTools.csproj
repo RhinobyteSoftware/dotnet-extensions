@@ -15,14 +15,14 @@
         <AssemblyName>$(PackageId)</AssemblyName>
         <RootNamespace>$(PackageId)</RootNamespace>
         <Title>$(PackageId)</Title>
-        <PackageTags>tests unittesting automation</PackageTags>
+        <PackageTags>tests unittesting automation msbuild extensions</PackageTags>
 
         <Summary>Extensions for .NET automated testing tools</Summary>
         <Description>$(Summary)</Description>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All" />
         <!-- Setting minimum version to 2.1.0 because MSTest has some public api differences between 2.0.0 like the TestMethodAttribute.DisplayName property -->
         <!-- Bad MSTest maintainers, no cookie -->
         <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
