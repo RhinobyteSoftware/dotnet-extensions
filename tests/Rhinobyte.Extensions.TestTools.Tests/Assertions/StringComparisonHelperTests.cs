@@ -10,6 +10,8 @@ namespace Rhinobyte.Extensions.TestTools.Tests.Assertions
 	[TestClass]
 	public class StringComparisonHelperTests
 	{
+		/******     TEST METHODS     ****************************
+		 ********************************************************/
 		[TestMethod]
 		public void AppendNewlineIfNecessary_behaves_as_expected()
 		{
@@ -92,6 +94,7 @@ namespace Rhinobyte.Extensions.TestTools.Tests.Assertions
 		[DataRow(WhitespaceNormalizationType.None)]
 		[DataRow(WhitespaceNormalizationType.RemoveCarriageReturns)]
 		[DataRow(WhitespaceNormalizationType.TrimTrailingWhitespace)]
+		[DataRow(WhitespaceNormalizationType.TrimLeadingAndTrailingWhitespace)]
 		public void CompareLinesTo_doesnt_blow_up_on_nulls_or_empty_arrays(WhitespaceNormalizationType whitespaceNormalizationType)
 		{
 			StringComparisonHelper.CompareLinesTo(source: null!, target: "Target String", whitespaceNormalizationType).Should().BeNull();
@@ -113,6 +116,7 @@ namespace Rhinobyte.Extensions.TestTools.Tests.Assertions
 		[DataRow(WhitespaceNormalizationType.None)]
 		[DataRow(WhitespaceNormalizationType.RemoveCarriageReturns)]
 		[DataRow(WhitespaceNormalizationType.TrimTrailingWhitespace)]
+		[DataRow(WhitespaceNormalizationType.TrimLeadingAndTrailingWhitespace)]
 		public void CompareLinesTo_handles_null_lines(WhitespaceNormalizationType whitespaceNormalizationType)
 		{
 			var sourceLines = new[]
@@ -339,7 +343,7 @@ Line 3";
 ";
 
 			// Ignore carriage returns in case the tests run on different platforms
-			comparisonDifferenceResult.RemoveAllCarriageReturns().Should().Be(expectedValue.RemoveAllCarriageReturns());
+			VerifyExpectedDifferencesStringResult(comparisonDifferenceResult, expectedValue);
 		}
 
 		[TestMethod]
@@ -365,7 +369,7 @@ Line 3";
 ";
 
 			// Ignore carriage returns in case the tests run on different platforms
-			comparisonDifferenceResult.RemoveAllCarriageReturns().Should().Be(expectedValue.RemoveAllCarriageReturns());
+			VerifyExpectedDifferencesStringResult(comparisonDifferenceResult, expectedValue);
 		}
 
 		[TestMethod]
@@ -395,7 +399,7 @@ Line 4";
 ";
 
 			// Ignore carriage returns in case the tests run on different platforms
-			comparisonDifferenceResult.RemoveAllCarriageReturns().Should().Be(expectedValue.RemoveAllCarriageReturns());
+			VerifyExpectedDifferencesStringResult(comparisonDifferenceResult, expectedValue);
 		}
 
 		[TestMethod]
@@ -454,7 +458,7 @@ Line 4";
 ";
 
 			// Ignore carriage returns in case the tests run on different platforms
-			comparisonDifferenceResult.RemoveAllCarriageReturns().Should().Be(expectedValue.RemoveAllCarriageReturns());
+			VerifyExpectedDifferencesStringResult(comparisonDifferenceResult, expectedValue);
 		}
 
 		[TestMethod]
@@ -518,7 +522,7 @@ Line 4";
 ";
 
 			// Ignore carriage returns in case the tests run on different platforms
-			comparisonDifferenceResult.RemoveAllCarriageReturns().Should().Be(expectedValue.RemoveAllCarriageReturns());
+			VerifyExpectedDifferencesStringResult(comparisonDifferenceResult, expectedValue);
 		}
 
 		[TestMethod]
@@ -567,7 +571,31 @@ Line 10";
 ";
 
 			// Ignore carriage returns in case the tests run on different platforms
-			comparisonDifferenceResult.RemoveAllCarriageReturns().Should().Be(expectedValue.RemoveAllCarriageReturns());
+			VerifyExpectedDifferencesStringResult(comparisonDifferenceResult, expectedValue);
+		}
+
+		[TestMethod]
+		public void GetComparisonDifferencesString_trims_leading_and_trailing_whitespace_before_comparing()
+		{
+			var sourceString = "   Single line string";
+			var targetString = "Single line string   "; // Comparison
+
+			var comparisonDifferenceResult = StringComparisonHelper.GetComparisonDifferencesString(
+				sourceString,
+				targetString,
+				whitespaceNormalizationTypeForLines: WhitespaceNormalizationType.TrimTrailingWhitespace
+			);
+
+			comparisonDifferenceResult.Should().NotBeEmpty();
+
+			// Comparing using TrimLeadingAndTrailingWhitespace should return an empty comparison result
+			comparisonDifferenceResult = StringComparisonHelper.GetComparisonDifferencesString(
+				sourceString,
+				targetString,
+				whitespaceNormalizationTypeForLines: WhitespaceNormalizationType.TrimLeadingAndTrailingWhitespace
+			);
+
+			comparisonDifferenceResult.Should().BeEmpty();
 		}
 
 		[TestMethod]
@@ -586,9 +614,29 @@ Line 10";
 		}
 
 		[TestMethod]
+		public void PrintVisibleWhitespace_does_not_blow_up_with_a_null_or_empty_argument()
+		{
+			StringComparisonHelper.PrintVisibleWhitespace(null).Should().BeNull();
+			StringComparisonHelper.PrintVisibleWhitespace(string.Empty).Should().BeEmpty();
+		}
+
+		[TestMethod]
 		public void RemoveAllCarriageReturns_does_not_blow_up_with_null_argument()
 		{
 			StringComparisonHelper.RemoveAllCarriageReturns(stringToNormalize: null).Should().BeNull();
+		}
+
+
+		/******     TEST SETUP     *****************************
+		 *******************************************************/
+		public static void VerifyExpectedDifferencesStringResult(string actualDifferencesString, string expectedResult)
+		{
+			// Our comparison difference helper method escapes the \t \r \n characters in the output source/target line values.
+			// Since this behavior can vary depending on the line ending of the environment running these tests, we'll
+			// use this verification method in tests that aren't explicitly looking for the visibly escaped characters
+			actualDifferencesString = actualDifferencesString.Replace("\r", string.Empty).Replace("\\r", string.Empty);
+			expectedResult = expectedResult.Replace("\r", string.Empty);
+			actualDifferencesString.Should().Be(expectedResult);
 		}
 	}
 }

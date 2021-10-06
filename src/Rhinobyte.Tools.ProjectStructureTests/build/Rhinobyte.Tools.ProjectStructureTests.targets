@@ -54,7 +54,7 @@
         </ItemGroup>
         
         <Rhinobyte.Tools.ProjectStructureTests.Tasks.GenerateProjectStructureTestsTask
-            ClassLibraryNamespaceValidationChecks="@(ProjectStructureTestsClassLibraryNamespaceValidationChecks)"
+            ClassLibraryNamespaceValidationChecks="@(ValidNamespacesCheck)"
             GeneratedClassName="$(ProjectStructureTestsGeneratedClassName)"
             GeneratedClassNamespaceToUse="$(ProjectStructureTestsGeneratedClassNamespaceToUse)"
             Language="$(Language)"

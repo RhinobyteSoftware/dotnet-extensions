@@ -12,7 +12,12 @@ namespace Rhinobyte.Extensions.DependencyInjection.Tests
 		[TestMethod]
 		public void Constructors_behave_as_expected()
 		{
-			var constructorSelectionFailedException = new ConstructorSelectionFailedException("Some message");
+			var constructorSelectionFailedException = new ConstructorSelectionFailedException();
+			var defaultMessage = new InvalidOperationException().Message;
+			constructorSelectionFailedException.Message.Should().Be(defaultMessage);
+			constructorSelectionFailedException.InnerException.Should().BeNull();
+
+			constructorSelectionFailedException = new ConstructorSelectionFailedException("Some message");
 			constructorSelectionFailedException.Message.Should().Be("Some message");
 			constructorSelectionFailedException.InnerException.Should().BeNull();
 

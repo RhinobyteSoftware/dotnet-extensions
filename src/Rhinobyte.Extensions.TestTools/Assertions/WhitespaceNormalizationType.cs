@@ -16,8 +16,13 @@
 		RemoveCarriageReturns = 1,
 
 		/// <summary>
+		/// Trim both the leading and trailing whitespace
+		/// </summary>
+		TrimLeadingAndTrailingWhitespace = 2,
+
+		/// <summary>
 		/// Trim all of the trailing whitespace
 		/// </summary>
-		TrimTrailingWhitespace = 2
+		TrimTrailingWhitespace = 3
 	}
 }

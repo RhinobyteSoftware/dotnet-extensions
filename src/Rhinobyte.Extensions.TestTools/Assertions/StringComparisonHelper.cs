@@ -45,7 +45,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 			this string source,
 			string target,
 			WhitespaceNormalizationType whitespaceNormalizationTypeForLines,
-			int maxComparisonOffset = 20)
+			int maxComparisonOffset = 5)
 		{
 			if (source is null || target is null)
 				return null;
@@ -65,7 +65,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 			string[] sourceLines,
 			string[] targetLines,
 			WhitespaceNormalizationType whitespaceNormalizationTypeForLines,
-			int maxComparisonOffset = 20)
+			int maxComparisonOffset = 5)
 		{
 			if (sourceLines is null || targetLines is null || sourceLines.Length < 1 || targetLines.Length < 1)
 				return null;
@@ -230,6 +230,11 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 #endif
 					break;
 
+				case WhitespaceNormalizationType.TrimLeadingAndTrailingWhitespace:
+					sourceLine = sourceLine.Trim();
+					targetLine = targetLine.Trim();
+					break;
+
 				case WhitespaceNormalizationType.TrimTrailingWhitespace:
 					sourceLine = sourceLine.TrimEnd();
 					targetLine = targetLine.TrimEnd();
@@ -249,7 +254,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 		public static string GetComparisonDifferencesString(
 			this string source,
 			string target,
-			int maxComparisonOffset = 20,
+			int maxComparisonOffset = 5,
 			int maxLinesFromRangeDifferenceToOuput = 3,
 			WhitespaceNormalizationType whitespaceNormalizationTypeForLines = WhitespaceNormalizationType.TrimTrailingWhitespace)
 		{
@@ -293,7 +298,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 						: Math.Min(range.SourceEndingLineNumber, range.SourceBeginningLineNumber + maxLinesFromRangeDifferenceToOuput);
 
 					for (var sourceLineIndex = range.SourceBeginningLineNumber; sourceLineIndex < localUpperBound; ++sourceLineIndex)
-						_ = errorMessageBuilder.Append("+ ").Append(sourceLines[sourceLineIndex]).AppendNewlineIfNecessary(doesNewlineIncludeCarriageReturn);
+						_ = errorMessageBuilder.Append("+ ").Append(PrintVisibleWhitespace(sourceLines[sourceLineIndex])).AppendNewlineIfNecessary(doesNewlineIncludeCarriageReturn);
 
 					truncatedLines = range.SourceEndingLineNumber - localUpperBound;
 					if (truncatedLines > 0)
@@ -318,7 +323,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 						: Math.Min(range.TargetEndingLineNumber, range.TargetBeginningLineNumber + maxLinesFromRangeDifferenceToOuput);
 
 					for (var targetLineIndex = range.TargetBeginningLineNumber; targetLineIndex < localUpperBound; ++targetLineIndex)
-						_ = errorMessageBuilder.Append("- ").Append(targetLines[targetLineIndex]).AppendNewlineIfNecessary(doesNewlineIncludeCarriageReturn);
+						_ = errorMessageBuilder.Append("- ").Append(PrintVisibleWhitespace(targetLines[targetLineIndex])).AppendNewlineIfNecessary(doesNewlineIncludeCarriageReturn);
 
 					truncatedLines = range.TargetEndingLineNumber - localUpperBound;
 					if (truncatedLines > 0)
@@ -345,7 +350,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 						: Math.Min(range.SourceEndingLineNumber, range.SourceBeginningLineNumber + maxLinesFromRangeDifferenceToOuput);
 
 				for (var sourceLineIndex = range.SourceBeginningLineNumber; sourceLineIndex < localUpperBound; ++sourceLineIndex)
-					_ = errorMessageBuilder.Append("+ ").Append(sourceLines[sourceLineIndex]).AppendNewlineIfNecessary(doesNewlineIncludeCarriageReturn);
+					_ = errorMessageBuilder.Append("+ ").Append(PrintVisibleWhitespace(sourceLines[sourceLineIndex])).AppendNewlineIfNecessary(doesNewlineIncludeCarriageReturn);
 
 				truncatedLines = range.SourceEndingLineNumber - localUpperBound;
 				if (truncatedLines > 0)
@@ -356,7 +361,7 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 						: Math.Min(range.TargetEndingLineNumber, range.TargetBeginningLineNumber + maxLinesFromRangeDifferenceToOuput);
 
 				for (var targetLineIndex = range.TargetBeginningLineNumber; targetLineIndex < localUpperBound; ++targetLineIndex)
-					_ = errorMessageBuilder.Append("- ").Append(targetLines[targetLineIndex]).AppendNewlineIfNecessary(doesNewlineIncludeCarriageReturn);
+					_ = errorMessageBuilder.Append("- ").Append(PrintVisibleWhitespace(targetLines[targetLineIndex])).AppendNewlineIfNecessary(doesNewlineIncludeCarriageReturn);
 
 				truncatedLines = range.TargetEndingLineNumber - localUpperBound;
 				if (truncatedLines > 0)
@@ -366,6 +371,29 @@ namespace Rhinobyte.Extensions.TestTools.Assertions
 			}
 
 			return errorMessageBuilder.ToString();
+		}
+
+		/// <summary>
+		/// When building the comparison differences string result we use this method to 'escape'
+		/// the \t, \r, and \n characters so that they're visible in the line comparison parts
+		/// of the message.
+		/// </summary>
+		internal static string? PrintVisibleWhitespace(string? stringToModify)
+		{
+			if (stringToModify is null || stringToModify.Length == 0)
+				return stringToModify;
+
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+			return stringToModify
+				.Replace("\t", "\\t", StringComparison.Ordinal)
+				.Replace("\r", "\\r", StringComparison.Ordinal)
+				.Replace("\n", "\\n", StringComparison.Ordinal);
+#else
+			return stringToModify
+				.Replace("\t", "\\t")
+				.Replace("\r", "\\r")
+				.Replace("\n", "\\n");
+#endif
 		}
 
 		/// <summary>

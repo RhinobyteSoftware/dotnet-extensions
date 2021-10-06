@@ -4,7 +4,7 @@
     <!-- Mabye a dotnet-build-tools repo ? -->
     <PropertyGroup>
         <!-- Have to use specific target frameworks for MSBuild extension packages -->
-        <TargetFrameworks>net472;net5.0</TargetFrameworks>
+        <TargetFrameworks>$(Msbuild16TargetFrameworks)</TargetFrameworks>
         <Configurations>Debug;Release;ReleaseTesting</Configurations>
         <DevelopmentDependency>true</DevelopmentDependency>
         <IsClsCompliant>false</IsClsCompliant>

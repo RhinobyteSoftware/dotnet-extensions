@@ -12,6 +12,7 @@
 
         <DefaultTargetFrameworks>netstandard2.0;netstandard2.1;net48;netcoreapp3.1;net5.0</DefaultTargetFrameworks>
         <InternalMsbuildMessageImportance>normal</InternalMsbuildMessageImportance>
+        <Msbuild16TargetFrameworks>net472;net5.0</Msbuild16TargetFrameworks>
         <UseProjectReferences Condition=" '$(UseProjectReferences)' == '' ">true</UseProjectReferences>
 
 

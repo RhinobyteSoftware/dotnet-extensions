@@ -187,6 +187,9 @@ namespace Rhinobyte.Tools.ProjectStructureTests.Tasks
 				var trueLiteral = new CodePrimitiveExpression(true);
 				var zeroLiteral = new CodePrimitiveExpression(0);
 
+				// CodeSnippet items doesn't get indented so we'll have to prepend this ourselves
+				var methodBodyIndentation = "            ";
+
 				var testMethodDeclarations = new List<CodeMemberMethod>();
 				if (ClassLibraryNamespaceValidationChecks != null)
 				{
@@ -206,7 +209,7 @@ namespace Rhinobyte.Tools.ProjectStructureTests.Tasks
 						var validNamespacesRaw = namespaceValidationCheckItem.GetMetadata(nameof(TaskItemMetadataNames.ClassLibraryNamespaceValidationTestItem.ValidNamespaces));
 						if (string.IsNullOrWhiteSpace(validNamespacesRaw))
 						{
-							errorMessages.Add($"The ClassLibraryNamespaceValidationChecks task item: {namespaceValidationCheckItem.ItemSpec} has an invalid or missing {nameof(TaskItemMetadataNames.ClassLibraryNamespaceValidationTestItem.ValidNamespaces)} metadata item");
+							errorMessages.Add($@"The ClassLibraryNamespaceValidationChecks task item at index {namespaceValidationCheckItemIndex-1} has an invalid or missing {nameof(TaskItemMetadataNames.ClassLibraryNamespaceValidationTestItem.ValidNamespaces)} metadata item.{Environment.NewLine}Item:  <NamespaceValidationCheck Include=""{namespaceValidationCheckItem.ItemSpec}"" />{Environment.NewLine}Metadata: <ValidNamespacesCheck>{validNamespacesRaw}</ValidNamespacesCheck>");
 							hasErrors = true;
 							continue;
 						}
@@ -219,6 +222,7 @@ namespace Rhinobyte.Tools.ProjectStructureTests.Tasks
 						{
 							_ = stringBuilder
 								.Clear()
+								.Append(methodBodyIndentation)
 								.Append("var validNamespaces = new [] {");
 
 							var validNamespaceCount = 0;
@@ -233,7 +237,7 @@ namespace Rhinobyte.Tools.ProjectStructureTests.Tasks
 
 							if (validNamespaceCount < 1)
 							{
-								errorMessages.Add($"The ClassLibraryNamespaceValidationChecks task item: {namespaceValidationCheckItem.ItemSpec} has an invalid or missing {nameof(TaskItemMetadataNames.ClassLibraryNamespaceValidationTestItem.ValidNamespaces)} metadata item");
+								errorMessages.Add($@"The ClassLibraryNamespaceValidationChecks task item at index {namespaceValidationCheckItemIndex-1} has an invalid or missing {nameof(TaskItemMetadataNames.ClassLibraryNamespaceValidationTestItem.ValidNamespaces)} metadata item.{Environment.NewLine}Item:  <NamespaceValidationCheck Include=""{namespaceValidationCheckItem.ItemSpec}"" />{Environment.NewLine}Metadata: <ValidNamespacesCheck>{validNamespacesRaw}</ValidNamespacesCheck>");
 								hasErrors = true;
 								continue;
 							}
@@ -257,7 +261,7 @@ namespace Rhinobyte.Tools.ProjectStructureTests.Tasks
 
 							if (validNamespacesStringLiterals.Count < 1)
 							{
-								errorMessages.Add($"The ClassLibraryNamespaceValidationChecks task item: {namespaceValidationCheckItem.ItemSpec} has an invalid or missing {nameof(TaskItemMetadataNames.ClassLibraryNamespaceValidationTestItem.ValidNamespaces)} metadata item");
+								errorMessages.Add($@"The ClassLibraryNamespaceValidationChecks task item at index {namespaceValidationCheckItemIndex-1} has an invalid or missing {nameof(TaskItemMetadataNames.ClassLibraryNamespaceValidationTestItem.ValidNamespaces)} metadata item.{Environment.NewLine}Item:  <NamespaceValidationCheck Include=""{namespaceValidationCheckItem.ItemSpec}"" />{Environment.NewLine}Metadata: <ValidNamespacesCheck>{validNamespacesRaw}</ValidNamespacesCheck>");
 								hasErrors = true;
 								continue;
 							}
@@ -289,31 +293,31 @@ namespace Rhinobyte.Tools.ProjectStructureTests.Tasks
 						{
 							// Assuming a defacto language of C# so we'll output using raw code snippets for better formatting and fallback on the
 							// code dom statements for any other language...
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"var libraryTypes = typeof({namespaceValidationCheckItem.ItemSpec}).Assembly.GetTypes();"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}var libraryTypes = typeof({namespaceValidationCheckItem.ItemSpec}).Assembly.GetTypes();"));
 							_ = testMethodCodeDeclaration.Statements.Add(validNamespacesVariableCodeStatement);
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("var invalidTypes = new List<string>();"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("foreach (var libraryType in libraryTypes)"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("{"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    if (libraryType.IsCompilerGenerated())"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("        continue;"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    var fullTypeName = libraryType?.FullName;"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    if (fullTypeName is null)"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("        continue;"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    var lastDotIndex = fullTypeName.LastIndexOf('.');"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    if (lastDotIndex == -1)"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("        continue;"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    var typeNamespace = fullTypeName.Substring(0, lastDotIndex);"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(@"   if (!validNamespaces.Contains(typeNamespace) && typeNamespace?.StartsWith(""Coverlet.Core.Instrumentation"") != true)"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("        invalidTypes.Add(fullTypeName);"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("}"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("if (invalidTypes.Count > 0)"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(@"    throw new AssertFailedException($""The following types have an incorrect namespace:{Environment.NewLine}{Environment.NewLine}{string.Join(Environment.NewLine, invalidTypes)}"");"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}var invalidTypes = new List<string>();"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}foreach (var libraryType in libraryTypes)"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}{{"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    if (libraryType.IsCompilerGenerated())"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}        continue;"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    var fullTypeName = libraryType?.FullName;"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    if (fullTypeName is null)"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}        continue;"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    var lastDotIndex = fullTypeName.LastIndexOf('.');"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    if (lastDotIndex == -1)"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}        continue;"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    var typeNamespace = fullTypeName.Substring(0, lastDotIndex);"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($@"{methodBodyIndentation}   if (!validNamespaces.Contains(typeNamespace) && typeNamespace?.StartsWith(""Coverlet.Core.Instrumentation"") != true)"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}        invalidTypes.Add(fullTypeName);"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}}}"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}if (invalidTypes.Count > 0)"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($@"{methodBodyIndentation}    throw new AssertFailedException($""The following types have an incorrect namespace:{{Environment.NewLine}}{{Environment.NewLine}}{{string.Join(Environment.NewLine, invalidTypes)}}"");"));
 						}
 						else
 						{
@@ -476,13 +480,14 @@ namespace Rhinobyte.Tools.ProjectStructureTests.Tasks
 					{
 						// Assuming a defacto language of C# so we'll output using raw code snippets for better formatting and fallback on the
 						// code dom statements for any other language...
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"var discoveredTestTypes = this.GetType().Assembly.GetTypes();"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}var discoveredTestTypes = this.GetType().Assembly.GetTypes();"));
 
 						var hasMethodNamesToIgnore = false;
 						if (methodNamesToIgnore.Length > 0)
 						{
 							_ = stringBuilder
 								.Clear()
+								.Append(methodBodyIndentation)
 								.Append("var methodNamesToIgnore = new [] {");
 
 							var validMethodNamesCount = 0;
@@ -507,37 +512,37 @@ namespace Rhinobyte.Tools.ProjectStructureTests.Tasks
 							}
 						}
 
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("var missingTestMethodAttributes = new List<string>();"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("foreach (var testType in discoveredTestTypes)"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("{"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    if (testType.IsCompilerGenerated() || !testType.IsDefined(typeof(TestClassAttribute), false))"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("        continue;"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    var testMethods = testType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    foreach (var testMethod in testMethods)"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    {"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("        if (testMethod.IsDefined(typeof(TestMethodAttribute), true)"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("            || testMethod.IsDefined(typeof(NotATestMethodAttribute), false)"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("            || testMethod.IsDefined(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false))"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("        {"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("            continue;"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("        }"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}var missingTestMethodAttributes = new List<string>();"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}foreach (var testType in discoveredTestTypes)"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}{{"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    if (testType.IsCompilerGenerated() || !testType.IsDefined(typeof(TestClassAttribute), false))"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}        continue;"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    var testMethods = testType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    foreach (var testMethod in testMethods)"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    {{"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}        if (testMethod.IsDefined(typeof(TestMethodAttribute), true)"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}            || testMethod.IsDefined(typeof(NotATestMethodAttribute), false)"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}            || testMethod.IsDefined(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false))"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}        {{"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}            continue;"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}        }}"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
 
 						if (hasMethodNamesToIgnore)
 						{
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("        if (methodNamesToIgnore.Contains(testMethod.Name))"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("            continue;"));
-							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}        if (methodNamesToIgnore.Contains(testMethod.Name))"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}            continue;"));
+							_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
 						}
 
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(@"        missingTestMethodAttributes.Add($""{testType.Name}.{testMethod.Name}"");"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    }"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("}"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("    "));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement("if (missingTestMethodAttributes.Count > 0)"));
-						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(@"    throw new AssertFailedException($""The following methods do not have a [TestMethod] attribute:{Environment.NewLine}{Environment.NewLine}{string.Join(Environment.NewLine, missingTestMethodAttributes)}"");"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($@"{methodBodyIndentation}        missingTestMethodAttributes.Add($""{{testType.Name}}.{{testMethod.Name}}"");"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}    }}"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}}}"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement(string.Empty));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($"{methodBodyIndentation}if (missingTestMethodAttributes.Count > 0)"));
+						_ = testMethodCodeDeclaration.Statements.Add(new CodeSnippetStatement($@"{methodBodyIndentation}    throw new AssertFailedException($""The following methods do not have a [TestMethod] attribute:{{Environment.NewLine}}{{Environment.NewLine}}{{string.Join(Environment.NewLine, missingTestMethodAttributes)}}"");"));
 					}
 					else
 					{
@@ -731,7 +736,8 @@ namespace Rhinobyte.Tools.ProjectStructureTests.Tasks
 						// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
 
 						// Important, make sure the 'continueTestTypeIterationLabel:' statement is LAST the one added to the forTestTypeLoopBodyStatements
-						forTestTypeLoopBodyStatements.Add(new CodeLabeledStatement("continueTestMethodIterationLabel"));
+						forTestTypeLoopBodyStatements.Add(new CodeLabeledStatement("continueTestTypeIterationLabel"));
+
 						var outerForLoopStatement = new CodeIterationStatement(
 							initStatement: discoveredTypeIndexInitializeStatement,
 							testExpression: new CodeBinaryOperatorExpression(
@@ -795,6 +801,7 @@ namespace Rhinobyte.Tools.ProjectStructureTests.Tasks
 				var classCodeStatement = new CodeTypeDeclaration(testClassName)
 				{
 					IsClass = true,
+					IsPartial = true,
 					TypeAttributes = TypeAttributes.Class | TypeAttributes.Public
 				};
 				_ = namespaceCodeSection.Types.Add(classCodeStatement);
