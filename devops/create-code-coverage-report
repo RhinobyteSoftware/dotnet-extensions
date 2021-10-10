@@ -1,6 +1,6 @@
 #!/bin/sh
 
-allLibraryNames=("Rhinobyte.Extensions.DataAnnotations" "Rhinobyte.Extensions.DependencyInjection" "Rhinobyte.Extensions.Reflection" "Rhinobyte.Extensions.TestTools" "Rhinobyte.Tools.ProjectStructureTests");
+allLibraryNames=("Rhinobyte.Extensions.DataAnnotations" "Rhinobyte.Extensions.DependencyInjection" "Rhinobyte.Extensions.Reflection" "Rhinobyte.Extensions.TestTools");
 allLibraryNamesCount=${#allLibraryNames[@]}
 
 dotnetConfiguration=''
@@ -25,7 +25,7 @@ for (( paramIndex=1; paramIndex<=$#; paramIndex++ )); do
 done;
 
 if [ $testProjectIndex -eq 0 ]; then
-	testProjectNames=("Rhinobyte.Extensions.DataAnnotations.Tests" "Rhinobyte.Extensions.DependencyInjection.Tests" "Rhinobyte.Extensions.Reflection.Tests" "Rhinobyte.Extensions.TestTools.Tests" "Rhinobyte.Tools.ProjectStructureTests.Tests");
+	testProjectNames=("Rhinobyte.Extensions.DataAnnotations.Tests" "Rhinobyte.Extensions.DependencyInjection.Tests" "Rhinobyte.Extensions.Reflection.Tests" "Rhinobyte.Extensions.TestTools.Tests");
 	testProjectsCount=${#testProjectNames[@]};
 else
 	testProjectsCount=$testProjectIndex

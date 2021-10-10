@@ -1,6 +1,0 @@
-
-#### Project Specific Overrides
-[*.{cs,csx}]
-
-# Rule (CA1014)     - Mark assemblies with CLSCompliant attribute       - Reason: MSBuild dependencies are not CLS compliant
-dotnet_diagnostic.CA1014.severity       = none

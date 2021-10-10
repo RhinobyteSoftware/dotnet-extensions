@@ -59,16 +59,8 @@
         <TestToolsPackageVersion>1.0.0-alpha-1</TestToolsPackageVersion>
         <TestToolsPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(TestToolsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</TestToolsPackage_ConsumerDependencyVersion>
 
-        <Tools_ProjectStructureTestsPackageVersion>1.0.0-alpha-1</Tools_ProjectStructureTestsPackageVersion>
-        <Tools_ProjectStructureTestsPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(Tools_ProjectStructureTestsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</Tools_ProjectStructureTestsPackage_ConsumerDependencyVersion>
-
         <!-- External Dependency Versions-->
-        <!-- I'm guessing the msbuild nuget package major version needs to match the available tools version? -->
-        <!-- If so I'll have to downgrade this to a 15.x version if I wan't to support VS 2017? -->
-        <MicrosoftBuildVersion>16.10.0</MicrosoftBuildVersion>
-        <MicrosoftBuildTasksCoreVersion>16.10.0</MicrosoftBuildTasksCoreVersion>
         <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
-        <SystemCodeDomVersion>5.0.0</SystemCodeDomVersion>
     </PropertyGroup>
 
     <Import Condition="Exists('$(RepoRoot)\development.local.props')" Project="$(RepoRoot)\development.local.props"/>
