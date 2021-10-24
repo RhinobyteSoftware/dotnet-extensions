@@ -26,6 +26,14 @@ The IServiceCollection extension methods provide support for registering auto-di
     </PropertyGroup>
 
     <ItemGroup>
+        <!--
+            TODO: Support a wider range/lower minimum version of the Microsoft.XXX dependencies
+
+            The v5 dotnet/runtime libraries support a wide range of target frameworks but other dependencies (e.g. a lower version of EF Core) can
+            prevent consumers from being able to update to the v5 libraries. I'd prefer to set our minimum required version to the lowest possible
+            value. Some considerable though/design work may be required to ensure that our extension libraries will work at runtime with different
+            major versions of the various dependency libraries.
+        -->
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All" />
     </ItemGroup>

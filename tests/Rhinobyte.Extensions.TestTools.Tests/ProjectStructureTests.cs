@@ -68,6 +68,11 @@ namespace Rhinobyte.Extensions.TestTools.Tests
 						continue;
 					}
 
+					// Ignore expression bodied/get only property methods like
+					// public CancellationToken CancellationTokenForTest => ...
+					if (testMethod.IsSpecialName && testMethod.Name.StartsWith("get_", StringComparison.Ordinal))
+						continue;
+
 					missingTestMethodAttributes.Add($"{testType.Name}.{testMethod.Name}");
 				}
 			}
