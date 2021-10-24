@@ -24,6 +24,12 @@ This library contains assembly scanning and convention based registration extens
 
 This library contains extensions for .Net reflection including assembly scanning/type discovery extensions and support for parsing IL (intermediate-language) instructions.
 
+### [Rhinobyte.Extensions.TestTools](/src/Rhinobyte.Extensions.TestTools/README.md)
+
+[![NuGet version (Rhinobyte.Extensions.TestTools)](https://img.shields.io/nuget/v/Rhinobyte.Extensions.TestTools.svg?style=flat)](https://www.nuget.org/packages/Rhinobyte.Extensions.TestTools/)
+
+This library contains general purpose testing helper/extension types and extensions for `MSTest`
+
 ## Contributing
 
 Filing issues for problems encountered is greatly appreciated and contribution via PRs is welcomed.
