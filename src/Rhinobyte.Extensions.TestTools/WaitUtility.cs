@@ -12,7 +12,7 @@ namespace Rhinobyte.Extensions.TestTools
 	/// <remarks>
 	/// <para>This utility type is generally intended for functional and end-to-end testing scenarios where waiting for a condition before proceeding is common</para>
 	/// <para>
-	/// The configuration object support is intended to allow local test runners to override delay/wait until values so fast running automated tests are easier to follow
+	/// The configuration object support is intended to allow local test runners to override delay/wait until values, so fast running automated tests are easier to follow
 	/// by a human, without requiring changes to the actual test code
 	/// </para>
 	/// </remarks>
