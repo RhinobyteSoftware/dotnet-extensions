@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31624.102
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{2EA9106B-DA90-4935-85B8-4FE7CCA53A45}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{2EA9106B
 		development.local.props = development.local.props
 		development.local.targets = development.local.targets
 		global.json = global.json
+		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 		solution.props = solution.props
 		solution.targets = solution.targets
