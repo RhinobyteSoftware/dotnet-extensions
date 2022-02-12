@@ -55,6 +55,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleIgnoredAttributeAsse
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleLibrary1", "tests\ExampleLibrary1\ExampleLibrary1.csproj", "{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{3BB3D502-2AE8-4C51-B34C-E79F8B024CBD}"
+	ProjectSection(SolutionItems) = preProject
+		docs\todo-list.md = docs\todo-list.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

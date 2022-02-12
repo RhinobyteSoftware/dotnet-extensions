@@ -2,6 +2,11 @@
 
     <PropertyGroup>
         <SolutionTargetsIsImported>true</SolutionTargetsIsImported>
+
+        <!-- Set RunOnlyOnceBeforeBuildTarget to 'BeforeBuild' for single target projects and 'DispatchToInnerBuilds' for cross taretting projects -->
+        <!-- Need to set these in the .targets file in order to be able to check the value of $(TargetFrameworks) and $(TargetFramework) -->
+        <RunOnlyOnceBeforeBuildTarget Condition=" '$(TargetFrameworks)' == '' AND '$(TargetFramework)' != '' ">BeforeBuild</RunOnlyOnceBeforeBuildTarget>
+        <RunOnlyOnceBeforeBuildTarget Condition=" '$(TargetFrameworks)' != '' AND '$(TargetFramework)' == '' ">DispatchToInnerBuilds</RunOnlyOnceBeforeBuildTarget>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'ReleaseTesting' ">
@@ -47,15 +52,15 @@ PackageVersion: $(PackageVersion)"  />
             <RepoRootParent>$([System.IO.Path]::GetFullPath('$([System.IO.Path]::Combine('$(RepoRoot)', '..'))'))</RepoRootParent>
             <LocalPackagesPath Condition="'$(LocalPackagesPath)' == ''">$(RepoRootParent)\localPackages</LocalPackagesPath>
             <DevelopmentPropsFileLines>
-                &lt;Project&gt;
-                &lt;PropertyGroup&gt;
-                &lt;DevelopmentPackagesDirectory&gt;$(LocalPackagesPath)&lt;/DevelopmentPackagesDirectory&gt;
-                &lt;!--  low, normal, or high --&gt;
-                &lt;InternalMsbuildMessageImportance&gt;high&lt;/InternalMsbuildMessageImportance&gt;
-                &lt;OutputToDevelopmentPackages&gt;false&lt;/OutputToDevelopmentPackages&gt;
-                &lt;UseProjectReferences&gt;true&lt;/UseProjectReferences&gt;
-                &lt;/PropertyGroup&gt;
-                &lt;/Project&gt;
+&lt;Project&gt;
+  &lt;PropertyGroup&gt;
+    &lt;DevelopmentPackagesDirectory&gt;$(LocalPackagesPath)&lt;/DevelopmentPackagesDirectory&gt;
+    &lt;!--  low, normal, or high --&gt;
+    &lt;InternalMsbuildMessageImportance&gt;high&lt;/InternalMsbuildMessageImportance&gt;
+    &lt;OutputToDevelopmentPackages&gt;false&lt;/OutputToDevelopmentPackages&gt;
+    &lt;UseProjectReferences&gt;true&lt;/UseProjectReferences&gt;
+  &lt;/PropertyGroup&gt;
+&lt;/Project&gt;
             </DevelopmentPropsFileLines>
         </PropertyGroup>
 
