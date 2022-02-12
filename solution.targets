@@ -83,14 +83,14 @@ LocalPackagesPath: '$(LocalPackagesPath)'
     <Target Name="CreateDevelopmentTargetsFile" BeforeTargets="$(RunOnlyOnceBeforeBuildTarget)" Condition="'$(Configuration)' != 'Release' AND Exists('$(RepoRoot)') AND !Exists('$(RepoRoot)\development.local.targets')">
         <PropertyGroup>
             <DevelopmentTargetsFileLines>
-                &lt;Project&gt;
-                &lt;PropertyGroup&gt;
-                <!-- Projects to temporarily disable optimization on to make debugging in the ReleaseTesting configuration easier -->
-                <!-- Each project name must end with a semicolon, even if there is only a single entry -->
-                &lt;ProjectsThatShouldNotBeOptimized&gt;
-                &lt;/ProjectsThatShouldNotBeOptimized&gt;
-                &lt;/PropertyGroup&gt;
-                &lt;/Project&gt;
+&lt;Project&gt;
+  &lt;PropertyGroup&gt;
+    <!-- Projects to temporarily disable optimization on to make debugging in the ReleaseTesting configuration easier -->
+    <!-- Each project name must end with a semicolon, even if there is only a single entry -->
+    &lt;ProjectsThatShouldNotBeOptimized&gt;
+    &lt;/ProjectsThatShouldNotBeOptimized&gt;
+  &lt;/PropertyGroup&gt;
+&lt;/Project&gt;
             </DevelopmentTargetsFileLines>
         </PropertyGroup>
 
