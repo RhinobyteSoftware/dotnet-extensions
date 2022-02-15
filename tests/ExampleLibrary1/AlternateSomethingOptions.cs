@@ -1,6 +1,5 @@
-﻿namespace ExampleLibrary1
+﻿namespace ExampleLibrary1;
+
+public class AlternateSomethingOptions : ISomethingOptions
 {
-	public class AlternateSomethingOptions : ISomethingOptions
-	{
-	}
 }

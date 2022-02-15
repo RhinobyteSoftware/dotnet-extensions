@@ -1,6 +1,5 @@
-﻿namespace ExampleLibrary1
+﻿namespace ExampleLibrary1;
+
+public interface ISomethingService
 {
-	public interface ISomethingService
-	{
-	}
 }

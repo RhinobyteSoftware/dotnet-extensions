@@ -2,30 +2,30 @@
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
-namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
+namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage;
+
+/// <summary>
+/// Static helper class for fast lookup of <see cref="OpCode"/> instances and related information.
+/// </summary>
+/// <summary>
+/// Static helper class for fast lookup of <see cref="OpCode"/> instances and related information.
+/// </summary>
+public static class OpCodeHelper
 {
 	/// <summary>
-	/// Static helper class for fast lookup of <see cref="OpCode"/> instances and related information.
+	/// Collection of <see cref="OpCodeType.Nternal"/> opcodes
 	/// </summary>
+	public static readonly IReadOnlyCollection<OpCode> InternalOpcodes = new OpCode[] { OpCodes.Prefix7, OpCodes.Prefix6, OpCodes.Prefix5, OpCodes.Prefix4, OpCodes.Prefix3, OpCodes.Prefix2, OpCodes.Prefix1, OpCodes.Prefixref };
+
 	/// <summary>
-	/// Static helper class for fast lookup of <see cref="OpCode"/> instances and related information.
+	/// Collection of the <see cref="OpCode"/> numeric values that are used in a <see cref="LocalVariableInstruction"/> 
 	/// </summary>
-	public static class OpCodeHelper
-	{
-		/// <summary>
-		/// Collection of <see cref="OpCodeType.Nternal"/> opcodes
-		/// </summary>
-		public static readonly IReadOnlyCollection<OpCode> InternalOpcodes = new OpCode[] { OpCodes.Prefix7, OpCodes.Prefix6, OpCodes.Prefix5, OpCodes.Prefix4, OpCodes.Prefix3, OpCodes.Prefix2, OpCodes.Prefix1, OpCodes.Prefixref };
+	public static readonly IReadOnlyCollection<short> LocalVariableOpcodeValues = new short[] { 17, 18, 19, -500, -499, -498 };
 
-		/// <summary>
-		/// Collection of the <see cref="OpCode"/> numeric values that are used in a <see cref="LocalVariableInstruction"/> 
-		/// </summary>
-		public static readonly IReadOnlyCollection<short> LocalVariableOpcodeValues = new short[] { 17, 18, 19, -500, -499, -498 };
-
-		/// <summary>
-		/// Dictionary to look up the explanatory description for a given <see cref="OpCode.Value"/>.
-		/// </summary>
-		public static readonly IReadOnlyDictionary<short, string> LongDescriptionLookup = new Dictionary<short, string>()
+	/// <summary>
+	/// Dictionary to look up the explanatory description for a given <see cref="OpCode.Value"/>.
+	/// </summary>
+	public static readonly IReadOnlyDictionary<short, string> LongDescriptionLookup = new Dictionary<short, string>()
 		{
 			{ 0, "" }, // OpCodes.Nop
 			{ 1, "Signals the CLI to inform debugger that a break point has been tripped" }, // OpCodes.Break
@@ -255,10 +255,10 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			{ -482, "Specify that the subsequent array address operation is readonly (performs no type check at runtime and returns a managed pointer whose mutability is restricted)" }, // OpCodes.Readonly
 		};
 
-		/// <summary>
-		/// Dictionary to look up the <see cref="OpCodes"/> field name for a given <see cref="OpCode.Value"/>.
-		/// </summary>
-		public static readonly IReadOnlyDictionary<short, string> NameLookup = new Dictionary<short, string>()
+	/// <summary>
+	/// Dictionary to look up the <see cref="OpCodes"/> field name for a given <see cref="OpCode.Value"/>.
+	/// </summary>
+	public static readonly IReadOnlyDictionary<short, string> NameLookup = new Dictionary<short, string>()
 		{
 			{ 0, "Nop" },
 			{ 1, "Break" },
@@ -488,10 +488,10 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			{ -482, "Readonly" }
 		};
 
-		/// <summary>
-		/// Dictionary to look up the short description for a given <see cref="OpCode.Value"/>.
-		/// </summary>
-		public static readonly IReadOnlyDictionary<short, string> ShortDescriptionLookup = new Dictionary<short, string>()
+	/// <summary>
+	/// Dictionary to look up the short description for a given <see cref="OpCode.Value"/>.
+	/// </summary>
+	public static readonly IReadOnlyDictionary<short, string> ShortDescriptionLookup = new Dictionary<short, string>()
 		{
 			{ 0, "NO-OP" }, // OpCodes.Nop
 			{ 1, "DEBUGGER BREAK" }, // OpCodes.Break
@@ -727,68 +727,67 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage
 			{ -482, "READONLY" } // OpCodes.Readonly
 		};
 
-		/// <summary>
-		/// Array lookup of <see cref="OpCode"/> instances for single byte value opcodes.
-		/// The index corresponds with the single byte value of the opcode.
-		/// </summary>
-		public static readonly OpCode[] SingleByteOpCodeLookup = new OpCode[] { OpCodes.Nop, OpCodes.Break, OpCodes.Ldarg_0, OpCodes.Ldarg_1, OpCodes.Ldarg_2, OpCodes.Ldarg_3, OpCodes.Ldloc_0, OpCodes.Ldloc_1, OpCodes.Ldloc_2, OpCodes.Ldloc_3, OpCodes.Stloc_0, OpCodes.Stloc_1, OpCodes.Stloc_2, OpCodes.Stloc_3, OpCodes.Ldarg_S, OpCodes.Ldarga_S, OpCodes.Starg_S, OpCodes.Ldloc_S, OpCodes.Ldloca_S, OpCodes.Stloc_S, OpCodes.Ldnull, OpCodes.Ldc_I4_M1, OpCodes.Ldc_I4_0, OpCodes.Ldc_I4_1, OpCodes.Ldc_I4_2, OpCodes.Ldc_I4_3, OpCodes.Ldc_I4_4, OpCodes.Ldc_I4_5, OpCodes.Ldc_I4_6, OpCodes.Ldc_I4_7, OpCodes.Ldc_I4_8, OpCodes.Ldc_I4_S, OpCodes.Ldc_I4, OpCodes.Ldc_I8, OpCodes.Ldc_R4, OpCodes.Ldc_R8, OpCodes.Nop, OpCodes.Dup, OpCodes.Pop, OpCodes.Jmp, OpCodes.Call, OpCodes.Calli, OpCodes.Ret, OpCodes.Br_S, OpCodes.Brfalse_S, OpCodes.Brtrue_S, OpCodes.Beq_S, OpCodes.Bge_S, OpCodes.Bgt_S, OpCodes.Ble_S, OpCodes.Blt_S, OpCodes.Bne_Un_S, OpCodes.Bge_Un_S, OpCodes.Bgt_Un_S, OpCodes.Ble_Un_S, OpCodes.Blt_Un_S, OpCodes.Br, OpCodes.Brfalse, OpCodes.Brtrue, OpCodes.Beq, OpCodes.Bge, OpCodes.Bgt, OpCodes.Ble, OpCodes.Blt, OpCodes.Bne_Un, OpCodes.Bge_Un, OpCodes.Bgt_Un, OpCodes.Ble_Un, OpCodes.Blt_Un, OpCodes.Switch, OpCodes.Ldind_I1, OpCodes.Ldind_U1, OpCodes.Ldind_I2, OpCodes.Ldind_U2, OpCodes.Ldind_I4, OpCodes.Ldind_U4, OpCodes.Ldind_I8, OpCodes.Ldind_I, OpCodes.Ldind_R4, OpCodes.Ldind_R8, OpCodes.Ldind_Ref, OpCodes.Stind_Ref, OpCodes.Stind_I1, OpCodes.Stind_I2, OpCodes.Stind_I4, OpCodes.Stind_I8, OpCodes.Stind_R4, OpCodes.Stind_R8, OpCodes.Add, OpCodes.Sub, OpCodes.Mul, OpCodes.Div, OpCodes.Div_Un, OpCodes.Rem, OpCodes.Rem_Un, OpCodes.And, OpCodes.Or, OpCodes.Xor, OpCodes.Shl, OpCodes.Shr, OpCodes.Shr_Un, OpCodes.Neg, OpCodes.Not, OpCodes.Conv_I1, OpCodes.Conv_I2, OpCodes.Conv_I4, OpCodes.Conv_I8, OpCodes.Conv_R4, OpCodes.Conv_R8, OpCodes.Conv_U4, OpCodes.Conv_U8, OpCodes.Callvirt, OpCodes.Cpobj, OpCodes.Ldobj, OpCodes.Ldstr, OpCodes.Newobj, OpCodes.Castclass, OpCodes.Isinst, OpCodes.Conv_R_Un, OpCodes.Nop, OpCodes.Nop, OpCodes.Unbox, OpCodes.Throw, OpCodes.Ldfld, OpCodes.Ldflda, OpCodes.Stfld, OpCodes.Ldsfld, OpCodes.Ldsflda, OpCodes.Stsfld, OpCodes.Stobj, OpCodes.Conv_Ovf_I1_Un, OpCodes.Conv_Ovf_I2_Un, OpCodes.Conv_Ovf_I4_Un, OpCodes.Conv_Ovf_I8_Un, OpCodes.Conv_Ovf_U1_Un, OpCodes.Conv_Ovf_U2_Un, OpCodes.Conv_Ovf_U4_Un, OpCodes.Conv_Ovf_U8_Un, OpCodes.Conv_Ovf_I_Un, OpCodes.Conv_Ovf_U_Un, OpCodes.Box, OpCodes.Newarr, OpCodes.Ldlen, OpCodes.Ldelema, OpCodes.Ldelem_I1, OpCodes.Ldelem_U1, OpCodes.Ldelem_I2, OpCodes.Ldelem_U2, OpCodes.Ldelem_I4, OpCodes.Ldelem_U4, OpCodes.Ldelem_I8, OpCodes.Ldelem_I, OpCodes.Ldelem_R4, OpCodes.Ldelem_R8, OpCodes.Ldelem_Ref, OpCodes.Stelem_I, OpCodes.Stelem_I1, OpCodes.Stelem_I2, OpCodes.Stelem_I4, OpCodes.Stelem_I8, OpCodes.Stelem_R4, OpCodes.Stelem_R8, OpCodes.Stelem_Ref, OpCodes.Ldelem, OpCodes.Stelem, OpCodes.Unbox_Any, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Conv_Ovf_I1, OpCodes.Conv_Ovf_U1, OpCodes.Conv_Ovf_I2, OpCodes.Conv_Ovf_U2, OpCodes.Conv_Ovf_I4, OpCodes.Conv_Ovf_U4, OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_U8, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Refanyval, OpCodes.Ckfinite, OpCodes.Nop, OpCodes.Nop, OpCodes.Mkrefany, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Ldtoken, OpCodes.Conv_U2, OpCodes.Conv_U1, OpCodes.Conv_I, OpCodes.Conv_Ovf_I, OpCodes.Conv_Ovf_U, OpCodes.Add_Ovf, OpCodes.Add_Ovf_Un, OpCodes.Mul_Ovf, OpCodes.Mul_Ovf_Un, OpCodes.Sub_Ovf, OpCodes.Sub_Ovf_Un, OpCodes.Endfinally, OpCodes.Leave, OpCodes.Leave_S, OpCodes.Stind_I, OpCodes.Conv_U, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Prefix7, OpCodes.Prefix6, OpCodes.Prefix5, OpCodes.Prefix4, OpCodes.Prefix3, OpCodes.Prefix2, OpCodes.Prefix1, OpCodes.Prefixref };
+	/// <summary>
+	/// Array lookup of <see cref="OpCode"/> instances for single byte value opcodes.
+	/// The index corresponds with the single byte value of the opcode.
+	/// </summary>
+	public static readonly OpCode[] SingleByteOpCodeLookup = new OpCode[] { OpCodes.Nop, OpCodes.Break, OpCodes.Ldarg_0, OpCodes.Ldarg_1, OpCodes.Ldarg_2, OpCodes.Ldarg_3, OpCodes.Ldloc_0, OpCodes.Ldloc_1, OpCodes.Ldloc_2, OpCodes.Ldloc_3, OpCodes.Stloc_0, OpCodes.Stloc_1, OpCodes.Stloc_2, OpCodes.Stloc_3, OpCodes.Ldarg_S, OpCodes.Ldarga_S, OpCodes.Starg_S, OpCodes.Ldloc_S, OpCodes.Ldloca_S, OpCodes.Stloc_S, OpCodes.Ldnull, OpCodes.Ldc_I4_M1, OpCodes.Ldc_I4_0, OpCodes.Ldc_I4_1, OpCodes.Ldc_I4_2, OpCodes.Ldc_I4_3, OpCodes.Ldc_I4_4, OpCodes.Ldc_I4_5, OpCodes.Ldc_I4_6, OpCodes.Ldc_I4_7, OpCodes.Ldc_I4_8, OpCodes.Ldc_I4_S, OpCodes.Ldc_I4, OpCodes.Ldc_I8, OpCodes.Ldc_R4, OpCodes.Ldc_R8, OpCodes.Nop, OpCodes.Dup, OpCodes.Pop, OpCodes.Jmp, OpCodes.Call, OpCodes.Calli, OpCodes.Ret, OpCodes.Br_S, OpCodes.Brfalse_S, OpCodes.Brtrue_S, OpCodes.Beq_S, OpCodes.Bge_S, OpCodes.Bgt_S, OpCodes.Ble_S, OpCodes.Blt_S, OpCodes.Bne_Un_S, OpCodes.Bge_Un_S, OpCodes.Bgt_Un_S, OpCodes.Ble_Un_S, OpCodes.Blt_Un_S, OpCodes.Br, OpCodes.Brfalse, OpCodes.Brtrue, OpCodes.Beq, OpCodes.Bge, OpCodes.Bgt, OpCodes.Ble, OpCodes.Blt, OpCodes.Bne_Un, OpCodes.Bge_Un, OpCodes.Bgt_Un, OpCodes.Ble_Un, OpCodes.Blt_Un, OpCodes.Switch, OpCodes.Ldind_I1, OpCodes.Ldind_U1, OpCodes.Ldind_I2, OpCodes.Ldind_U2, OpCodes.Ldind_I4, OpCodes.Ldind_U4, OpCodes.Ldind_I8, OpCodes.Ldind_I, OpCodes.Ldind_R4, OpCodes.Ldind_R8, OpCodes.Ldind_Ref, OpCodes.Stind_Ref, OpCodes.Stind_I1, OpCodes.Stind_I2, OpCodes.Stind_I4, OpCodes.Stind_I8, OpCodes.Stind_R4, OpCodes.Stind_R8, OpCodes.Add, OpCodes.Sub, OpCodes.Mul, OpCodes.Div, OpCodes.Div_Un, OpCodes.Rem, OpCodes.Rem_Un, OpCodes.And, OpCodes.Or, OpCodes.Xor, OpCodes.Shl, OpCodes.Shr, OpCodes.Shr_Un, OpCodes.Neg, OpCodes.Not, OpCodes.Conv_I1, OpCodes.Conv_I2, OpCodes.Conv_I4, OpCodes.Conv_I8, OpCodes.Conv_R4, OpCodes.Conv_R8, OpCodes.Conv_U4, OpCodes.Conv_U8, OpCodes.Callvirt, OpCodes.Cpobj, OpCodes.Ldobj, OpCodes.Ldstr, OpCodes.Newobj, OpCodes.Castclass, OpCodes.Isinst, OpCodes.Conv_R_Un, OpCodes.Nop, OpCodes.Nop, OpCodes.Unbox, OpCodes.Throw, OpCodes.Ldfld, OpCodes.Ldflda, OpCodes.Stfld, OpCodes.Ldsfld, OpCodes.Ldsflda, OpCodes.Stsfld, OpCodes.Stobj, OpCodes.Conv_Ovf_I1_Un, OpCodes.Conv_Ovf_I2_Un, OpCodes.Conv_Ovf_I4_Un, OpCodes.Conv_Ovf_I8_Un, OpCodes.Conv_Ovf_U1_Un, OpCodes.Conv_Ovf_U2_Un, OpCodes.Conv_Ovf_U4_Un, OpCodes.Conv_Ovf_U8_Un, OpCodes.Conv_Ovf_I_Un, OpCodes.Conv_Ovf_U_Un, OpCodes.Box, OpCodes.Newarr, OpCodes.Ldlen, OpCodes.Ldelema, OpCodes.Ldelem_I1, OpCodes.Ldelem_U1, OpCodes.Ldelem_I2, OpCodes.Ldelem_U2, OpCodes.Ldelem_I4, OpCodes.Ldelem_U4, OpCodes.Ldelem_I8, OpCodes.Ldelem_I, OpCodes.Ldelem_R4, OpCodes.Ldelem_R8, OpCodes.Ldelem_Ref, OpCodes.Stelem_I, OpCodes.Stelem_I1, OpCodes.Stelem_I2, OpCodes.Stelem_I4, OpCodes.Stelem_I8, OpCodes.Stelem_R4, OpCodes.Stelem_R8, OpCodes.Stelem_Ref, OpCodes.Ldelem, OpCodes.Stelem, OpCodes.Unbox_Any, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Conv_Ovf_I1, OpCodes.Conv_Ovf_U1, OpCodes.Conv_Ovf_I2, OpCodes.Conv_Ovf_U2, OpCodes.Conv_Ovf_I4, OpCodes.Conv_Ovf_U4, OpCodes.Conv_Ovf_I8, OpCodes.Conv_Ovf_U8, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Refanyval, OpCodes.Ckfinite, OpCodes.Nop, OpCodes.Nop, OpCodes.Mkrefany, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Ldtoken, OpCodes.Conv_U2, OpCodes.Conv_U1, OpCodes.Conv_I, OpCodes.Conv_Ovf_I, OpCodes.Conv_Ovf_U, OpCodes.Add_Ovf, OpCodes.Add_Ovf_Un, OpCodes.Mul_Ovf, OpCodes.Mul_Ovf_Un, OpCodes.Sub_Ovf, OpCodes.Sub_Ovf_Un, OpCodes.Endfinally, OpCodes.Leave, OpCodes.Leave_S, OpCodes.Stind_I, OpCodes.Conv_U, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Nop, OpCodes.Prefix7, OpCodes.Prefix6, OpCodes.Prefix5, OpCodes.Prefix4, OpCodes.Prefix3, OpCodes.Prefix2, OpCodes.Prefix1, OpCodes.Prefixref };
 
-		/// <summary>
-		/// Array lookup of <see cref="OpCode"/> instances for two byte value opcodes.
-		/// The index corresponds with the 2nd byte of the opcode value.
-		/// </summary>
-		public static readonly OpCode[] TwoByteOpCodeLookup = new OpCode[] { OpCodes.Arglist, OpCodes.Ceq, OpCodes.Cgt, OpCodes.Cgt_Un, OpCodes.Clt, OpCodes.Clt_Un, OpCodes.Ldftn, OpCodes.Ldvirtftn, OpCodes.Nop, OpCodes.Ldarg, OpCodes.Ldarga, OpCodes.Starg, OpCodes.Ldloc, OpCodes.Ldloca, OpCodes.Stloc, OpCodes.Localloc, OpCodes.Nop, OpCodes.Endfilter, OpCodes.Unaligned, OpCodes.Volatile, OpCodes.Tailcall, OpCodes.Initobj, OpCodes.Constrained, OpCodes.Cpblk, OpCodes.Initblk, OpCodes.Nop, OpCodes.Rethrow, OpCodes.Nop, OpCodes.Sizeof, OpCodes.Refanytype, OpCodes.Readonly };
+	/// <summary>
+	/// Array lookup of <see cref="OpCode"/> instances for two byte value opcodes.
+	/// The index corresponds with the 2nd byte of the opcode value.
+	/// </summary>
+	public static readonly OpCode[] TwoByteOpCodeLookup = new OpCode[] { OpCodes.Arglist, OpCodes.Ceq, OpCodes.Cgt, OpCodes.Cgt_Un, OpCodes.Clt, OpCodes.Clt_Un, OpCodes.Ldftn, OpCodes.Ldvirtftn, OpCodes.Nop, OpCodes.Ldarg, OpCodes.Ldarga, OpCodes.Starg, OpCodes.Ldloc, OpCodes.Ldloca, OpCodes.Stloc, OpCodes.Localloc, OpCodes.Nop, OpCodes.Endfilter, OpCodes.Unaligned, OpCodes.Volatile, OpCodes.Tailcall, OpCodes.Initobj, OpCodes.Constrained, OpCodes.Cpblk, OpCodes.Initblk, OpCodes.Nop, OpCodes.Rethrow, OpCodes.Nop, OpCodes.Sizeof, OpCodes.Refanytype, OpCodes.Readonly };
 
-		/// <summary>
-		///		Returns the size in bytes for the <paramref name="operandType"/>.
-		/// </summary>
-		/// <param name="operandType">The operand type to look up the size for.</param>
-		/// <remarks>
-		///		<see cref="OperandType.InlineSwitch"/> is variable. This method returns a value of <c>4</c> for the operand type;
-		///		the first four bytes of the operand contain an integer value for the length of the jump table array.
-		///		The actual operand size is <c>4 + (arrayLength * 4)</c>.
-		/// </remarks>
-		public static int GetOperandSize(OperandType operandType)
+	/// <summary>
+	///		Returns the size in bytes for the <paramref name="operandType"/>.
+	/// </summary>
+	/// <param name="operandType">The operand type to look up the size for.</param>
+	/// <remarks>
+	///		<see cref="OperandType.InlineSwitch"/> is variable. This method returns a value of <c>4</c> for the operand type;
+	///		the first four bytes of the operand contain an integer value for the length of the jump table array.
+	///		The actual operand size is <c>4 + (arrayLength * 4)</c>.
+	/// </remarks>
+	public static int GetOperandSize(OperandType operandType)
+	{
+		switch (operandType)
 		{
-			switch (operandType)
-			{
-				case OperandType.InlineNone:
-					return 0;
+			case OperandType.InlineNone:
+				return 0;
 
-				case OperandType.ShortInlineBrTarget:
-				case OperandType.ShortInlineI:
-				case OperandType.ShortInlineVar:
-					return 1;
+			case OperandType.ShortInlineBrTarget:
+			case OperandType.ShortInlineI:
+			case OperandType.ShortInlineVar:
+				return 1;
 
-				case OperandType.InlineVar:
-					return 2;
+			case OperandType.InlineVar:
+				return 2;
 
-				case OperandType.InlineBrTarget:
-				case OperandType.InlineField:
-				case OperandType.InlineI:
-				case OperandType.InlineMethod:
-				case OperandType.InlineSig:
-				case OperandType.InlineString:
-				// Note: The actual oprand size of OperandType.InlineSwitch is variable.
-				// The first four bytes of the operand contain the length of the jump table array.
-				// The following (arrayLength * 4) bytes contain the target offset values that make up the
-				// jump table array.
-				case OperandType.InlineSwitch:
-				case OperandType.InlineTok:
-				case OperandType.InlineType:
-				case OperandType.ShortInlineR:
-					return 4;
+			case OperandType.InlineBrTarget:
+			case OperandType.InlineField:
+			case OperandType.InlineI:
+			case OperandType.InlineMethod:
+			case OperandType.InlineSig:
+			case OperandType.InlineString:
+			// Note: The actual oprand size of OperandType.InlineSwitch is variable.
+			// The first four bytes of the operand contain the length of the jump table array.
+			// The following (arrayLength * 4) bytes contain the target offset values that make up the
+			// jump table array.
+			case OperandType.InlineSwitch:
+			case OperandType.InlineTok:
+			case OperandType.InlineType:
+			case OperandType.ShortInlineR:
+				return 4;
 
-				case OperandType.InlineI8:
-				case OperandType.InlineR:
-					return 8;
+			case OperandType.InlineI8:
+			case OperandType.InlineR:
+				return 8;
 
 #pragma warning disable CS0618 // Type or member is obsolete. Reason: Ensuring all switch cases are handled.
-				case OperandType.InlinePhi:
+			case OperandType.InlinePhi:
 #pragma warning restore CS0618 // Type or member is obsolete
-				default:
-					throw new NotSupportedException($"{nameof(OpCodeHelper)}.{nameof(GetOperandSize)}(..) is not supported for an {nameof(OperandType)} value of {operandType}");
-			};
-		}
+			default:
+				throw new NotSupportedException($"{nameof(OpCodeHelper)}.{nameof(GetOperandSize)}(..) is not supported for an {nameof(OperandType)} value of {operandType}");
+		};
 	}
 }

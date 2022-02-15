@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace Rhinobyte.Extensions.Reflection.AssemblyScanning
+namespace Rhinobyte.Extensions.Reflection.AssemblyScanning;
+
+/// <summary>
+/// A filter that can be applied to an <see cref="AssemblyScanner"/> in order to ignore specific types during scanning.
+/// </summary>
+public interface IScannedTypeFilter
 {
 	/// <summary>
-	/// A filter that can be applied to an <see cref="AssemblyScanner"/> in order to ignore specific types during scanning.
+	/// 
 	/// </summary>
-	public interface IScannedTypeFilter
-	{
-		/// <summary>
-		/// 
-		/// </summary>
-		bool ShouldIgnoreType(AssemblyInclude assemblyInclude, Type scannedType, IAssemblyScanner scanner, IAssemblyScanResult scanResult);
-	}
+	bool ShouldIgnoreType(AssemblyInclude assemblyInclude, Type scannedType, IAssemblyScanner scanner, IAssemblyScanResult scanResult);
 }

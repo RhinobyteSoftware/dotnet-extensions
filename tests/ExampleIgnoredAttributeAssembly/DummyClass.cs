@@ -2,10 +2,9 @@
 
 [assembly: IgnoreAssemblyScanner]
 
-namespace ExampleIgnoredAttributeAssembly
+namespace ExampleIgnoredAttributeAssembly;
+
+[IgnoreAssemblyScanner]
+public class DummyClass
 {
-	[IgnoreAssemblyScanner]
-	public class DummyClass
-	{
-	}
 }

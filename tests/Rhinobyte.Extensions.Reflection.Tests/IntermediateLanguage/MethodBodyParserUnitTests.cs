@@ -8,311 +8,311 @@ using System.Linq;
 using System.Reflection;
 using static FluentAssertions.FluentActions;
 
-namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
+namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage;
+
+[TestClass]
+public class MethodBodyParserUnitTests
 {
-	[TestClass]
-	public class MethodBodyParserUnitTests
+	/******     TEST METHODS     ****************************
+	 ********************************************************/
+
+	[TestMethod]
+	public void Constructor_throws_argument_exceptions_for_required_parameter_members()
 	{
-		/******     TEST METHODS     ****************************
-		 ********************************************************/
+		Invoking(() => new MethodBodyParser(null!))
+			.Should()
+			.Throw<ArgumentNullException>()
+			.WithMessage("Value cannot be null*method*");
 
-		[TestMethod]
-		public void Constructor_throws_argument_exceptions_for_required_parameter_members()
-		{
-			Invoking(() => new MethodBodyParser(null!))
-				.Should()
-				.Throw<ArgumentNullException>()
-				.WithMessage("Value cannot be null*method*");
+		var mockMethodBase = new MockMethodBase("MockMethod");
+		Invoking(() => new MethodBodyParser(mockMethodBase))
+			.Should()
+			.Throw<ArgumentException>()
+			.WithMessage("*.GetMethodBody() returned null for the method:*");
 
-			var mockMethodBase = new MockMethodBase("MockMethod");
-			Invoking(() => new MethodBodyParser(mockMethodBase))
-				.Should()
-				.Throw<ArgumentException>()
-				.WithMessage("*.GetMethodBody() returned null for the method:*");
+		mockMethodBase.SetMethodBody(new MockMethodBody());
+		Invoking(() => new MethodBodyParser(mockMethodBase))
+			.Should()
+			.Throw<ArgumentException>()
+			.WithMessage("MethodBody.GetILAsByteArray() returned null for the method:*");
 
-			mockMethodBase.SetMethodBody(new MockMethodBody());
-			Invoking(() => new MethodBodyParser(mockMethodBase))
-				.Should()
-				.Throw<ArgumentException>()
-				.WithMessage("MethodBody.GetILAsByteArray() returned null for the method:*");
+		var actualMethod = typeof(ExampleMethods).GetMethod("AddTwoValues", BindingFlags.Public | BindingFlags.Static);
+		mockMethodBase.SetMethodBody(actualMethod!.GetMethodBody());
+		Invoking(() => new MethodBodyParser(mockMethodBase))
+			.Should()
+			.Throw<ArgumentException>()
+			.WithMessage("*.Module property is null");
 
-			var actualMethod = typeof(ExampleMethods).GetMethod("AddTwoValues", BindingFlags.Public | BindingFlags.Static);
-			mockMethodBase.SetMethodBody(actualMethod!.GetMethodBody());
-			Invoking(() => new MethodBodyParser(mockMethodBase))
-				.Should()
-				.Throw<ArgumentException>()
-				.WithMessage("*.Module property is null");
+		mockMethodBase = new MockMethodBase(null, "MockMethodNullDeclaringType");
+		mockMethodBase.SetMethodBody(actualMethod.GetMethodBody());
+		mockMethodBase.SetModule(actualMethod.Module);
+		mockMethodBase.DeclaringType.Should().BeNull();
 
-			mockMethodBase = new MockMethodBase(null, "MockMethodNullDeclaringType");
-			mockMethodBase.SetMethodBody(actualMethod.GetMethodBody());
-			mockMethodBase.SetModule(actualMethod.Module);
-			mockMethodBase.DeclaringType.Should().BeNull();
+		// Should be able handle the null DeclaringType without throwing
+		var methodBodyParser = new MethodBodyParser(mockMethodBase);
+		methodBodyParser.Should().NotBeNull();
+	}
 
-			// Should be able handle the null DeclaringType without throwing
-			var methodBodyParser = new MethodBodyParser(mockMethodBase);
-			methodBodyParser.Should().NotBeNull();
-		}
+	[TestMethod]
+	public void ContainsReferencesToAll_doesnt_blow_up1()
+	{
+		var methodReferencesToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).ToList();
 
-		[TestMethod]
-		public void ContainsReferencesToAll_doesnt_blow_up1()
-		{
-			var methodReferencesToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).ToList();
+		var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
+		methodBodyParser.ContainsReferencesToAll(methodReferencesToSearchFor, false, false).Should().BeFalse();
+	}
 
-			var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
-			methodBodyParser.ContainsReferencesToAll(methodReferencesToSearchFor, false, false).Should().BeFalse();
-		}
+	[TestMethod]
+	public void ContainsReferenceTo_correctly_matches_property_references1()
+	{
+		var baseProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.InheritedIntProperty), BindingFlags.Public | BindingFlags.Instance);
+		var inheritedProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.InheritedIntProperty), BindingFlags.Public | BindingFlags.Instance);
 
-		[TestMethod]
-		public void ContainsReferenceTo_correctly_matches_property_references1()
-		{
-			var baseProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.InheritedIntProperty), BindingFlags.Public | BindingFlags.Instance);
-			var inheritedProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.InheritedIntProperty), BindingFlags.Public | BindingFlags.Instance);
+		var methodThatReferencesBaseThroughInheritedType = typeof(ExampleInheritedMemberStaticClass)
+			.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesTheInheritedPublicProperty), BindingFlags.Static | BindingFlags.Public);
 
-			var methodThatReferencesBaseThroughInheritedType = typeof(ExampleInheritedMemberStaticClass)
-				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesTheInheritedPublicProperty), BindingFlags.Static | BindingFlags.Public);
+		methodThatReferencesBaseThroughInheritedType!.ContainsReferenceTo(baseProperty!).Should().BeTrue();
+		methodThatReferencesBaseThroughInheritedType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: true).Should().BeTrue();
+		methodThatReferencesBaseThroughInheritedType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: false).Should().BeFalse();
 
-			methodThatReferencesBaseThroughInheritedType!.ContainsReferenceTo(baseProperty!).Should().BeTrue();
-			methodThatReferencesBaseThroughInheritedType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: true).Should().BeTrue();
-			methodThatReferencesBaseThroughInheritedType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: false).Should().BeFalse();
+		var methodThatReferencesBaseThroughBaseType = typeof(ExampleInheritedMemberStaticClass)
+			.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesTheBasePublicProperty), BindingFlags.Static | BindingFlags.Public);
 
-			var methodThatReferencesBaseThroughBaseType = typeof(ExampleInheritedMemberStaticClass)
-				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesTheBasePublicProperty), BindingFlags.Static | BindingFlags.Public);
+		methodThatReferencesBaseThroughBaseType!.ContainsReferenceTo(baseProperty!).Should().BeTrue();
+		methodThatReferencesBaseThroughBaseType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: true).Should().BeTrue();
+		methodThatReferencesBaseThroughBaseType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: false).Should().BeFalse();
+	}
 
-			methodThatReferencesBaseThroughBaseType!.ContainsReferenceTo(baseProperty!).Should().BeTrue();
-			methodThatReferencesBaseThroughBaseType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: true).Should().BeTrue();
-			methodThatReferencesBaseThroughBaseType!.ContainsReferenceTo(inheritedProperty!, matchAgainstDeclaringTypeMember: false).Should().BeFalse();
-		}
+	[TestMethod]
+	public void ContainsReferenceTo_correctly_matches_property_references2()
+	{
+		var baseVirtualProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicVirtualBoolProperty), BindingFlags.Public | BindingFlags.Instance);
+		var baseVirtualReadOnlyProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicVirtualBoolReadOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
+		var baseVirtualWriteOnlyProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicVirtualBoolWriteOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
 
-		[TestMethod]
-		public void ContainsReferenceTo_correctly_matches_property_references2()
-		{
-			var baseVirtualProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicVirtualBoolProperty), BindingFlags.Public | BindingFlags.Instance);
-			var baseVirtualReadOnlyProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicVirtualBoolReadOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
-			var baseVirtualWriteOnlyProperty = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicVirtualBoolWriteOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
+		var overridenVirtualProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicVirtualBoolProperty), BindingFlags.Public | BindingFlags.Instance);
+		var overridenVirtualReadOnlyProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicVirtualBoolReadOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
+		var overridenVirtualWriteOnlyProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicVirtualBoolWriteOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
 
-			var overridenVirtualProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicVirtualBoolProperty), BindingFlags.Public | BindingFlags.Instance);
-			var overridenVirtualReadOnlyProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicVirtualBoolReadOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
-			var overridenVirtualWriteOnlyProperty = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicVirtualBoolWriteOnlyProperty), BindingFlags.Public | BindingFlags.Instance);
+		var methodThatReferencesBaseVirtualProperties = typeof(ExampleInheritedMemberStaticClass)
+			.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesBaseVirtualProperties), BindingFlags.Static | BindingFlags.Public);
 
-			var methodThatReferencesBaseVirtualProperties = typeof(ExampleInheritedMemberStaticClass)
-				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesBaseVirtualProperties), BindingFlags.Static | BindingFlags.Public);
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
 
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
 
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
 
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
 
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
-			methodThatReferencesBaseVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		var methodThatReferencesOverrideVirtualProperties = typeof(ExampleInheritedMemberStaticClass)
+			.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesOverrideVirtualProperties), BindingFlags.Static | BindingFlags.Public);
 
-			var methodThatReferencesOverrideVirtualProperties = typeof(ExampleInheritedMemberStaticClass)
-				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesOverrideVirtualProperties), BindingFlags.Static | BindingFlags.Public);
+		// For override members the IL reference is to the base member with a CALLVIRT op code, so the reference will still match the base property
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
 
-			// For override members the IL reference is to the base member with a CALLVIRT op code, so the reference will still match the base property
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
 
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(baseVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
 
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+	}
 
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualReadOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
-			methodThatReferencesOverrideVirtualProperties!.ContainsReferenceTo(overridenVirtualWriteOnlyProperty!, matchAgainstBaseClassMembers: true).Should().BeTrue();
-		}
+	[TestMethod]
+	public void ContainsReferenceTo_correctly_matches_property_references3()
+	{
+		var basePropertyThatWillBeHidden = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicPropertyOnBaseThatWillBeHidden), BindingFlags.Public | BindingFlags.Instance);
+		basePropertyThatWillBeHidden!.DeclaringType.Should().Be(basePropertyThatWillBeHidden.ReflectedType);
+		basePropertyThatWillBeHidden.DeclaringType.Should().Be<ExampleInheritedMemberBaseClass>();
 
-		[TestMethod]
-		public void ContainsReferenceTo_correctly_matches_property_references3()
-		{
-			var basePropertyThatWillBeHidden = typeof(ExampleInheritedMemberBaseClass).GetProperty(nameof(ExampleInheritedMemberBaseClass.PublicPropertyOnBaseThatWillBeHidden), BindingFlags.Public | BindingFlags.Instance);
-			basePropertyThatWillBeHidden!.DeclaringType.Should().Be(basePropertyThatWillBeHidden.ReflectedType);
-			basePropertyThatWillBeHidden.DeclaringType.Should().Be<ExampleInheritedMemberBaseClass>();
+		var subclassPropertyThatHidesBase = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicPropertyOnBaseThatWillBeHidden), BindingFlags.Public | BindingFlags.Instance);
+		subclassPropertyThatHidesBase!.DeclaringType.Should().Be(subclassPropertyThatHidesBase.ReflectedType);
+		subclassPropertyThatHidesBase.DeclaringType.Should().Be<ExampleInheritedMemberSubClass>();
 
-			var subclassPropertyThatHidesBase = typeof(ExampleInheritedMemberSubClass).GetProperty(nameof(ExampleInheritedMemberSubClass.PublicPropertyOnBaseThatWillBeHidden), BindingFlags.Public | BindingFlags.Instance);
-			subclassPropertyThatHidesBase!.DeclaringType.Should().Be(subclassPropertyThatHidesBase.ReflectedType);
-			subclassPropertyThatHidesBase.DeclaringType.Should().Be<ExampleInheritedMemberSubClass>();
+		var methodThatReferencesBaseProperty = typeof(ExampleInheritedMemberStaticClass)
+			.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesBasePropertyNotYetHidden), BindingFlags.Static | BindingFlags.Public);
 
-			var methodThatReferencesBaseProperty = typeof(ExampleInheritedMemberStaticClass)
-				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesBasePropertyNotYetHidden), BindingFlags.Static | BindingFlags.Public);
+		methodThatReferencesBaseProperty!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+		methodThatReferencesBaseProperty!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: true).Should().BeTrue();
 
-			methodThatReferencesBaseProperty!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: false).Should().BeTrue();
-			methodThatReferencesBaseProperty!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		methodThatReferencesBaseProperty!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: false).Should().BeFalse();
 
-			methodThatReferencesBaseProperty!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+		// When match against base class members is true, it will find the base class member with the same name so the contains reference result will be true
+		methodThatReferencesBaseProperty!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: true).Should().BeTrue();
 
-			// When match against base class members is true, it will find the base class member with the same name so the contains reference result will be true
-			methodThatReferencesBaseProperty!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+		var methodThatReferencesSubclassPropertyThatHidesBase = typeof(ExampleInheritedMemberStaticClass)
+			.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesSubclassPropertyThatHidesBaseClassProperty), BindingFlags.Static | BindingFlags.Public);
 
-			var methodThatReferencesSubclassPropertyThatHidesBase = typeof(ExampleInheritedMemberStaticClass)
-				.GetMethod(nameof(ExampleInheritedMemberStaticClass.MethodThatReferencesSubclassPropertyThatHidesBaseClassProperty), BindingFlags.Static | BindingFlags.Public);
+		// For the hidden property reference it should not have an IL instruction that references the base property
+		methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: false).Should().BeFalse();
+		methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: true).Should().BeFalse();
 
-			// For the hidden property reference it should not have an IL instruction that references the base property
-			methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: false).Should().BeFalse();
-			methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(basePropertyThatWillBeHidden!, matchAgainstBaseClassMembers: true).Should().BeFalse();
+		methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: false).Should().BeTrue();
+		methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: true).Should().BeTrue();
+	}
 
-			methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: false).Should().BeTrue();
-			methodThatReferencesSubclassPropertyThatHidesBase!.ContainsReferenceTo(subclassPropertyThatHidesBase!, matchAgainstBaseClassMembers: true).Should().BeTrue();
-		}
+	[TestMethod]
+	public void ContainsReferenceTo_doesnt_blow_up1()
+	{
+		var methodReferenceToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).First(method => method.Name == "WriteLine");
 
-		[TestMethod]
-		public void ContainsReferenceTo_doesnt_blow_up1()
-		{
-			var methodReferenceToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).First(method => method.Name == "WriteLine");
+		var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
+		methodBodyParser.ContainsReferenceTo(methodReferenceToSearchFor, false, false).Should().BeFalse();
+	}
 
-			var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
-			methodBodyParser.ContainsReferenceTo(methodReferenceToSearchFor, false, false).Should().BeFalse();
-		}
+	[TestMethod]
+	public void ContainsReferenceToAny_doesnt_blow_up1()
+	{
+		var methodReferencesToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).ToList();
 
-		[TestMethod]
-		public void ContainsReferenceToAny_doesnt_blow_up1()
-		{
-			var methodReferencesToSearchFor = typeof(System.Console).GetMethods(BindingFlags.Public | BindingFlags.Static).ToList();
+		var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
+		methodBodyParser.ContainsReferenceToAny(methodReferencesToSearchFor, false, false).Should().BeFalse();
+	}
 
-			var methodBodyParser = new MethodBodyParser(_dynamicJumpTableMethod);
-			methodBodyParser.ContainsReferenceToAny(methodReferencesToSearchFor, false, false).Should().BeFalse();
-		}
+	[TestMethod]
+	public void FindMethodOnConstrainingType_handles_overloads_reasonably_well1()
+	{
+		var interfaceMethods = typeof(IInheritedExampleType).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomethingElse1FromInterface = interfaceMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
+		var doSomethingElse2FromInterface = interfaceMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
+		doSomethingElse1FromInterface.GetMethodBody().Should().BeNull();
+		doSomethingElse2FromInterface.GetMethodBody().Should().BeNull();
 
-		[TestMethod]
-		public void FindMethodOnConstrainingType_handles_overloads_reasonably_well1()
-		{
-			var interfaceMethods = typeof(IInheritedExampleType).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomethingElse1FromInterface = interfaceMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
-			var doSomethingElse2FromInterface = interfaceMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
-			doSomethingElse1FromInterface.GetMethodBody().Should().BeNull();
-			doSomethingElse2FromInterface.GetMethodBody().Should().BeNull();
+		var abstractBaseMethods = typeof(InheritedAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomethingElse1FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
+		var doSomethingElse2FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
+		doSomethingElse1FromAbstractBase.GetMethodBody().Should().BeNull();
+		doSomethingElse2FromAbstractBase.GetMethodBody().Should().NotBeNull();
 
-			var abstractBaseMethods = typeof(InheritedAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomethingElse1FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
-			var doSomethingElse2FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
-			doSomethingElse1FromAbstractBase.GetMethodBody().Should().BeNull();
-			doSomethingElse2FromAbstractBase.GetMethodBody().Should().NotBeNull();
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(InheritedAbstractClass), doSomethingElse1FromInterface).Should().BeSameAs(doSomethingElse1FromAbstractBase);
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(InheritedAbstractClass), doSomethingElse2FromInterface).Should().BeSameAs(doSomethingElse2FromAbstractBase);
 
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(InheritedAbstractClass), doSomethingElse1FromInterface).Should().BeSameAs(doSomethingElse1FromAbstractBase);
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(InheritedAbstractClass), doSomethingElse2FromInterface).Should().BeSameAs(doSomethingElse2FromAbstractBase);
+		var childMethods = typeof(ChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomethingElse1FromChild = childMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
+		var doSomethingElse2FromChild = childMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
+		doSomethingElse1FromChild.GetMethodBody().Should().NotBeNull();
+		doSomethingElse2FromChild.GetMethodBody().Should().NotBeNull();
 
-			var childMethods = typeof(ChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomethingElse1FromChild = childMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
-			var doSomethingElse2FromChild = childMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
-			doSomethingElse1FromChild.GetMethodBody().Should().NotBeNull();
-			doSomethingElse2FromChild.GetMethodBody().Should().NotBeNull();
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomethingElse1FromInterface).Should().BeSameAs(doSomethingElse1FromChild);
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomethingElse2FromInterface).Should().BeSameAs(doSomethingElse2FromChild);
 
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomethingElse1FromInterface).Should().BeSameAs(doSomethingElse1FromChild);
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomethingElse2FromInterface).Should().BeSameAs(doSomethingElse2FromChild);
+		var grandChildMethods = typeof(GrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomethingElse1FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(ChildOfAbstractClass));
+		var doSomethingElse2FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
+		var doSomethingElseThatHidesOtherMethod = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(GrandChildOfAbstractClass));
+		doSomethingElse1FromGrandChild.GetMethodBody().Should().NotBeNull();
+		doSomethingElse2FromGrandChild.GetMethodBody().Should().NotBeNull();
+		doSomethingElseThatHidesOtherMethod.GetMethodBody().Should().NotBeNull();
 
-			var grandChildMethods = typeof(GrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomethingElse1FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(ChildOfAbstractClass));
-			var doSomethingElse2FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse2));
-			var doSomethingElseThatHidesOtherMethod = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(GrandChildOfAbstractClass));
-			doSomethingElse1FromGrandChild.GetMethodBody().Should().NotBeNull();
-			doSomethingElse2FromGrandChild.GetMethodBody().Should().NotBeNull();
-			doSomethingElseThatHidesOtherMethod.GetMethodBody().Should().NotBeNull();
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomethingElse1FromInterface).Should().BeSameAs(doSomethingElse1FromGrandChild);
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomethingElse2FromInterface).Should().BeSameAs(doSomethingElse2FromGrandChild);
+	}
 
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomethingElse1FromInterface).Should().BeSameAs(doSomethingElse1FromGrandChild);
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomethingElse2FromInterface).Should().BeSameAs(doSomethingElse2FromGrandChild);
-		}
+	[TestMethod]
+	public void FindMethodOnConstrainingType_handles_overloads_reasonably_well2()
+	{
+		var abstractBaseMethods = typeof(InheritedAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomething1FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length == 0);
+		var doSomething2FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length > 0);
+		var doSomething3FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingOverridenInGrandchildButNotChild));
+		doSomething1FromAbstractBase.GetMethodBody().Should().BeNull();
+		doSomething2FromAbstractBase.GetMethodBody().Should().NotBeNull();
+		doSomething3FromAbstractBase.GetMethodBody().Should().NotBeNull();
 
-		[TestMethod]
-		public void FindMethodOnConstrainingType_handles_overloads_reasonably_well2()
-		{
-			var abstractBaseMethods = typeof(InheritedAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomething1FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length == 0);
-			var doSomething2FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length > 0);
-			var doSomething3FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingOverridenInGrandchildButNotChild));
-			doSomething1FromAbstractBase.GetMethodBody().Should().BeNull();
-			doSomething2FromAbstractBase.GetMethodBody().Should().NotBeNull();
-			doSomething3FromAbstractBase.GetMethodBody().Should().NotBeNull();
+		var childMethods = typeof(ChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomething1FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length == 0);
+		var doSomething2FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length > 0);
+		var doSomething3FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingOverridenInGrandchildButNotChild));
+		doSomething1FromChild.GetMethodBody().Should().NotBeNull();
+		doSomething2FromChild.GetMethodBody().Should().NotBeNull();
+		doSomething3FromChild.GetMethodBody().Should().NotBeNull();
 
-			var childMethods = typeof(ChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomething1FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length == 0);
-			var doSomething2FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length > 0);
-			var doSomething3FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingOverridenInGrandchildButNotChild));
-			doSomething1FromChild.GetMethodBody().Should().NotBeNull();
-			doSomething2FromChild.GetMethodBody().Should().NotBeNull();
-			doSomething3FromChild.GetMethodBody().Should().NotBeNull();
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomething1FromAbstractBase).Should().BeSameAs(doSomething1FromChild);
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomething2FromAbstractBase).Should().BeSameAs(doSomething2FromChild);
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomething3FromAbstractBase).Should().BeSameAs(doSomething3FromChild);
 
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomething1FromAbstractBase).Should().BeSameAs(doSomething1FromChild);
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomething2FromAbstractBase).Should().BeSameAs(doSomething2FromChild);
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomething3FromAbstractBase).Should().BeSameAs(doSomething3FromChild);
+		var grandChildMethods = typeof(GrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomething1FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length == 0);
+		var doSomething2FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length > 0);
+		var doSomething3FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingOverridenInGrandchildButNotChild));
+		doSomething1FromGrandChild.GetMethodBody().Should().NotBeNull();
+		doSomething2FromGrandChild.GetMethodBody().Should().NotBeNull();
+		doSomething3FromGrandChild.GetMethodBody().Should().NotBeNull();
 
-			var grandChildMethods = typeof(GrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomething1FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length == 0);
-			var doSomething2FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomething) && method.GetParameters().Length > 0);
-			var doSomething3FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingOverridenInGrandchildButNotChild));
-			doSomething1FromGrandChild.GetMethodBody().Should().NotBeNull();
-			doSomething2FromGrandChild.GetMethodBody().Should().NotBeNull();
-			doSomething3FromGrandChild.GetMethodBody().Should().NotBeNull();
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomething1FromAbstractBase).Should().BeSameAs(doSomething1FromGrandChild);
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomething2FromAbstractBase).Should().BeSameAs(doSomething2FromGrandChild);
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomething3FromAbstractBase).Should().BeSameAs(doSomething3FromGrandChild);
+	}
 
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomething1FromAbstractBase).Should().BeSameAs(doSomething1FromGrandChild);
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomething2FromAbstractBase).Should().BeSameAs(doSomething2FromGrandChild);
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomething3FromAbstractBase).Should().BeSameAs(doSomething3FromGrandChild);
-		}
+	[TestMethod]
+	public void FindMethodOnConstrainingType_handles_overloads_reasonably_well3()
+	{
+		var abstractBaseMethods = typeof(InheritedAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomethingElse1FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingElse1));
+		doSomethingElse1FromAbstractBase.GetMethodBody().Should().BeNull();
 
-		[TestMethod]
-		public void FindMethodOnConstrainingType_handles_overloads_reasonably_well3()
-		{
-			var abstractBaseMethods = typeof(InheritedAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomethingElse1FromAbstractBase = abstractBaseMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingElse1));
-			doSomethingElse1FromAbstractBase.GetMethodBody().Should().BeNull();
+		var childMethods = typeof(ChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomethingElse1FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingElse1));
+		doSomethingElse1FromChild.GetMethodBody().Should().NotBeNull();
 
-			var childMethods = typeof(ChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomethingElse1FromChild = childMethods.Single(method => method.Name == nameof(InheritedAbstractClass.DoSomethingElse1));
-			doSomethingElse1FromChild.GetMethodBody().Should().NotBeNull();
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomethingElse1FromAbstractBase).Should().BeSameAs(doSomethingElse1FromChild);
 
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(ChildOfAbstractClass), doSomethingElse1FromAbstractBase).Should().BeSameAs(doSomethingElse1FromChild);
+		var grandChildMethods = typeof(GrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomethingElse1FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(ChildOfAbstractClass));
+		doSomethingElse1FromGrandChild.GetMethodBody().Should().NotBeNull();
 
-			var grandChildMethods = typeof(GrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomethingElse1FromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(ChildOfAbstractClass));
-			doSomethingElse1FromGrandChild.GetMethodBody().Should().NotBeNull();
-
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomethingElse1FromAbstractBase).Should().BeSameAs(doSomethingElse1FromGrandChild);
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(GrandChildOfAbstractClass), doSomethingElse1FromAbstractBase).Should().BeSameAs(doSomethingElse1FromGrandChild);
 
 
-			var doSomethingElseThatHidesOtherMethodFromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(GrandChildOfAbstractClass));
-			doSomethingElseThatHidesOtherMethodFromGrandChild.GetMethodBody().Should().NotBeNull();
+		var doSomethingElseThatHidesOtherMethodFromGrandChild = grandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1) && method.DeclaringType == typeof(GrandChildOfAbstractClass));
+		doSomethingElseThatHidesOtherMethodFromGrandChild.GetMethodBody().Should().NotBeNull();
 
-			var greatGrandChildMethods = typeof(GreatGrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-			var doSomethingElseThatHidesOtherMethodFromGreatGrandChild = greatGrandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
-			doSomethingElseThatHidesOtherMethodFromGreatGrandChild.GetMethodBody().Should().NotBeNull();
+		var greatGrandChildMethods = typeof(GreatGrandChildOfAbstractClass).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+		var doSomethingElseThatHidesOtherMethodFromGreatGrandChild = greatGrandChildMethods.Single(method => method.Name == nameof(IInheritedExampleType.DoSomethingElse1));
+		doSomethingElseThatHidesOtherMethodFromGreatGrandChild.GetMethodBody().Should().NotBeNull();
 
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(GreatGrandChildOfAbstractClass), doSomethingElseThatHidesOtherMethodFromGrandChild).Should().BeSameAs(doSomethingElseThatHidesOtherMethodFromGreatGrandChild);
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(GreatGrandChildOfAbstractClass), doSomethingElseThatHidesOtherMethodFromGrandChild).Should().BeSameAs(doSomethingElseThatHidesOtherMethodFromGreatGrandChild);
 
-			// As the test says, it handles it 'reasonably' well... for hiding via the new keyword we don't bother looking back at the base types so the hidden value would be found in this case
-			MethodBodyParser.FindMethodOnConstrainingType(typeof(GreatGrandChildOfAbstractClass), doSomethingElse1FromAbstractBase).Should().BeSameAs(doSomethingElseThatHidesOtherMethodFromGreatGrandChild);
-		}
+		// As the test says, it handles it 'reasonably' well... for hiding via the new keyword we don't bother looking back at the base types so the hidden value would be found in this case
+		MethodBodyParser.FindMethodOnConstrainingType(typeof(GreatGrandChildOfAbstractClass), doSomethingElse1FromAbstractBase).Should().BeSameAs(doSomethingElseThatHidesOtherMethodFromGreatGrandChild);
+	}
 
-		[TestMethod]
-		public void ParseInstructions_handles_instance_method_parameters_correctly()
-		{
-			var testMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.InstanceMethodWithLotsOfParameters), BindingFlags.Public | BindingFlags.Instance);
-			testMethodInfo.Should().NotBeNull();
+	[TestMethod]
+	public void ParseInstructions_handles_instance_method_parameters_correctly()
+	{
+		var testMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.InstanceMethodWithLotsOfParameters), BindingFlags.Public | BindingFlags.Instance);
+		testMethodInfo.Should().NotBeNull();
 
-			var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
+		var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
 #if IS_RELEASE_TESTING_BUILD
-			instructions.Count.Should().Be(23);
+		instructions.Count.Should().Be(23);
 #else
 			instructions.Count.Should().Be(29);
 #endif
 
-			var thisKeywordInstruction = instructions.FirstOrDefault(instruction => instruction is ThisKeywordInstruction) as ThisKeywordInstruction;
-			thisKeywordInstruction.Should().NotBeNull();
-			thisKeywordInstruction!.Method.Should().Be(testMethodInfo);
+		var thisKeywordInstruction = instructions.FirstOrDefault(instruction => instruction is ThisKeywordInstruction) as ThisKeywordInstruction;
+		thisKeywordInstruction.Should().NotBeNull();
+		thisKeywordInstruction!.Method.Should().Be(testMethodInfo);
 
-			var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+		var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);
 #if IS_RELEASE_TESTING_BUILD
-			description.Should().Be(
+		description.Should().Be(
 @"(0) LOAD ARGUMENT (Index 0)  [this keyword]
 (1) CALL METHOD  [ExampleMethods.get_LocalIntegerProperty]
 (2) LOAD ARGUMENT (Index 1)  [Parameter #0]  [ParameterReference: System.Int32 value1]
@@ -368,25 +368,25 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 (27) LOAD LOCAL VARIABLE (Index 1)  [Of type Int32]
 (28) RETURN");
 #endif
-		}
+	}
 
-		[TestMethod]
-		public void ParseInstructions_handles_static_method_parameters_correctly()
-		{
-			var testMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.StaticMethodWithLotsOfParameters), BindingFlags.Public | BindingFlags.Static);
-			testMethodInfo.Should().NotBeNull();
+	[TestMethod]
+	public void ParseInstructions_handles_static_method_parameters_correctly()
+	{
+		var testMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.StaticMethodWithLotsOfParameters), BindingFlags.Public | BindingFlags.Static);
+		testMethodInfo.Should().NotBeNull();
 
-			var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
+		var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
 #if IS_RELEASE_TESTING_BUILD
-			instructions.Count.Should().Be(20);
+		instructions.Count.Should().Be(20);
 #else
 			instructions.Count.Should().Be(26);
 #endif
 
-			var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+		var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);
 
 #if IS_RELEASE_TESTING_BUILD
-			description.Should().Be(
+		description.Should().Be(
 @"(0) LOAD ARGUMENT (Index 0)  [Parameter #0]  [ParameterReference: System.Int32 value1]
 (1) LOAD ARGUMENT (Index 1)  [Parameter #1]  [ParameterReference: System.Int32 value2]
 (2) ADD
@@ -436,102 +436,102 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 (24) LOAD LOCAL VARIABLE (Index 1)  [Of type Int32]
 (25) RETURN");
 #endif
-		}
+	}
 
-		[TestMethod]
-		public void ParseInstructions_returns_the_expected_result1()
-		{
-			var methodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddLocalVariables_For_5_And_15), BindingFlags.Public | BindingFlags.Static);
-			methodInfo.Should().NotBeNull();
+	[TestMethod]
+	public void ParseInstructions_returns_the_expected_result1()
+	{
+		var methodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddLocalVariables_For_5_And_15), BindingFlags.Public | BindingFlags.Static);
+		methodInfo.Should().NotBeNull();
 
-			var instructions = new MethodBodyParser(methodInfo!).ParseInstructions();
+		var instructions = new MethodBodyParser(methodInfo!).ParseInstructions();
 #if IS_RELEASE_TESTING_BUILD
-			instructions.Count.Should().Be(6);
+		instructions.Count.Should().Be(6);
 #else
 			instructions.Count.Should().Be(12);
 #endif
 
-			//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
-			//results.Should().NotBeNullOrEmpty();
-		}
+		//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
+		//results.Should().NotBeNullOrEmpty();
+	}
 
-		[TestMethod]
-		public void ParseInstructions_returns_the_expected_result2()
-		{
-			var nullCheckMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.NullParameterCheck_Type1), BindingFlags.Public | BindingFlags.Static);
-			nullCheckMethodInfo.Should().NotBeNull();
+	[TestMethod]
+	public void ParseInstructions_returns_the_expected_result2()
+	{
+		var nullCheckMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.NullParameterCheck_Type1), BindingFlags.Public | BindingFlags.Static);
+		nullCheckMethodInfo.Should().NotBeNull();
 
-			var instructions = new MethodBodyParser(nullCheckMethodInfo!).ParseInstructions();
+		var instructions = new MethodBodyParser(nullCheckMethodInfo!).ParseInstructions();
 #if IS_RELEASE_TESTING_BUILD
-			instructions.Count.Should().Be(7);
+		instructions.Count.Should().Be(7);
 #else
 			instructions.Count.Should().Be(15);
 #endif
 
-			//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
-			//results.Should().NotBeNullOrEmpty();
-		}
+		//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
+		//results.Should().NotBeNullOrEmpty();
+	}
 
-		[TestMethod]
-		public void ParseInstructions_returns_the_expected_result3()
-		{
-			var nullCheckMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.NullParameterCheck_Type2), BindingFlags.Public | BindingFlags.Static);
-			nullCheckMethodInfo.Should().NotBeNull();
+	[TestMethod]
+	public void ParseInstructions_returns_the_expected_result3()
+	{
+		var nullCheckMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.NullParameterCheck_Type2), BindingFlags.Public | BindingFlags.Static);
+		nullCheckMethodInfo.Should().NotBeNull();
 
-			var instructions = new MethodBodyParser(nullCheckMethodInfo!).ParseInstructions();
+		var instructions = new MethodBodyParser(nullCheckMethodInfo!).ParseInstructions();
 #if IS_RELEASE_TESTING_BUILD
-			instructions.Count.Should().Be(7);
+		instructions.Count.Should().Be(7);
 #else
 			instructions.Count.Should().Be(11);
 #endif
 
-			//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
-			//results.Should().NotBeNullOrEmpty();
+		//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
+		//results.Should().NotBeNullOrEmpty();
+	}
+
+	[TestMethod]
+	public void ParseInstructions_returns_the_expected_result4()
+	{
+		var testMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.MethodWithEachTypeOfInstruction), BindingFlags.Public | BindingFlags.Instance);
+		testMethodInfo.Should().NotBeNull();
+
+		var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
+		var instructionsDescription = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+
+		var instructionTypes = new HashSet<Type>();
+		foreach (var instruction in instructions)
+		{
+			instructionTypes.Add(instruction.GetType());
 		}
 
-		[TestMethod]
-		public void ParseInstructions_returns_the_expected_result4()
+		// Release/optimized build will have different IL causing our test expectations will fail
+		var debuggableAttribute = typeof(ExampleMethods).Assembly.GetCustomAttribute<System.Diagnostics.DebuggableAttribute>();
+		var assemblyIsDebugBuildWithoutOptimizations = debuggableAttribute?.IsJITOptimizerDisabled == true;
+
+
+		if (assemblyIsDebugBuildWithoutOptimizations)
 		{
-			var testMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.MethodWithEachTypeOfInstruction), BindingFlags.Public | BindingFlags.Instance);
-			testMethodInfo.Should().NotBeNull();
+			instructionTypes.Should().Contain(typeof(BranchTargetInstruction));
+			//instructionTypes.Should().Contain(typeof(ByteInstruction));
+			instructionTypes.Should().Contain(typeof(DoubleInstruction));
+			instructionTypes.Should().Contain(typeof(FieldReferenceInstruction));
+			instructionTypes.Should().Contain(typeof(FloatInstruction));
+			instructionTypes.Should().Contain(typeof(Int32Instruction));
+			instructionTypes.Should().Contain(typeof(Int64Instruction));
+			instructionTypes.Should().Contain(typeof(LocalVariableInstruction));
+			instructionTypes.Should().Contain(typeof(MethodReferenceInstruction));
+			instructionTypes.Should().Contain(typeof(ParameterReferenceInstruction));
+			//instructionTypes.Should().Contain(typeof(SignatureInstruction));
+			instructionTypes.Should().Contain(typeof(SignedByteInstruction));
+			instructionTypes.Should().Contain(typeof(SimpleInstruction));
+			instructionTypes.Should().Contain(typeof(StringInstruction));
+			//instructionTypes.Should().Contain(typeof(SwitchInstruction));
+			instructionTypes.Should().Contain(typeof(ThisKeywordInstruction));
+			instructionTypes.Should().Contain(typeof(TypeReferenceInstruction));
 
-			var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
-			var instructionsDescription = new DefaultInstructionFormatter().DescribeInstructions(instructions);
-
-			var instructionTypes = new HashSet<Type>();
-			foreach (var instruction in instructions)
-			{
-				instructionTypes.Add(instruction.GetType());
-			}
-
-			// Release/optimized build will have different IL causing our test expectations will fail
-			var debuggableAttribute = typeof(ExampleMethods).Assembly.GetCustomAttribute<System.Diagnostics.DebuggableAttribute>();
-			var assemblyIsDebugBuildWithoutOptimizations = debuggableAttribute?.IsJITOptimizerDisabled == true;
-
-
-			if (assemblyIsDebugBuildWithoutOptimizations)
-			{
-				instructionTypes.Should().Contain(typeof(BranchTargetInstruction));
-				//instructionTypes.Should().Contain(typeof(ByteInstruction));
-				instructionTypes.Should().Contain(typeof(DoubleInstruction));
-				instructionTypes.Should().Contain(typeof(FieldReferenceInstruction));
-				instructionTypes.Should().Contain(typeof(FloatInstruction));
-				instructionTypes.Should().Contain(typeof(Int32Instruction));
-				instructionTypes.Should().Contain(typeof(Int64Instruction));
-				instructionTypes.Should().Contain(typeof(LocalVariableInstruction));
-				instructionTypes.Should().Contain(typeof(MethodReferenceInstruction));
-				instructionTypes.Should().Contain(typeof(ParameterReferenceInstruction));
-				//instructionTypes.Should().Contain(typeof(SignatureInstruction));
-				instructionTypes.Should().Contain(typeof(SignedByteInstruction));
-				instructionTypes.Should().Contain(typeof(SimpleInstruction));
-				instructionTypes.Should().Contain(typeof(StringInstruction));
-				//instructionTypes.Should().Contain(typeof(SwitchInstruction));
-				instructionTypes.Should().Contain(typeof(ThisKeywordInstruction));
-				instructionTypes.Should().Contain(typeof(TypeReferenceInstruction));
-
-				// DEBUG (Non Optimizied) Build
-				instructions.Count.Should().Be(320);
-				instructionsDescription.Should().Be(
+			// DEBUG (Non Optimizied) Build
+			instructions.Count.Should().Be(320);
+			instructionsDescription.Should().Be(
 @"(0) NO-OP
 (1) LOAD INT LITERAL (5)
 (2) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
@@ -852,29 +852,29 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 (317) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 318]
 (318) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type String]
 (319) RETURN");
-			}
-			else
-			{
-				instructionTypes.Should().Contain(typeof(BranchTargetInstruction));
-				//instructionTypes.Should().Contain(typeof(ByteInstruction));
-				instructionTypes.Should().Contain(typeof(DoubleInstruction));
-				instructionTypes.Should().Contain(typeof(FieldReferenceInstruction));
-				instructionTypes.Should().Contain(typeof(FloatInstruction));
-				instructionTypes.Should().Contain(typeof(Int32Instruction));
-				instructionTypes.Should().Contain(typeof(Int64Instruction));
-				instructionTypes.Should().Contain(typeof(LocalVariableInstruction));
-				instructionTypes.Should().Contain(typeof(MethodReferenceInstruction));
-				instructionTypes.Should().Contain(typeof(ParameterReferenceInstruction));
-				//instructionTypes.Should().Contain(typeof(SignatureInstruction));
-				instructionTypes.Should().Contain(typeof(SimpleInstruction));
-				instructionTypes.Should().Contain(typeof(StringInstruction));
-				//instructionTypes.Should().Contain(typeof(SwitchInstruction));
-				instructionTypes.Should().Contain(typeof(ThisKeywordInstruction));
-				instructionTypes.Should().Contain(typeof(TypeReferenceInstruction));
+		}
+		else
+		{
+			instructionTypes.Should().Contain(typeof(BranchTargetInstruction));
+			//instructionTypes.Should().Contain(typeof(ByteInstruction));
+			instructionTypes.Should().Contain(typeof(DoubleInstruction));
+			instructionTypes.Should().Contain(typeof(FieldReferenceInstruction));
+			instructionTypes.Should().Contain(typeof(FloatInstruction));
+			instructionTypes.Should().Contain(typeof(Int32Instruction));
+			instructionTypes.Should().Contain(typeof(Int64Instruction));
+			instructionTypes.Should().Contain(typeof(LocalVariableInstruction));
+			instructionTypes.Should().Contain(typeof(MethodReferenceInstruction));
+			instructionTypes.Should().Contain(typeof(ParameterReferenceInstruction));
+			//instructionTypes.Should().Contain(typeof(SignatureInstruction));
+			instructionTypes.Should().Contain(typeof(SimpleInstruction));
+			instructionTypes.Should().Contain(typeof(StringInstruction));
+			//instructionTypes.Should().Contain(typeof(SwitchInstruction));
+			instructionTypes.Should().Contain(typeof(ThisKeywordInstruction));
+			instructionTypes.Should().Contain(typeof(TypeReferenceInstruction));
 
-				// RELEASE (Optimizied) Build
-				instructions.Count.Should().Be(292);
-				instructionsDescription.Should().Be(
+			// RELEASE (Optimizied) Build
+			instructions.Count.Should().Be(292);
+			instructionsDescription.Should().Be(
 @"(0) LOAD INT LITERAL (5)
 (1) LOAD INT VALUE (Int8)  [SByte Value: 12]
 (2) SET LOCAL VARIABLE (Index 0)  [Of type Byte]
@@ -1167,26 +1167,26 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 (289) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
 (290) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
 (291) RETURN");
-			}
 		}
+	}
 
-		[TestMethod]
-		public void ParseInstructions_returns_the_expected_result5()
-		{
-			var testMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.MethodWithGotoLabels), BindingFlags.Public | BindingFlags.Instance);
-			testMethodInfo.Should().NotBeNull();
+	[TestMethod]
+	public void ParseInstructions_returns_the_expected_result5()
+	{
+		var testMethodInfo = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.MethodWithGotoLabels), BindingFlags.Public | BindingFlags.Instance);
+		testMethodInfo.Should().NotBeNull();
 
-			var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
+		var instructions = new MethodBodyParser(testMethodInfo!).ParseInstructions();
 #if IS_RELEASE_TESTING_BUILD
-			instructions.Count.Should().Be(26);
+		instructions.Count.Should().Be(26);
 #else
 			instructions.Count.Should().Be(46);
 #endif
 
-			var instructionDescription = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+		var instructionDescription = new DefaultInstructionFormatter().DescribeInstructions(instructions);
 
 #if IS_RELEASE_TESTING_BUILD
-			instructionDescription.Should().Be(
+		instructionDescription.Should().Be(
 @"(0) LOAD INT LITERAL (0)
 (1) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
 (2) LOAD STRING  [String Value: First Label]
@@ -1263,17 +1263,17 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 (44) NO-OP
 (45) RETURN");
 #endif
-		}
+	}
 
-		[TestMethod]
-		public void ParseInstructions_returns_the_expected_result6()
-		{
-			_dynamicJumpTableMethod.Should().NotBeNull();
-			var instructions = new MethodBodyParser(_dynamicJumpTableMethod).ParseInstructions();
-			instructions.Count.Should().Be(15);
+	[TestMethod]
+	public void ParseInstructions_returns_the_expected_result6()
+	{
+		_dynamicJumpTableMethod.Should().NotBeNull();
+		var instructions = new MethodBodyParser(_dynamicJumpTableMethod).ParseInstructions();
+		instructions.Count.Should().Be(15);
 
-			var instructionsDescription = new DefaultInstructionFormatter().DescribeInstructions(instructions);
-			instructionsDescription.Should().Be(
+		var instructionsDescription = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+		instructionsDescription.Should().Be(
 @"(0) LOAD ARGUMENT (Index 0)  [Parameter #0]  [ParameterReference: System.Int32 ]
 (1) SWITCH  [TargetInstructions: 3, 5, 7, 9, 11]  [TargetOffsets: 28, 35, 42, 49, 56]
 (2) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 13]
@@ -1289,74 +1289,73 @@ namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
 (12) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 14]
 (13) LOAD STRING  [String Value: are many bananas]
 (14) RETURN");
-		}
+	}
 
-		[TestMethod]
-		public void ParseInstructions_returns_the_expected_result7()
-		{
-			var methodToParse = typeof(NativeInteropExampleMethods).GetMethod(nameof(NativeInteropExampleMethods.MethodThatUsesNativeInteropCall), BindingFlags.Public | BindingFlags.Static);
-			methodToParse.Should().NotBeNull();
+	[TestMethod]
+	public void ParseInstructions_returns_the_expected_result7()
+	{
+		var methodToParse = typeof(NativeInteropExampleMethods).GetMethod(nameof(NativeInteropExampleMethods.MethodThatUsesNativeInteropCall), BindingFlags.Public | BindingFlags.Static);
+		methodToParse.Should().NotBeNull();
 
-			var instructions = new MethodBodyParser(methodToParse!).ParseInstructions();
+		var instructions = new MethodBodyParser(methodToParse!).ParseInstructions();
 #if IS_RELEASE_TESTING_BUILD
-			instructions.Count.Should().Be(19);
+		instructions.Count.Should().Be(19);
 #else
 			instructions.Count.Should().Be(23);
 #endif
-		}
+	}
 
-		[TestMethod]
-		public void ParseInstructions_returns_the_expected_result8()
-		{
-			var methodToParse = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues_Of_7_And_14_Using_Delegate_Function), BindingFlags.Public | BindingFlags.Static);
-			methodToParse.Should().NotBeNull();
+	[TestMethod]
+	public void ParseInstructions_returns_the_expected_result8()
+	{
+		var methodToParse = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddTwoValues_Of_7_And_14_Using_Delegate_Function), BindingFlags.Public | BindingFlags.Static);
+		methodToParse.Should().NotBeNull();
 
-			var instructions = new MethodBodyParser(methodToParse!).ParseInstructions();
+		var instructions = new MethodBodyParser(methodToParse!).ParseInstructions();
 #if IS_RELEASE_TESTING_BUILD
-			instructions.Count.Should().Be(7);
+		instructions.Count.Should().Be(7);
 #else
 			instructions.Count.Should().Be(13);
 #endif
-		}
+	}
 
-		[TestMethod]
-		public void ParseInstructions_returns_the_expected_result9()
-		{
-			var dynamicType = DynamicTypeBuilder.BuildTypeWithInlineSignatureMethod();
-			var dynamicMethod = dynamicType!.GetMethod("InlineSignatureMethod", BindingFlags.Public | BindingFlags.Static);
+	[TestMethod]
+	public void ParseInstructions_returns_the_expected_result9()
+	{
+		var dynamicType = DynamicTypeBuilder.BuildTypeWithInlineSignatureMethod();
+		var dynamicMethod = dynamicType!.GetMethod("InlineSignatureMethod", BindingFlags.Public | BindingFlags.Static);
 
-			var instructions = new MethodBodyParser(dynamicMethod!).ParseInstructions();
-			instructions.Count.Should().Be(2);
-			instructions.Any(instruction => instruction is SignatureInstruction).Should().BeTrue();
-		}
+		var instructions = new MethodBodyParser(dynamicMethod!).ParseInstructions();
+		instructions.Count.Should().Be(2);
+		instructions.Any(instruction => instruction is SignatureInstruction).Should().BeTrue();
+	}
 
-		[TestMethod]
-		public void ParseInstructions_returns_the_expected_result_with_for_loop_and_continue_statement()
-		{
-			var methodToTest = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.MethodWithForLoopAndContinueStatement), BindingFlags.Public | BindingFlags.Static);
+	[TestMethod]
+	public void ParseInstructions_returns_the_expected_result_with_for_loop_and_continue_statement()
+	{
+		var methodToTest = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.MethodWithForLoopAndContinueStatement), BindingFlags.Public | BindingFlags.Static);
 
-			var instructions = new MethodBodyParser(methodToTest!).ParseInstructions();
+		var instructions = new MethodBodyParser(methodToTest!).ParseInstructions();
 #if IS_RELEASE_TESTING_BUILD
-			instructions.Count.Should().Be(95);
+		instructions.Count.Should().Be(95);
 #else
 			instructions.Count.Should().Be(119);
 #endif
 
-			//var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);
-		}
+		//var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);
+	}
 
 
 
-		/******     TEST SETUP     *****************************
-		 *******************************************************/
-		private static Type _dynamicTypeWithJumpTableMethod = null!; // Nullability hacks, InitializeTestClass will always set these
-		private static MethodInfo _dynamicJumpTableMethod = null!;
+	/******     TEST SETUP     *****************************
+	 *******************************************************/
+	private static Type _dynamicTypeWithJumpTableMethod = null!; // Nullability hacks, InitializeTestClass will always set these
+	private static MethodInfo _dynamicJumpTableMethod = null!;
 
-		[ClassInitialize]
-		public static void InitializeTestClass(TestContext testContext)
-		{
-			_dynamicTypeWithJumpTableMethod = DynamicTypeBuilder.BuildTypeWithJumpTableMethod()!;
-			_dynamicJumpTableMethod = _dynamicTypeWithJumpTableMethod!.GetMethod("JumpTableMethod", BindingFlags.Public | BindingFlags.Static)!;
-		}
+	[ClassInitialize]
+	public static void InitializeTestClass(TestContext testContext)
+	{
+		_dynamicTypeWithJumpTableMethod = DynamicTypeBuilder.BuildTypeWithJumpTableMethod()!;
+		_dynamicJumpTableMethod = _dynamicTypeWithJumpTableMethod!.GetMethod("JumpTableMethod", BindingFlags.Public | BindingFlags.Static)!;
 	}
 }

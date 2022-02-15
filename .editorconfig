@@ -241,6 +241,9 @@ dotnet_diagnostic.IDE0090.severity                          = refactoring
 # Rule (IDE0130)    - Namespace does not match folder structure     - Reason: Not required and analyzer is broken
 dotnet_diagnostic.IDE0130.severity                      = refactoring
 
+# File Scoped Namespaces    -   Much Better Than Block Scoped. Reduced Nesting.
+csharp_style_namespace_declarations     = file_scoped:error
+
 
 
 

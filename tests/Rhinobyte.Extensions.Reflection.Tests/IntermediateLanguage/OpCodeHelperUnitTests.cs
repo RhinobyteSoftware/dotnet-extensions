@@ -7,102 +7,101 @@ using System.Linq;
 using System.Reflection.Emit;
 using static FluentAssertions.FluentActions;
 
-namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage
+namespace Rhinobyte.Extensions.Reflection.Tests.IntermediateLanguage;
+
+[TestClass]
+public class OpCodeHelperUnitTests
 {
-	[TestClass]
-	public class OpCodeHelperUnitTests
+	[TestMethod]
+	public void GetOperandSize_should_throw_for_unknown_operand_type_values()
 	{
-		[TestMethod]
-		public void GetOperandSize_should_throw_for_unknown_operand_type_values()
-		{
-			Invoking(() => OpCodeHelper.GetOperandSize((OperandType)250))
-				.Should()
-				.Throw<System.NotSupportedException>()
-				.WithMessage("OpCodeHelper.GetOperandSize(..) is not supported for an OperandType value of 250");
-		}
+		Invoking(() => OpCodeHelper.GetOperandSize((OperandType)250))
+			.Should()
+			.Throw<System.NotSupportedException>()
+			.WithMessage("OpCodeHelper.GetOperandSize(..) is not supported for an OperandType value of 250");
+	}
 
-		[TestMethod]
-		public void LocalVariableOpcodeValues_should_match_the_values_found_using_reflection()
+	[TestMethod]
+	public void LocalVariableOpcodeValues_should_match_the_values_found_using_reflection()
+	{
+		var variableOpcodes = new List<OpCode>();
+		foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
 		{
-			var variableOpcodes = new List<OpCode>();
-			foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
+			var opcode = (OpCode)opcodeField.GetValue(null)!;
+			if (opcode.OperandType == OperandType.InlineVar || opcode.OperandType == OperandType.ShortInlineVar)
 			{
-				var opcode = (OpCode)opcodeField.GetValue(null)!;
-				if (opcode.OperandType == OperandType.InlineVar || opcode.OperandType == OperandType.ShortInlineVar)
-				{
-					variableOpcodes.Add(opcode);
-				}
-			}
-
-			var localVariableOpcodes = variableOpcodes.Where(opcode => opcode.Name?.Contains("loc") == true).Select(opcode => opcode.Value).ToArray();
-
-			OpCodeHelper.LocalVariableOpcodeValues.Should().BeEquivalentTo(localVariableOpcodes);
-		}
-
-		[TestMethod]
-		public void LongDescriptionLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
-		{
-			foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
-			{
-				var opcode = (OpCode)opcodeField.GetValue(null)!;
-				OpCodeHelper.LongDescriptionLookup.ContainsKey(opcode.Value).Should().BeTrue();
+				variableOpcodes.Add(opcode);
 			}
 		}
 
-		[TestMethod]
-		public void NameLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
+		var localVariableOpcodes = variableOpcodes.Where(opcode => opcode.Name?.Contains("loc") == true).Select(opcode => opcode.Value).ToArray();
+
+		OpCodeHelper.LocalVariableOpcodeValues.Should().BeEquivalentTo(localVariableOpcodes);
+	}
+
+	[TestMethod]
+	public void LongDescriptionLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
+	{
+		foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
 		{
-			foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
+			var opcode = (OpCode)opcodeField.GetValue(null)!;
+			OpCodeHelper.LongDescriptionLookup.ContainsKey(opcode.Value).Should().BeTrue();
+		}
+	}
+
+	[TestMethod]
+	public void NameLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
+	{
+		foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
+		{
+			var opcode = (OpCode)opcodeField.GetValue(null)!;
+			OpCodeHelper.NameLookup[opcode.Value].Should().Be(opcodeField.Name);
+		}
+	}
+
+	[TestMethod]
+	public void ShortDescriptionLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
+	{
+		foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
+		{
+			var opcode = (OpCode)opcodeField.GetValue(null)!;
+			OpCodeHelper.ShortDescriptionLookup.ContainsKey(opcode.Value).Should().BeTrue();
+		}
+	}
+
+	[TestMethod]
+	public void SingleByteOpCodeLookup_should_match_the_values_found_using_reflection()
+	{
+		// Build the array of single byte opcodes using reflection
+		var singleByteOpcodes = new OpCode[256];
+		foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
+		{
+			var opcode = (OpCode)opcodeField.GetValue(null)!;
+			if (opcode.Size == 1)
 			{
-				var opcode = (OpCode)opcodeField.GetValue(null)!;
-				OpCodeHelper.NameLookup[opcode.Value].Should().Be(opcodeField.Name);
+				singleByteOpcodes[opcode.Value] = opcode;
 			}
 		}
 
-		[TestMethod]
-		public void ShortDescriptionLookup_should_contain_entries_for_all_of_the_opcodes_found_using_reflection()
-		{
-			foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
-			{
-				var opcode = (OpCode)opcodeField.GetValue(null)!;
-				OpCodeHelper.ShortDescriptionLookup.ContainsKey(opcode.Value).Should().BeTrue();
-			}
-		}
+		OpCodeHelper.SingleByteOpCodeLookup.Should().BeEquivalentTo(singleByteOpcodes);
+	}
 
-		[TestMethod]
-		public void SingleByteOpCodeLookup_should_match_the_values_found_using_reflection()
+	[TestMethod]
+	public void TwoByteOpCodeLookup_should_match_the_values_found_using_reflection()
+	{
+		// Build the array of two byte opcodes using reflection
+		var twoByteOpcodes = new OpCode[31];
+		foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
 		{
-			// Build the array of single byte opcodes using reflection
-			var singleByteOpcodes = new OpCode[256];
-			foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
+			var opcode = (OpCode)opcodeField.GetValue(null)!;
+			if (opcode.Size == 1)
 			{
-				var opcode = (OpCode)opcodeField.GetValue(null)!;
-				if (opcode.Size == 1)
-				{
-					singleByteOpcodes[opcode.Value] = opcode;
-				}
+				continue;
 			}
 
-			OpCodeHelper.SingleByteOpCodeLookup.Should().BeEquivalentTo(singleByteOpcodes);
+			twoByteOpcodes[opcode.Value & 0xff] = opcode;
 		}
 
-		[TestMethod]
-		public void TwoByteOpCodeLookup_should_match_the_values_found_using_reflection()
-		{
-			// Build the array of two byte opcodes using reflection
-			var twoByteOpcodes = new OpCode[31];
-			foreach (var opcodeField in OpCodeTestHelper.OpcodeStaticFields)
-			{
-				var opcode = (OpCode)opcodeField.GetValue(null)!;
-				if (opcode.Size == 1)
-				{
-					continue;
-				}
-
-				twoByteOpcodes[opcode.Value & 0xff] = opcode;
-			}
-
-			OpCodeHelper.TwoByteOpCodeLookup.Should().BeEquivalentTo(twoByteOpcodes);
-		}
+		OpCodeHelper.TwoByteOpCodeLookup.Should().BeEquivalentTo(twoByteOpcodes);
 	}
 }

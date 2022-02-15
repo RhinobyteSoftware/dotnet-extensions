@@ -1,6 +1,5 @@
-﻿namespace ExampleLibrary1
+﻿namespace ExampleLibrary1;
+
+public abstract class AbstractSomething
 {
-	public abstract class AbstractSomething
-	{
-	}
 }

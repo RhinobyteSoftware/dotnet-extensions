@@ -2,9 +2,8 @@
 
 [assembly: Parallelize(Workers = 0, Scope = ExecutionScope.ClassLevel)]
 
-namespace Rhinobyte.Extensions.DependencyInjection.Tests
+namespace Rhinobyte.Extensions.DependencyInjection.Tests;
+
+public class TestAssemblySettings
 {
-	public class TestAssemblySettings
-	{
-	}
 }

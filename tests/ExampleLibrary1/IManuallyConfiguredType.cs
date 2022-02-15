@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace ExampleLibrary1
-{
-	public interface IManuallyConfiguredType
-	{
-	}
+namespace ExampleLibrary1;
 
-	public class ManuallyConfiguredType : IManuallyConfiguredType
-	{
-		public ManuallyConfiguredType(Uri someUri) { }
-	}
+public interface IManuallyConfiguredType
+{
+}
+
+public class ManuallyConfiguredType : IManuallyConfiguredType
+{
+	public ManuallyConfiguredType(Uri someUri) { }
 }

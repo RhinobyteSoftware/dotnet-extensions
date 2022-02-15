@@ -5,80 +5,79 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Rhinobyte.Extensions.TestTools.Tests
+namespace Rhinobyte.Extensions.TestTools.Tests;
+
+[TestClass]
+public class ProjectStructureTests
 {
-	[TestClass]
-	public class ProjectStructureTests
+	[TestMethod]
+	public void Library_types_all_match_one_of_the_valid_namespaces()
 	{
-		[TestMethod]
-		public void Library_types_all_match_one_of_the_valid_namespaces()
+		// Even though I divide the files into subfolder for slightly easier organization I want them all to use the same Rhinobyte.Extensions.DependencyInjection
+		// root namespace. Verify that I didn't forget to adjust it if I add new types to one of the subfolders.
+		var libraryTypes = typeof(Rhinobyte.Extensions.TestTools.NotATestMethodAttribute).Assembly.GetTypes();
+		var validNamespaces = new[]
 		{
-			// Even though I divide the files into subfolder for slightly easier organization I want them all to use the same Rhinobyte.Extensions.DependencyInjection
-			// root namespace. Verify that I didn't forget to adjust it if I add new types to one of the subfolders.
-			var libraryTypes = typeof(Rhinobyte.Extensions.TestTools.NotATestMethodAttribute).Assembly.GetTypes();
-			var validNamespaces = new[]
-			{
 				"Rhinobyte.Extensions.TestTools",
 				"Rhinobyte.Extensions.TestTools.Assertions",
 			};
 
-			var invalidTypes = new List<string>();
-			foreach (var libraryType in libraryTypes)
-			{
-				if (libraryType.IsCompilerGenerated())
-					continue;
-
-
-				var fullTypeName = libraryType?.FullName;
-				if (fullTypeName is null)
-					continue;
-
-				var lastDotIndex = fullTypeName.LastIndexOf('.');
-				if (lastDotIndex == -1)
-					continue;
-
-				var typeNamespace = fullTypeName.Substring(0, lastDotIndex);
-
-				if (!validNamespaces.Contains(typeNamespace) && typeNamespace?.StartsWith("Coverlet.Core.Instrumentation") != true)
-					invalidTypes.Add(fullTypeName);
-			}
-
-			if (invalidTypes.Count > 0)
-				throw new AssertFailedException($"The following types have an incorrect namespace:{Environment.NewLine}{Environment.NewLine}{string.Join(Environment.NewLine, invalidTypes)}");
-		}
-
-		[TestMethod]
-		public void TestMethods_are_not_missing_the_TestMethod_attribute()
+		var invalidTypes = new List<string>();
+		foreach (var libraryType in libraryTypes)
 		{
-			var discoveredTestTypes = typeof(ProjectStructureTests).Assembly.GetTypes();
+			if (libraryType.IsCompilerGenerated())
+				continue;
 
-			var missingTestMethodAttributes = new List<string>();
-			foreach (var testType in discoveredTestTypes)
+
+			var fullTypeName = libraryType?.FullName;
+			if (fullTypeName is null)
+				continue;
+
+			var lastDotIndex = fullTypeName.LastIndexOf('.');
+			if (lastDotIndex == -1)
+				continue;
+
+			var typeNamespace = fullTypeName.Substring(0, lastDotIndex);
+
+			if (!validNamespaces.Contains(typeNamespace) && typeNamespace?.StartsWith("Coverlet.Core.Instrumentation") != true)
+				invalidTypes.Add(fullTypeName);
+		}
+
+		if (invalidTypes.Count > 0)
+			throw new AssertFailedException($"The following types have an incorrect namespace:{Environment.NewLine}{Environment.NewLine}{string.Join(Environment.NewLine, invalidTypes)}");
+	}
+
+	[TestMethod]
+	public void TestMethods_are_not_missing_the_TestMethod_attribute()
+	{
+		var discoveredTestTypes = typeof(ProjectStructureTests).Assembly.GetTypes();
+
+		var missingTestMethodAttributes = new List<string>();
+		foreach (var testType in discoveredTestTypes)
+		{
+			if (testType.IsCompilerGenerated() || !testType.IsDefined(typeof(TestClassAttribute), false))
+				continue;
+
+			var testMethods = testType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+			foreach (var testMethod in testMethods)
 			{
-				if (testType.IsCompilerGenerated() || !testType.IsDefined(typeof(TestClassAttribute), false))
+				if (testMethod.IsDefined(typeof(TestMethodAttribute), true)
+					|| testMethod.IsDefined(typeof(NotATestMethodAttribute), false)
+					|| testMethod.IsDefined(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false))
+				{
+					continue;
+				}
+
+				// Ignore expression bodied/get only property methods like
+				// public CancellationToken CancellationTokenForTest => ...
+				if (testMethod.IsSpecialName && testMethod.Name.StartsWith("get_", StringComparison.Ordinal))
 					continue;
 
-				var testMethods = testType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-				foreach (var testMethod in testMethods)
-				{
-					if (testMethod.IsDefined(typeof(TestMethodAttribute), true)
-						|| testMethod.IsDefined(typeof(NotATestMethodAttribute), false)
-						|| testMethod.IsDefined(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute), false))
-					{
-						continue;
-					}
-
-					// Ignore expression bodied/get only property methods like
-					// public CancellationToken CancellationTokenForTest => ...
-					if (testMethod.IsSpecialName && testMethod.Name.StartsWith("get_", StringComparison.Ordinal))
-						continue;
-
-					missingTestMethodAttributes.Add($"{testType.Name}.{testMethod.Name}");
-				}
+				missingTestMethodAttributes.Add($"{testType.Name}.{testMethod.Name}");
 			}
-
-			if (missingTestMethodAttributes.Count > 0)
-				throw new AssertFailedException($"The following methods do not have a [TestMethod] attribute:{Environment.NewLine}{Environment.NewLine}{string.Join(Environment.NewLine, missingTestMethodAttributes)}");
 		}
+
+		if (missingTestMethodAttributes.Count > 0)
+			throw new AssertFailedException($"The following methods do not have a [TestMethod] attribute:{Environment.NewLine}{Environment.NewLine}{string.Join(Environment.NewLine, missingTestMethodAttributes)}");
 	}
 }

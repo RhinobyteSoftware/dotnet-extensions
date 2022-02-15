@@ -1,21 +1,20 @@
-﻿namespace Rhinobyte.Extensions.Reflection.Tests.Setup
+﻿namespace Rhinobyte.Extensions.Reflection.Tests.Setup;
+
+public class ExampleAccessLevelMethods
 {
-	public class ExampleAccessLevelMethods
-	{
 #pragma warning disable IDE0051 // Remove unused private members
 #pragma warning disable IDE0040 // Add accessibility modifiers
-		void DefaultAccessInstanceMethod() { }
+	void DefaultAccessInstanceMethod() { }
 #pragma warning restore IDE0040 // Add accessibility modifiers
 
-		private void PrivateInstanceMethod() { }
+	private void PrivateInstanceMethod() { }
 #pragma warning restore IDE0051 // Remove unused private members
 
-		protected internal void ProtectedInternalInstanceMethod() { }
+	protected internal void ProtectedInternalInstanceMethod() { }
 
-		protected void ProtectedInstanceMethod() { }
+	protected void ProtectedInstanceMethod() { }
 
-		public void PublicInstanceMethod() { }
+	public void PublicInstanceMethod() { }
 
-		internal void InternalInstanceMethod() { }
-	}
+	internal void InternalInstanceMethod() { }
 }
