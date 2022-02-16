@@ -379,7 +379,7 @@ public class MethodBaseExtensionsUnitTests
 (4) ADD
 (5) RETURN");
 #else
-			methodBodyDescription.Should().Be(
+		methodBodyDescription.Should().Be(
 @"(0) NO-OP
 (1) LOAD INT LITERAL (5)
 (2) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
@@ -795,7 +795,7 @@ where TSomethingElse : System.Enum");
 #if IS_RELEASE_TESTING_BUILD
 		instructions.Count.Should().Be(6);
 #else
-			instructions.Count.Should().Be(12);
+		instructions.Count.Should().Be(12);
 #endif
 	}
 

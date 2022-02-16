@@ -303,7 +303,7 @@ public class MethodBodyParserUnitTests
 #if IS_RELEASE_TESTING_BUILD
 		instructions.Count.Should().Be(23);
 #else
-			instructions.Count.Should().Be(29);
+		instructions.Count.Should().Be(29);
 #endif
 
 		var thisKeywordInstruction = instructions.FirstOrDefault(instruction => instruction is ThisKeywordInstruction) as ThisKeywordInstruction;
@@ -337,7 +337,7 @@ public class MethodBodyParserUnitTests
 (21) ADD
 (22) RETURN");
 #else
-			description.Should().Be(
+		description.Should().Be(
 @"(0) NO-OP
 (1) LOAD ARGUMENT (Index 0)  [this keyword]
 (2) CALL METHOD  [ExampleMethods.get_LocalIntegerProperty]
@@ -380,7 +380,7 @@ public class MethodBodyParserUnitTests
 #if IS_RELEASE_TESTING_BUILD
 		instructions.Count.Should().Be(20);
 #else
-			instructions.Count.Should().Be(26);
+		instructions.Count.Should().Be(26);
 #endif
 
 		var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);
@@ -408,7 +408,7 @@ public class MethodBodyParserUnitTests
 (18) ADD
 (19) RETURN");
 #else
-			description.Should().Be(
+		description.Should().Be(
 @"(0) NO-OP
 (1) LOAD ARGUMENT (Index 0)  [Parameter #0]  [ParameterReference: System.Int32 value1]
 (2) LOAD ARGUMENT (Index 1)  [Parameter #1]  [ParameterReference: System.Int32 value2]
@@ -448,7 +448,7 @@ public class MethodBodyParserUnitTests
 #if IS_RELEASE_TESTING_BUILD
 		instructions.Count.Should().Be(6);
 #else
-			instructions.Count.Should().Be(12);
+		instructions.Count.Should().Be(12);
 #endif
 
 		//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
@@ -465,7 +465,7 @@ public class MethodBodyParserUnitTests
 #if IS_RELEASE_TESTING_BUILD
 		instructions.Count.Should().Be(7);
 #else
-			instructions.Count.Should().Be(15);
+		instructions.Count.Should().Be(15);
 #endif
 
 		//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
@@ -482,7 +482,7 @@ public class MethodBodyParserUnitTests
 #if IS_RELEASE_TESTING_BUILD
 		instructions.Count.Should().Be(7);
 #else
-			instructions.Count.Should().Be(11);
+		instructions.Count.Should().Be(11);
 #endif
 
 		//var results = string.Join($"{System.Environment.NewLine}{System.Environment.NewLine}{System.Environment.NewLine}", instructions.Select(instruction => instruction.FullDescription()));
@@ -508,30 +508,391 @@ public class MethodBodyParserUnitTests
 		var debuggableAttribute = typeof(ExampleMethods).Assembly.GetCustomAttribute<System.Diagnostics.DebuggableAttribute>();
 		var assemblyIsDebugBuildWithoutOptimizations = debuggableAttribute?.IsJITOptimizerDisabled == true;
 
+#if NET6_0 && !IS_RELEASE_TESTING_BUILD
+		instructionTypes.Should().Contain(typeof(BranchTargetInstruction));
+		//instructionTypes.Should().Contain(typeof(ByteInstruction));
+		instructionTypes.Should().Contain(typeof(DoubleInstruction));
+		instructionTypes.Should().Contain(typeof(FieldReferenceInstruction));
+		instructionTypes.Should().Contain(typeof(FloatInstruction));
+		instructionTypes.Should().Contain(typeof(Int32Instruction));
+		instructionTypes.Should().Contain(typeof(Int64Instruction));
+		instructionTypes.Should().Contain(typeof(LocalVariableInstruction));
+		instructionTypes.Should().Contain(typeof(MethodReferenceInstruction));
+		instructionTypes.Should().Contain(typeof(ParameterReferenceInstruction));
+		//instructionTypes.Should().Contain(typeof(SignatureInstruction));
+		instructionTypes.Should().Contain(typeof(SignedByteInstruction));
+		instructionTypes.Should().Contain(typeof(SimpleInstruction));
+		instructionTypes.Should().Contain(typeof(StringInstruction));
+		//instructionTypes.Should().Contain(typeof(SwitchInstruction));
+		instructionTypes.Should().Contain(typeof(ThisKeywordInstruction));
+		instructionTypes.Should().Contain(typeof(TypeReferenceInstruction));
 
-		if (assemblyIsDebugBuildWithoutOptimizations)
-		{
-			instructionTypes.Should().Contain(typeof(BranchTargetInstruction));
-			//instructionTypes.Should().Contain(typeof(ByteInstruction));
-			instructionTypes.Should().Contain(typeof(DoubleInstruction));
-			instructionTypes.Should().Contain(typeof(FieldReferenceInstruction));
-			instructionTypes.Should().Contain(typeof(FloatInstruction));
-			instructionTypes.Should().Contain(typeof(Int32Instruction));
-			instructionTypes.Should().Contain(typeof(Int64Instruction));
-			instructionTypes.Should().Contain(typeof(LocalVariableInstruction));
-			instructionTypes.Should().Contain(typeof(MethodReferenceInstruction));
-			instructionTypes.Should().Contain(typeof(ParameterReferenceInstruction));
-			//instructionTypes.Should().Contain(typeof(SignatureInstruction));
-			instructionTypes.Should().Contain(typeof(SignedByteInstruction));
-			instructionTypes.Should().Contain(typeof(SimpleInstruction));
-			instructionTypes.Should().Contain(typeof(StringInstruction));
-			//instructionTypes.Should().Contain(typeof(SwitchInstruction));
-			instructionTypes.Should().Contain(typeof(ThisKeywordInstruction));
-			instructionTypes.Should().Contain(typeof(TypeReferenceInstruction));
+		// DEBUG (Non Optimizied) Build
+		instructions.Count.Should().Be(341);
+		instructionsDescription.Should().Be(
+@"(0) NO-OP
+(1) LOAD INT LITERAL (5)
+(2) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
+(3) LOAD INT VALUE (Int8)  [SByte Value: 12]
+(4) SET LOCAL VARIABLE (Index 1)  [Of type Byte]
+(5) LOAD INT VALUE (Int8)  [SByte Value: -12]
+(6) SET LOCAL VARIABLE (Index 2)  [Of type SByte]
+(7) LOAD INT VALUE (Int32)  [Int32 Value: -300]
+(8) SET LOCAL VARIABLE (Index 3)  [Of type Int16]
+(9) LOAD INT VALUE (Int32)  [Int32 Value: 65000]
+(10) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 4)  [Of type UInt16]
+(11) LOAD INT VALUE (Int32)  [Int32 Value: -70000]
+(12) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 5)  [Of type Int32]
+(13) LOAD INT VALUE (Int32)  [Int32 Value: 70000]
+(14) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 6)  [Of type UInt32]
+(15) LOAD INT VALUE (Int64)  [Int64 Value: -3000000000]
+(16) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 7)  [Of type Int64]
+(17) LOAD INT VALUE (Int64)  [Int64 Value: -8446744073709551616]
+(18) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 8)  [Of type UInt64]
+(19) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 8)  [Of type UInt64]
+(20) LOAD INT VALUE (Int64)  [Int64 Value: 9223372036854775807]
+(21) SUBTRACT
+(22) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 8)  [Of type UInt64]
+(23) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 5)  [Of type Int32]
+(24) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 5)  [Of type Int32]
+(25) CALL METHOD  [ExampleMethods.AddTwoValues]
+(26) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 9)  [Of type Int32]
+(27) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 9)  [Of type Int32]
+(28) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 9)  [Of type Int32]
+(29) MULTIPLY
+(30) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 9)  [Of type Int32]
+(31) LOAD LOCAL VARIABLE (Index 0)  [Of type Int32]
+(32) LOAD LOCAL VARIABLE (Index 1)  [Of type Byte]
+(33) ADD
+(34) LOAD LOCAL VARIABLE (Index 2)  [Of type SByte]
+(35) ADD
+(36) LOAD LOCAL VARIABLE (Index 3)  [Of type Int16]
+(37) ADD
+(38) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 4)  [Of type UInt16]
+(39) ADD
+(40) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 9)  [Of type Int32]
+(41) ADD
+(42) CONVERT (Int64)
+(43) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 6)  [Of type UInt32]
+(44) CONVERT (UInt64)
+(45) ADD
+(46) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 7)  [Of type Int64]
+(47) ADD
+(48) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 8)  [Of type UInt64]
+(49) ADD
+(50) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 10)  [Of type Int64]
+(51) LOAD FLOAT VALUE (Float64)  [Double Value: 0.5]
+(52) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 11)  [Of type Double]
+(53) LOAD FLOAT VALUE (Float32)  [Float Value: 0.5]
+(54) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type Single]
+(55) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 10)  [Of type Int64]
+(56) CONVERT (Float64)
+(57) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 11)  [Of type Double]
+(58) ADD
+(59) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type Single]
+(60) CONVERT (Float64)
+(61) ADD
+(62) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type Double]
+(63) LOAD STRING  [String Value: SomeString]
+(64) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 14)  [Of type String]
+(65) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(66) LOAD INT VALUE (Int8)  [SByte Value: 11]
+(67) LOAD INT LITERAL (6)
+(68) CALL METHOD  [DefaultInterpolatedStringHandler..ctor]
+(69) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(70) LOAD ARGUMENT (Index 1)  [Parameter #0]  [ParameterReference: System.String prefix]
+(71) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(72) NO-OP
+(73) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(74) LOAD STRING  [String Value: :  ]
+(75) CALL METHOD  [DefaultInterpolatedStringHandler.AppendLiteral]
+(76) NO-OP
+(77) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(78) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 14)  [Of type String]
+(79) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(80) NO-OP
+(81) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(82) LOAD STRING  [String Value:  ]
+(83) CALL METHOD  [DefaultInterpolatedStringHandler.AppendLiteral]
+(84) NO-OP
+(85) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(86) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type Double]
+(87) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(88) NO-OP
+(89) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(90) LOAD STRING  [String Value:   - ]
+(91) CALL METHOD  [DefaultInterpolatedStringHandler.AppendLiteral]
+(92) NO-OP
+(93) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(94) LOAD TOKEN  [TypeReference: ExampleMethods]
+(95) CALL METHOD  [Type.GetTypeFromHandle]
+(96) CALL VIRTUAL  [Type.get_FullName]
+(97) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(98) NO-OP
+(99) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(100) LOAD STRING  [String Value: .]
+(101) CALL METHOD  [DefaultInterpolatedStringHandler.AppendLiteral]
+(102) NO-OP
+(103) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(104) LOAD STRING  [String Value: LocalStringField]
+(105) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(106) NO-OP
+(107) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(108) LOAD STRING  [String Value: : ]
+(109) CALL METHOD  [DefaultInterpolatedStringHandler.AppendLiteral]
+(110) NO-OP
+(111) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(112) LOAD ARGUMENT (Index 0)  [this keyword]
+(113) LOAD FIELD  [FieldReference: LocalStringField]
+(114) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(115) NO-OP
+(116) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 17)  [Of type DefaultInterpolatedStringHandler]
+(117) CALL METHOD  [DefaultInterpolatedStringHandler.ToStringAndClear]
+(118) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(119) LOAD LOCAL VARIABLE (Index 1)  [Of type Byte]
+(120) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 19)  [Of type Byte]
+(121) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 19)  [Of type Byte]
+(122) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 18)  [Of type Byte]
+(123) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 18)  [Of type Byte]
+(124) LOAD INT LITERAL (1)
+(125) SUBTRACT
+(126) LOAD INT LITERAL (3)
+(127) BRANCH WHEN LESS THAN OR EQUAL (Unsigned, Short Form)  [TargetInstruction: 133]
+(128) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 129]
+(129) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 18)  [Of type Byte]
+(130) LOAD INT LITERAL (5)
+(131) BRANCH WHEN EQUAL (Short Form)  [TargetInstruction: 138]
+(132) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 143]
+(133) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(134) LOAD STRING  [String Value:   - switch statement case 1/2/3/4]
+(135) CALL METHOD  [String.Concat]
+(136) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(137) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 148]
+(138) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(139) LOAD STRING  [String Value:   - switch statement case 5]
+(140) CALL METHOD  [String.Concat]
+(141) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(142) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 148]
+(143) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(144) LOAD STRING  [String Value:   - switch statement default case]
+(145) CALL METHOD  [String.Concat]
+(146) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(147) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 148]
+(148) LOAD STRING  [String Value: test]
+(149) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(150) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(151) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 21)  [Of type String]
+(152) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 21)  [Of type String]
+(153) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(154) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(155) CALL METHOD  [<PrivateImplementationDetails>.ComputeStringHash]
+(156) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(157) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(158) LOAD INT VALUE (Int32)  [Int32 Value: -1725747012]
+(159) BRANCH WHEN GREATER THAN (Unsigned, Short Form)  [TargetInstruction: 183]
+(160) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(161) LOAD INT VALUE (Int32)  [Int32 Value: -1776079869]
+(162) BRANCH WHEN GREATER THAN (Unsigned, Short Form)  [TargetInstruction: 171]
+(163) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(164) LOAD INT VALUE (Int32)  [Int32 Value: -1792857488]
+(165) BRANCH WHEN EQUAL  [TargetInstruction: 230]
+(166) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 167]
+(167) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(168) LOAD INT VALUE (Int32)  [Int32 Value: -1776079869]
+(169) BRANCH WHEN EQUAL  [TargetInstruction: 225]
+(170) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(171) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(172) LOAD INT VALUE (Int32)  [Int32 Value: -1759302250]
+(173) BRANCH WHEN EQUAL  [TargetInstruction: 240]
+(174) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 175]
+(175) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(176) LOAD INT VALUE (Int32)  [Int32 Value: -1742524631]
+(177) BRANCH WHEN EQUAL  [TargetInstruction: 235]
+(178) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 179]
+(179) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(180) LOAD INT VALUE (Int32)  [Int32 Value: -1725747012]
+(181) BRANCH WHEN EQUAL (Short Form)  [TargetInstruction: 210]
+(182) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(183) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(184) LOAD INT VALUE (Int32)  [Int32 Value: -1637520284]
+(185) BRANCH WHEN GREATER THAN (Unsigned, Short Form)  [TargetInstruction: 198]
+(186) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(187) LOAD INT VALUE (Int32)  [Int32 Value: -1692191774]
+(188) BRANCH WHEN EQUAL (Short Form)  [TargetInstruction: 220]
+(189) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 190]
+(190) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(191) LOAD INT VALUE (Int32)  [Int32 Value: -1675414155]
+(192) BRANCH WHEN EQUAL (Short Form)  [TargetInstruction: 215]
+(193) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 194]
+(194) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(195) LOAD INT VALUE (Int32)  [Int32 Value: -1637520284]
+(196) BRANCH WHEN EQUAL  [TargetInstruction: 255]
+(197) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(198) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(199) LOAD INT VALUE (Int32)  [Int32 Value: -1620742665]
+(200) BRANCH WHEN EQUAL  [TargetInstruction: 260]
+(201) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 202]
+(202) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(203) LOAD INT VALUE (Int32)  [Int32 Value: -1591526060]
+(204) BRANCH WHEN EQUAL  [TargetInstruction: 250]
+(205) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 206]
+(206) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type UInt32]
+(207) LOAD INT VALUE (Int32)  [Int32 Value: -1574748441]
+(208) BRANCH WHEN EQUAL  [TargetInstruction: 245]
+(209) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(210) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(211) LOAD STRING  [String Value: test1]
+(212) CALL METHOD  [String.op_Equality]
+(213) BRANCH WHEN TRUE  [TargetInstruction: 265]
+(214) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(215) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(216) LOAD STRING  [String Value: test2]
+(217) CALL METHOD  [String.op_Equality]
+(218) BRANCH WHEN TRUE  [TargetInstruction: 271]
+(219) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(220) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(221) LOAD STRING  [String Value: test3]
+(222) CALL METHOD  [String.op_Equality]
+(223) BRANCH WHEN TRUE  [TargetInstruction: 277]
+(224) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(225) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(226) LOAD STRING  [String Value: test4]
+(227) CALL METHOD  [String.op_Equality]
+(228) BRANCH WHEN TRUE  [TargetInstruction: 283]
+(229) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(230) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(231) LOAD STRING  [String Value: test5]
+(232) CALL METHOD  [String.op_Equality]
+(233) BRANCH WHEN TRUE  [TargetInstruction: 289]
+(234) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(235) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(236) LOAD STRING  [String Value: test6]
+(237) CALL METHOD  [String.op_Equality]
+(238) BRANCH WHEN TRUE  [TargetInstruction: 295]
+(239) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(240) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(241) LOAD STRING  [String Value: test7]
+(242) CALL METHOD  [String.op_Equality]
+(243) BRANCH WHEN TRUE  [TargetInstruction: 301]
+(244) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(245) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(246) LOAD STRING  [String Value: test8]
+(247) CALL METHOD  [String.op_Equality]
+(248) BRANCH WHEN TRUE  [TargetInstruction: 307]
+(249) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(250) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(251) LOAD STRING  [String Value: test9]
+(252) CALL METHOD  [String.op_Equality]
+(253) BRANCH WHEN TRUE  [TargetInstruction: 313]
+(254) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(255) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(256) LOAD STRING  [String Value: test10]
+(257) CALL METHOD  [String.op_Equality]
+(258) BRANCH WHEN TRUE  [TargetInstruction: 319]
+(259) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(260) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 20)  [Of type String]
+(261) LOAD STRING  [String Value: test11]
+(262) CALL METHOD  [String.op_Equality]
+(263) BRANCH WHEN TRUE  [TargetInstruction: 325]
+(264) BRANCH UNCONDITIONALLY  [TargetInstruction: 331]
+(265) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(266) LOAD STRING  [String Value:   - string switch statement case ]
+(267) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(268) CALL METHOD  [String.Concat]
+(269) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(270) BRANCH UNCONDITIONALLY  [TargetInstruction: 336]
+(271) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(272) LOAD STRING  [String Value:   - string switch statement case ]
+(273) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(274) CALL METHOD  [String.Concat]
+(275) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(276) BRANCH UNCONDITIONALLY  [TargetInstruction: 336]
+(277) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(278) LOAD STRING  [String Value:   - string switch statement case ]
+(279) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(280) CALL METHOD  [String.Concat]
+(281) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(282) BRANCH UNCONDITIONALLY  [TargetInstruction: 336]
+(283) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(284) LOAD STRING  [String Value:   - string switch statement case ]
+(285) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(286) CALL METHOD  [String.Concat]
+(287) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(288) BRANCH UNCONDITIONALLY  [TargetInstruction: 336]
+(289) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(290) LOAD STRING  [String Value:   - string switch statement case ]
+(291) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(292) CALL METHOD  [String.Concat]
+(293) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(294) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 336]
+(295) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(296) LOAD STRING  [String Value:   - string switch statement case ]
+(297) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(298) CALL METHOD  [String.Concat]
+(299) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(300) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 336]
+(301) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(302) LOAD STRING  [String Value:   - string switch statement case ]
+(303) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(304) CALL METHOD  [String.Concat]
+(305) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(306) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 336]
+(307) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(308) LOAD STRING  [String Value:   - string switch statement case ]
+(309) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(310) CALL METHOD  [String.Concat]
+(311) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(312) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 336]
+(313) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(314) LOAD STRING  [String Value:   - string switch statement case ]
+(315) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(316) CALL METHOD  [String.Concat]
+(317) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(318) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 336]
+(319) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(320) LOAD STRING  [String Value:   - string switch statement case ]
+(321) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(322) CALL METHOD  [String.Concat]
+(323) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(324) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 336]
+(325) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(326) LOAD STRING  [String Value:   - string switch statement case ]
+(327) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 16)  [Of type String]
+(328) CALL METHOD  [String.Concat]
+(329) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(330) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 336]
+(331) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(332) LOAD STRING  [String Value:   - string switch statement default case]
+(333) CALL METHOD  [String.Concat]
+(334) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(335) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 336]
+(336) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type String]
+(337) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 23)  [Of type String]
+(338) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 339]
+(339) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 23)  [Of type String]
+(340) RETURN");
+#elif !IS_RELEASE_TESTING_BUILD
+		instructionTypes.Should().Contain(typeof(BranchTargetInstruction));
+		//instructionTypes.Should().Contain(typeof(ByteInstruction));
+		instructionTypes.Should().Contain(typeof(DoubleInstruction));
+		instructionTypes.Should().Contain(typeof(FieldReferenceInstruction));
+		instructionTypes.Should().Contain(typeof(FloatInstruction));
+		instructionTypes.Should().Contain(typeof(Int32Instruction));
+		instructionTypes.Should().Contain(typeof(Int64Instruction));
+		instructionTypes.Should().Contain(typeof(LocalVariableInstruction));
+		instructionTypes.Should().Contain(typeof(MethodReferenceInstruction));
+		instructionTypes.Should().Contain(typeof(ParameterReferenceInstruction));
+		//instructionTypes.Should().Contain(typeof(SignatureInstruction));
+		instructionTypes.Should().Contain(typeof(SignedByteInstruction));
+		instructionTypes.Should().Contain(typeof(SimpleInstruction));
+		instructionTypes.Should().Contain(typeof(StringInstruction));
+		//instructionTypes.Should().Contain(typeof(SwitchInstruction));
+		instructionTypes.Should().Contain(typeof(ThisKeywordInstruction));
+		instructionTypes.Should().Contain(typeof(TypeReferenceInstruction));
 
-			// DEBUG (Non Optimizied) Build
-			instructions.Count.Should().Be(320);
-			instructionsDescription.Should().Be(
+		// DEBUG (Non Optimizied) Build
+		instructions.Count.Should().Be(320);
+		instructionsDescription.Should().Be(
 @"(0) NO-OP
 (1) LOAD INT LITERAL (5)
 (2) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
@@ -852,29 +1213,350 @@ public class MethodBodyParserUnitTests
 (317) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 318]
 (318) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 22)  [Of type String]
 (319) RETURN");
-		}
-		else
-		{
-			instructionTypes.Should().Contain(typeof(BranchTargetInstruction));
-			//instructionTypes.Should().Contain(typeof(ByteInstruction));
-			instructionTypes.Should().Contain(typeof(DoubleInstruction));
-			instructionTypes.Should().Contain(typeof(FieldReferenceInstruction));
-			instructionTypes.Should().Contain(typeof(FloatInstruction));
-			instructionTypes.Should().Contain(typeof(Int32Instruction));
-			instructionTypes.Should().Contain(typeof(Int64Instruction));
-			instructionTypes.Should().Contain(typeof(LocalVariableInstruction));
-			instructionTypes.Should().Contain(typeof(MethodReferenceInstruction));
-			instructionTypes.Should().Contain(typeof(ParameterReferenceInstruction));
-			//instructionTypes.Should().Contain(typeof(SignatureInstruction));
-			instructionTypes.Should().Contain(typeof(SimpleInstruction));
-			instructionTypes.Should().Contain(typeof(StringInstruction));
-			//instructionTypes.Should().Contain(typeof(SwitchInstruction));
-			instructionTypes.Should().Contain(typeof(ThisKeywordInstruction));
-			instructionTypes.Should().Contain(typeof(TypeReferenceInstruction));
+#elif NET6_0
+		instructionTypes.Should().Contain(typeof(BranchTargetInstruction));
+		//instructionTypes.Should().Contain(typeof(ByteInstruction));
+		instructionTypes.Should().Contain(typeof(DoubleInstruction));
+		instructionTypes.Should().Contain(typeof(FieldReferenceInstruction));
+		instructionTypes.Should().Contain(typeof(FloatInstruction));
+		instructionTypes.Should().Contain(typeof(Int32Instruction));
+		instructionTypes.Should().Contain(typeof(Int64Instruction));
+		instructionTypes.Should().Contain(typeof(LocalVariableInstruction));
+		instructionTypes.Should().Contain(typeof(MethodReferenceInstruction));
+		instructionTypes.Should().Contain(typeof(ParameterReferenceInstruction));
+		//instructionTypes.Should().Contain(typeof(SignatureInstruction));
+		instructionTypes.Should().Contain(typeof(SimpleInstruction));
+		instructionTypes.Should().Contain(typeof(StringInstruction));
+		//instructionTypes.Should().Contain(typeof(SwitchInstruction));
+		instructionTypes.Should().Contain(typeof(ThisKeywordInstruction));
+		instructionTypes.Should().Contain(typeof(TypeReferenceInstruction));
 
-			// RELEASE (Optimizied) Build
-			instructions.Count.Should().Be(292);
-			instructionsDescription.Should().Be(
+		// RELEASE (Optimizied) Build
+		instructions.Count.Should().Be(302);
+		instructionsDescription.Should().Be(
+@"(0) LOAD INT LITERAL (5)
+(1) LOAD INT VALUE (Int8)  [SByte Value: 12]
+(2) SET LOCAL VARIABLE (Index 0)  [Of type Byte]
+(3) LOAD INT VALUE (Int8)  [SByte Value: -12]
+(4) SET LOCAL VARIABLE (Index 1)  [Of type SByte]
+(5) LOAD INT VALUE (Int32)  [Int32 Value: -300]
+(6) SET LOCAL VARIABLE (Index 2)  [Of type Int16]
+(7) LOAD INT VALUE (Int32)  [Int32 Value: 65000]
+(8) SET LOCAL VARIABLE (Index 3)  [Of type UInt16]
+(9) LOAD INT VALUE (Int32)  [Int32 Value: -70000]
+(10) LOAD INT VALUE (Int32)  [Int32 Value: 70000]
+(11) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 4)  [Of type UInt32]
+(12) LOAD INT VALUE (Int64)  [Int64 Value: -3000000000]
+(13) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 5)  [Of type Int64]
+(14) LOAD INT VALUE (Int64)  [Int64 Value: -8446744073709551616]
+(15) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 6)  [Of type UInt64]
+(16) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 6)  [Of type UInt64]
+(17) LOAD INT VALUE (Int64)  [Int64 Value: 9223372036854775807]
+(18) SUBTRACT
+(19) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 6)  [Of type UInt64]
+(20) DUPLICATE
+(21) CALL METHOD  [ExampleMethods.AddTwoValues]
+(22) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 7)  [Of type Int32]
+(23) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 7)  [Of type Int32]
+(24) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 7)  [Of type Int32]
+(25) MULTIPLY
+(26) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 7)  [Of type Int32]
+(27) LOAD LOCAL VARIABLE (Index 0)  [Of type Byte]
+(28) ADD
+(29) LOAD LOCAL VARIABLE (Index 1)  [Of type SByte]
+(30) ADD
+(31) LOAD LOCAL VARIABLE (Index 2)  [Of type Int16]
+(32) ADD
+(33) LOAD LOCAL VARIABLE (Index 3)  [Of type UInt16]
+(34) ADD
+(35) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 7)  [Of type Int32]
+(36) ADD
+(37) CONVERT (Int64)
+(38) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 4)  [Of type UInt32]
+(39) CONVERT (UInt64)
+(40) ADD
+(41) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 5)  [Of type Int64]
+(42) ADD
+(43) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 6)  [Of type UInt64]
+(44) ADD
+(45) LOAD FLOAT VALUE (Float64)  [Double Value: 0.5]
+(46) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 8)  [Of type Double]
+(47) LOAD FLOAT VALUE (Float32)  [Float Value: 0.5]
+(48) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 9)  [Of type Single]
+(49) CONVERT (Float64)
+(50) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 8)  [Of type Double]
+(51) ADD
+(52) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 9)  [Of type Single]
+(53) CONVERT (Float64)
+(54) ADD
+(55) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 10)  [Of type Double]
+(56) LOAD STRING  [String Value: SomeString]
+(57) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 11)  [Of type String]
+(58) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(59) LOAD INT VALUE (Int8)  [SByte Value: 11]
+(60) LOAD INT LITERAL (6)
+(61) CALL METHOD  [DefaultInterpolatedStringHandler..ctor]
+(62) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(63) LOAD ARGUMENT (Index 1)  [Parameter #0]  [ParameterReference: System.String prefix]
+(64) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(65) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(66) LOAD STRING  [String Value: :  ]
+(67) CALL METHOD  [DefaultInterpolatedStringHandler.AppendLiteral]
+(68) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(69) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 11)  [Of type String]
+(70) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(71) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(72) LOAD STRING  [String Value:  ]
+(73) CALL METHOD  [DefaultInterpolatedStringHandler.AppendLiteral]
+(74) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(75) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 10)  [Of type Double]
+(76) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(77) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(78) LOAD STRING  [String Value:   - ]
+(79) CALL METHOD  [DefaultInterpolatedStringHandler.AppendLiteral]
+(80) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(81) LOAD TOKEN  [TypeReference: ExampleMethods]
+(82) CALL METHOD  [Type.GetTypeFromHandle]
+(83) CALL VIRTUAL  [Type.get_FullName]
+(84) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(85) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(86) LOAD STRING  [String Value: .]
+(87) CALL METHOD  [DefaultInterpolatedStringHandler.AppendLiteral]
+(88) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(89) LOAD STRING  [String Value: LocalStringField]
+(90) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(91) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(92) LOAD STRING  [String Value: : ]
+(93) CALL METHOD  [DefaultInterpolatedStringHandler.AppendLiteral]
+(94) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(95) LOAD ARGUMENT (Index 0)  [this keyword]
+(96) LOAD FIELD  [FieldReference: LocalStringField]
+(97) CALL METHOD  [DefaultInterpolatedStringHandler.AppendFormatted]
+(98) LOAD LOCAL VARIABLE ADDRESS (Specified Short Form Index)  (Index 14)  [Of type DefaultInterpolatedStringHandler]
+(99) CALL METHOD  [DefaultInterpolatedStringHandler.ToStringAndClear]
+(100) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(101) LOAD LOCAL VARIABLE (Index 0)  [Of type Byte]
+(102) LOAD INT LITERAL (1)
+(103) SUBTRACT
+(104) LOAD INT LITERAL (3)
+(105) BRANCH WHEN LESS THAN OR EQUAL (Unsigned, Short Form)  [TargetInstruction: 110]
+(106) LOAD LOCAL VARIABLE (Index 0)  [Of type Byte]
+(107) LOAD INT LITERAL (5)
+(108) BRANCH WHEN EQUAL (Short Form)  [TargetInstruction: 115]
+(109) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 120]
+(110) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(111) LOAD STRING  [String Value:   - switch statement case 1/2/3/4]
+(112) CALL METHOD  [String.Concat]
+(113) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(114) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 124]
+(115) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(116) LOAD STRING  [String Value:   - switch statement case 5]
+(117) CALL METHOD  [String.Concat]
+(118) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(119) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 124]
+(120) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(121) LOAD STRING  [String Value:   - switch statement default case]
+(122) CALL METHOD  [String.Concat]
+(123) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(124) LOAD STRING  [String Value: test]
+(125) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(126) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(127) CALL METHOD  [<PrivateImplementationDetails>.ComputeStringHash]
+(128) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(129) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(130) LOAD INT VALUE (Int32)  [Int32 Value: -1725747012]
+(131) BRANCH WHEN GREATER THAN (Unsigned, Short Form)  [TargetInstruction: 152]
+(132) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(133) LOAD INT VALUE (Int32)  [Int32 Value: -1776079869]
+(134) BRANCH WHEN GREATER THAN (Unsigned, Short Form)  [TargetInstruction: 142]
+(135) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(136) LOAD INT VALUE (Int32)  [Int32 Value: -1792857488]
+(137) BRANCH WHEN EQUAL  [TargetInstruction: 195]
+(138) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(139) LOAD INT VALUE (Int32)  [Int32 Value: -1776079869]
+(140) BRANCH WHEN EQUAL  [TargetInstruction: 190]
+(141) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(142) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(143) LOAD INT VALUE (Int32)  [Int32 Value: -1759302250]
+(144) BRANCH WHEN EQUAL  [TargetInstruction: 205]
+(145) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(146) LOAD INT VALUE (Int32)  [Int32 Value: -1742524631]
+(147) BRANCH WHEN EQUAL  [TargetInstruction: 200]
+(148) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(149) LOAD INT VALUE (Int32)  [Int32 Value: -1725747012]
+(150) BRANCH WHEN EQUAL (Short Form)  [TargetInstruction: 175]
+(151) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(152) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(153) LOAD INT VALUE (Int32)  [Int32 Value: -1637520284]
+(154) BRANCH WHEN GREATER THAN (Unsigned, Short Form)  [TargetInstruction: 165]
+(155) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(156) LOAD INT VALUE (Int32)  [Int32 Value: -1692191774]
+(157) BRANCH WHEN EQUAL (Short Form)  [TargetInstruction: 185]
+(158) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(159) LOAD INT VALUE (Int32)  [Int32 Value: -1675414155]
+(160) BRANCH WHEN EQUAL (Short Form)  [TargetInstruction: 180]
+(161) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(162) LOAD INT VALUE (Int32)  [Int32 Value: -1637520284]
+(163) BRANCH WHEN EQUAL  [TargetInstruction: 220]
+(164) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(165) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(166) LOAD INT VALUE (Int32)  [Int32 Value: -1620742665]
+(167) BRANCH WHEN EQUAL  [TargetInstruction: 225]
+(168) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(169) LOAD INT VALUE (Int32)  [Int32 Value: -1591526060]
+(170) BRANCH WHEN EQUAL  [TargetInstruction: 215]
+(171) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 15)  [Of type UInt32]
+(172) LOAD INT VALUE (Int32)  [Int32 Value: -1574748441]
+(173) BRANCH WHEN EQUAL  [TargetInstruction: 210]
+(174) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(175) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(176) LOAD STRING  [String Value: test1]
+(177) CALL METHOD  [String.op_Equality]
+(178) BRANCH WHEN TRUE  [TargetInstruction: 230]
+(179) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(180) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(181) LOAD STRING  [String Value: test2]
+(182) CALL METHOD  [String.op_Equality]
+(183) BRANCH WHEN TRUE  [TargetInstruction: 236]
+(184) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(185) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(186) LOAD STRING  [String Value: test3]
+(187) CALL METHOD  [String.op_Equality]
+(188) BRANCH WHEN TRUE  [TargetInstruction: 242]
+(189) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(190) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(191) LOAD STRING  [String Value: test4]
+(192) CALL METHOD  [String.op_Equality]
+(193) BRANCH WHEN TRUE  [TargetInstruction: 248]
+(194) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(195) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(196) LOAD STRING  [String Value: test5]
+(197) CALL METHOD  [String.op_Equality]
+(198) BRANCH WHEN TRUE  [TargetInstruction: 254]
+(199) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(200) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(201) LOAD STRING  [String Value: test6]
+(202) CALL METHOD  [String.op_Equality]
+(203) BRANCH WHEN TRUE  [TargetInstruction: 260]
+(204) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(205) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(206) LOAD STRING  [String Value: test7]
+(207) CALL METHOD  [String.op_Equality]
+(208) BRANCH WHEN TRUE  [TargetInstruction: 266]
+(209) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(210) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(211) LOAD STRING  [String Value: test8]
+(212) CALL METHOD  [String.op_Equality]
+(213) BRANCH WHEN TRUE  [TargetInstruction: 272]
+(214) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(215) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(216) LOAD STRING  [String Value: test9]
+(217) CALL METHOD  [String.op_Equality]
+(218) BRANCH WHEN TRUE  [TargetInstruction: 278]
+(219) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(220) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(221) LOAD STRING  [String Value: test10]
+(222) CALL METHOD  [String.op_Equality]
+(223) BRANCH WHEN TRUE  [TargetInstruction: 284]
+(224) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(225) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(226) LOAD STRING  [String Value: test11]
+(227) CALL METHOD  [String.op_Equality]
+(228) BRANCH WHEN TRUE  [TargetInstruction: 290]
+(229) BRANCH UNCONDITIONALLY  [TargetInstruction: 296]
+(230) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(231) LOAD STRING  [String Value:   - string switch statement case ]
+(232) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(233) CALL METHOD  [String.Concat]
+(234) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(235) BRANCH UNCONDITIONALLY  [TargetInstruction: 300]
+(236) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(237) LOAD STRING  [String Value:   - string switch statement case ]
+(238) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(239) CALL METHOD  [String.Concat]
+(240) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(241) BRANCH UNCONDITIONALLY  [TargetInstruction: 300]
+(242) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(243) LOAD STRING  [String Value:   - string switch statement case ]
+(244) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(245) CALL METHOD  [String.Concat]
+(246) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(247) BRANCH UNCONDITIONALLY  [TargetInstruction: 300]
+(248) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(249) LOAD STRING  [String Value:   - string switch statement case ]
+(250) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(251) CALL METHOD  [String.Concat]
+(252) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(253) BRANCH UNCONDITIONALLY  [TargetInstruction: 300]
+(254) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(255) LOAD STRING  [String Value:   - string switch statement case ]
+(256) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(257) CALL METHOD  [String.Concat]
+(258) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(259) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 300]
+(260) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(261) LOAD STRING  [String Value:   - string switch statement case ]
+(262) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(263) CALL METHOD  [String.Concat]
+(264) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(265) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 300]
+(266) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(267) LOAD STRING  [String Value:   - string switch statement case ]
+(268) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(269) CALL METHOD  [String.Concat]
+(270) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(271) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 300]
+(272) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(273) LOAD STRING  [String Value:   - string switch statement case ]
+(274) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(275) CALL METHOD  [String.Concat]
+(276) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(277) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 300]
+(278) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(279) LOAD STRING  [String Value:   - string switch statement case ]
+(280) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(281) CALL METHOD  [String.Concat]
+(282) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(283) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 300]
+(284) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(285) LOAD STRING  [String Value:   - string switch statement case ]
+(286) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(287) CALL METHOD  [String.Concat]
+(288) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(289) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 300]
+(290) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(291) LOAD STRING  [String Value:   - string switch statement case ]
+(292) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 13)  [Of type String]
+(293) CALL METHOD  [String.Concat]
+(294) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(295) BRANCH UNCONDITIONALLY (Short Form)  [TargetInstruction: 300]
+(296) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(297) LOAD STRING  [String Value:   - string switch statement default case]
+(298) CALL METHOD  [String.Concat]
+(299) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(300) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
+(301) RETURN");
+#else
+		instructionTypes.Should().Contain(typeof(BranchTargetInstruction));
+		//instructionTypes.Should().Contain(typeof(ByteInstruction));
+		instructionTypes.Should().Contain(typeof(DoubleInstruction));
+		instructionTypes.Should().Contain(typeof(FieldReferenceInstruction));
+		instructionTypes.Should().Contain(typeof(FloatInstruction));
+		instructionTypes.Should().Contain(typeof(Int32Instruction));
+		instructionTypes.Should().Contain(typeof(Int64Instruction));
+		instructionTypes.Should().Contain(typeof(LocalVariableInstruction));
+		instructionTypes.Should().Contain(typeof(MethodReferenceInstruction));
+		instructionTypes.Should().Contain(typeof(ParameterReferenceInstruction));
+		//instructionTypes.Should().Contain(typeof(SignatureInstruction));
+		instructionTypes.Should().Contain(typeof(SimpleInstruction));
+		instructionTypes.Should().Contain(typeof(StringInstruction));
+		//instructionTypes.Should().Contain(typeof(SwitchInstruction));
+		instructionTypes.Should().Contain(typeof(ThisKeywordInstruction));
+		instructionTypes.Should().Contain(typeof(TypeReferenceInstruction));
+
+		// RELEASE (Optimizied) Build
+		instructions.Count.Should().Be(292);
+		instructionsDescription.Should().Be(
 @"(0) LOAD INT LITERAL (5)
 (1) LOAD INT VALUE (Int8)  [SByte Value: 12]
 (2) SET LOCAL VARIABLE (Index 0)  [Of type Byte]
@@ -1167,7 +1849,7 @@ public class MethodBodyParserUnitTests
 (289) SET LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
 (290) LOAD LOCAL VARIABLE (Specified Short Form Index)  (Index 12)  [Of type String]
 (291) RETURN");
-		}
+#endif
 	}
 
 	[TestMethod]
@@ -1180,7 +1862,7 @@ public class MethodBodyParserUnitTests
 #if IS_RELEASE_TESTING_BUILD
 		instructions.Count.Should().Be(26);
 #else
-			instructions.Count.Should().Be(46);
+		instructions.Count.Should().Be(46);
 #endif
 
 		var instructionDescription = new DefaultInstructionFormatter().DescribeInstructions(instructions);
@@ -1215,7 +1897,7 @@ public class MethodBodyParserUnitTests
 (25) RETURN");
 #else
 
-			instructionDescription.Should().Be(
+		instructionDescription.Should().Be(
 @"(0) NO-OP
 (1) LOAD INT LITERAL (0)
 (2) SET LOCAL VARIABLE (Index 0)  [Of type Int32]
@@ -1301,7 +1983,7 @@ public class MethodBodyParserUnitTests
 #if IS_RELEASE_TESTING_BUILD
 		instructions.Count.Should().Be(19);
 #else
-			instructions.Count.Should().Be(23);
+		instructions.Count.Should().Be(23);
 #endif
 	}
 
@@ -1315,7 +1997,7 @@ public class MethodBodyParserUnitTests
 #if IS_RELEASE_TESTING_BUILD
 		instructions.Count.Should().Be(7);
 #else
-			instructions.Count.Should().Be(13);
+		instructions.Count.Should().Be(13);
 #endif
 	}
 
@@ -1339,7 +2021,7 @@ public class MethodBodyParserUnitTests
 #if IS_RELEASE_TESTING_BUILD
 		instructions.Count.Should().Be(95);
 #else
-			instructions.Count.Should().Be(119);
+		instructions.Count.Should().Be(119);
 #endif
 
 		//var description = new DefaultInstructionFormatter().DescribeInstructions(instructions);

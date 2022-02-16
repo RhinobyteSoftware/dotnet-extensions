@@ -245,8 +245,8 @@ public class AssemblyScannerTests
 			.AddExampleLibrary1()
 			.AddAssemblyFilter((assemblyInclude, scanner, currentScanResult) =>
 			{
-					// Return true to ignore the type
-					return assemblyInclude.AssemblyToInclude.GetName().Name?.Contains("ExampleLibrary1") == true;
+				// Return true to ignore the type
+				return assemblyInclude.AssemblyToInclude.GetName().Name?.Contains("ExampleLibrary1") == true;
 			});
 
 		var exampleLibrary1Assembly = typeof(ISomethingOptions).Assembly;
@@ -274,8 +274,8 @@ public class AssemblyScannerTests
 			.AddExampleLibrary1()
 			.AddTypeFilter((assemblyInclude, discoveredType, scanner, currentScanResult) =>
 			{
-					// Return true to ignore the type
-					return !discoveredType.Name.EndsWith("Service");
+				// Return true to ignore the type
+				return !discoveredType.Name.EndsWith("Service");
 			});
 
 		var scanResult = assemblyScanner.ScanAssemblies();

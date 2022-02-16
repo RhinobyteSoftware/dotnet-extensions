@@ -34,8 +34,8 @@ fi;
 echo "Test Project Names:  ${testProjectNames[@]}  ($testProjectsCount)"
 
 # Switch commented line to run coverage for all 3 target frameworks
-#targetFrameworkNames=("net48", "netcoreapp3.1", "net5.0");
-targetFrameworkNames=("net5.0")
+#targetFrameworkNames=("net48", "netcoreapp3.1", "net5.0", "net6.0");
+targetFrameworkNames=("net6.0")
 targetFrameworksCount=${#targetFrameworkNames[@]}
 echo "Target Frameworks:  ${targetFrameworkNames[@]}"
 
