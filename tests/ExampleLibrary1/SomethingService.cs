@@ -1,6 +1,5 @@
-﻿namespace ExampleLibrary1
+﻿namespace ExampleLibrary1;
+
+public class SomethingService : ISomethingService
 {
-	public class SomethingService : ISomethingService
-	{
-	}
 }

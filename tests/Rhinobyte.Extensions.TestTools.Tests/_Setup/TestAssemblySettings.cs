@@ -2,4 +2,4 @@
 
 [assembly: Parallelize(Workers = 0, Scope = ExecutionScope.ClassLevel)]
 
-namespace Rhinobyte.Extensions.TestTools.Tests.Setup { }
+namespace Rhinobyte.Extensions.TestTools.Tests.Setup;

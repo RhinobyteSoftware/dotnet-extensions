@@ -1,7 +1,6 @@
-﻿namespace Rhinobyte.Extensions.Reflection.Tests.Setup
+﻿namespace Rhinobyte.Extensions.Reflection.Tests.Setup;
+
+public class ExampleProperties
 {
-	public class ExampleProperties
-	{
-		public object? NullableObjectProperty { get; set; }
-	}
+	public object? NullableObjectProperty { get; set; }
 }

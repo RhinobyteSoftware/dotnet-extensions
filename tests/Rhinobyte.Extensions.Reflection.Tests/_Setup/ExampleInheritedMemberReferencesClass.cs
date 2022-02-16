@@ -1,166 +1,165 @@
 ﻿using System;
 
-namespace Rhinobyte.Extensions.Reflection.Tests.Setup
+namespace Rhinobyte.Extensions.Reflection.Tests.Setup;
+
+/******     BASE TYPE     ******************************
+********************************************************/
+public class ExampleInheritedMemberBaseClass
 {
-	/******     BASE TYPE     ******************************
-	********************************************************/
-	public class ExampleInheritedMemberBaseClass
-	{
-		protected string? inheritedStringField;
-		public int baseIntFieldThatWillBeHidden;
-		public static readonly TimeSpan staticTimeSpanField = TimeSpan.FromMinutes(1);
+	protected string? inheritedStringField;
+	public int baseIntFieldThatWillBeHidden;
+	public static readonly TimeSpan staticTimeSpanField = TimeSpan.FromMinutes(1);
 
-		public int InheritedIntProperty { get; protected set; }
+	public int InheritedIntProperty { get; protected set; }
 
-		public bool InheritedPublicPropertyWithNoSetter { get; }
+	public bool InheritedPublicPropertyWithNoSetter { get; }
 
-		public bool PublicPropertyOnBaseThatWillBeHidden { get; set; }
+	public bool PublicPropertyOnBaseThatWillBeHidden { get; set; }
 
-		protected virtual short ProtectedVirtualShortProperty { get; set; }
+	protected virtual short ProtectedVirtualShortProperty { get; set; }
 
-		public virtual bool PublicVirtualBoolProperty { get; set; }
+	public virtual bool PublicVirtualBoolProperty { get; set; }
 
-		public virtual bool PublicVirtualBoolReadOnlyProperty { get; }
+	public virtual bool PublicVirtualBoolReadOnlyProperty { get; }
 
-		public bool _writeOnlyBackingField;
+	public bool _writeOnlyBackingField;
 #pragma warning disable CA1044 // Properties should not be write only
-		public virtual bool PublicVirtualBoolWriteOnlyProperty { set => _writeOnlyBackingField = value; }
+	public virtual bool PublicVirtualBoolWriteOnlyProperty { set => _writeOnlyBackingField = value; }
 #pragma warning restore CA1044 // Properties should not be write only
 
-		protected internal void InheritedMethod()
-		{
-			Console.WriteLine("InheritedMethod() was called");
-		}
+	protected internal void InheritedMethod()
+	{
+		Console.WriteLine("InheritedMethod() was called");
+	}
 
-		protected virtual void InheritedVirtualProtectedMethod()
-		{
-			Console.WriteLine("InheritedVirtualMethod() was called");
-		}
+	protected virtual void InheritedVirtualProtectedMethod()
+	{
+		Console.WriteLine("InheritedVirtualMethod() was called");
+	}
 
-		public void NonVirtualBaseMethod1() { }
+	public void NonVirtualBaseMethod1() { }
 
-		public void NonVirtualBaseMethod2(string someStringParameter) { }
+	public void NonVirtualBaseMethod2(string someStringParameter) { }
 
-		public virtual void PublicVirtualMethod() { }
+	public virtual void PublicVirtualMethod() { }
 
 #pragma warning disable CA1044 // Properties should not be write only
 #pragma warning disable IDE0052 // Remove unread private members
-		private string _backingField = string.Empty;
-		public string WriteOnlyProperty { set => _backingField = value; }
+	private string _backingField = string.Empty;
+	public string WriteOnlyProperty { set => _backingField = value; }
 #pragma warning restore IDE0052 // Remove unread private members
 #pragma warning restore CA1044 // Properties should not be write only
 
-		public static bool StaticPropertyOnBaseClass { get; set; }
+	public static bool StaticPropertyOnBaseClass { get; set; }
 
-		public static bool StaticReadOnlyProperty => true;
+	public static bool StaticReadOnlyProperty => true;
 
 #pragma warning disable IDE0052 // Remove unread private members
-		private static bool _staticWriteOnlyBackingField;
+	private static bool _staticWriteOnlyBackingField;
 #pragma warning restore IDE0052 // Remove unread private members
 #pragma warning disable CA1044 // Properties should not be write only
-		public static bool StaticWriteOnlyProperty { set => _staticWriteOnlyBackingField = value; }
+	public static bool StaticWriteOnlyProperty { set => _staticWriteOnlyBackingField = value; }
 #pragma warning restore CA1044 // Properties should not be write only
+}
+
+
+/******     CHILD TYPE     *****************************
+********************************************************/
+public class ExampleInheritedMemberSubClass : ExampleInheritedMemberBaseClass
+{
+	public new int baseIntFieldThatWillBeHidden;
+
+	protected override short ProtectedVirtualShortProperty { get => 5; set => _ = value; }
+	public new bool PublicPropertyOnBaseThatWillBeHidden { get; set; }
+	public override bool PublicVirtualBoolProperty { get => true; set => _ = value; }
+	public override bool PublicVirtualBoolReadOnlyProperty => false;
+	public override bool PublicVirtualBoolWriteOnlyProperty { set => _ = value; }
+
+	protected override void InheritedVirtualProtectedMethod()
+	{
+		base.InheritedVirtualProtectedMethod();
 	}
 
-
-	/******     CHILD TYPE     *****************************
-	********************************************************/
-	public class ExampleInheritedMemberSubClass : ExampleInheritedMemberBaseClass
+	public void MethodThatCallsTheInheritedMethod()
 	{
-		public new int baseIntFieldThatWillBeHidden;
-
-		protected override short ProtectedVirtualShortProperty { get => 5; set => _ = value; }
-		public new bool PublicPropertyOnBaseThatWillBeHidden { get; set; }
-		public override bool PublicVirtualBoolProperty { get => true; set => _ = value; }
-		public override bool PublicVirtualBoolReadOnlyProperty => false;
-		public override bool PublicVirtualBoolWriteOnlyProperty { set => _ = value; }
-
-		protected override void InheritedVirtualProtectedMethod()
-		{
-			base.InheritedVirtualProtectedMethod();
-		}
-
-		public void MethodThatCallsTheInheritedMethod()
-		{
-			InheritedMethod();
-		}
-
-		public string MethodThatReferencesTheInheritedField()
-		{
-			return inheritedStringField ?? string.Empty;
-		}
-
-		public override void PublicVirtualMethod() => base.PublicVirtualMethod();
+		InheritedMethod();
 	}
 
-
-	/******     GRANDCHILD TYPE     ************************
-	********************************************************/
-	public class GrandChildMemberClass : ExampleInheritedMemberSubClass
+	public string MethodThatReferencesTheInheritedField()
 	{
-		public new int baseIntFieldThatWillBeHidden;
-
-		public override void PublicVirtualMethod()
-		{
-			return;
-		}
+		return inheritedStringField ?? string.Empty;
 	}
 
+	public override void PublicVirtualMethod() => base.PublicVirtualMethod();
+}
 
-	/******     STATIC REFERENCES TYPE     *****************
-	********************************************************/
-	public static class ExampleInheritedMemberStaticClass
+
+/******     GRANDCHILD TYPE     ************************
+********************************************************/
+public class GrandChildMemberClass : ExampleInheritedMemberSubClass
+{
+	public new int baseIntFieldThatWillBeHidden;
+
+	public override void PublicVirtualMethod()
 	{
-		public static bool MethodThatReferencesBasePropertyNotYetHidden()
-		{
-			var baseInstance = new ExampleInheritedMemberBaseClass();
-			return baseInstance.PublicPropertyOnBaseThatWillBeHidden;
-		}
+		return;
+	}
+}
 
-		public static bool MethodThatReferencesSubclassPropertyThatHidesBaseClassProperty()
-		{
-			var subclassInstance = new ExampleInheritedMemberSubClass();
-			return subclassInstance.PublicPropertyOnBaseThatWillBeHidden;
-		}
 
-		public static void MethodThatReferencesBaseVirtualProperties()
-		{
-			var baseInstance = new ExampleInheritedMemberBaseClass();
-			var value1 = baseInstance.PublicVirtualBoolProperty || baseInstance.PublicVirtualBoolReadOnlyProperty;
-			baseInstance.PublicVirtualBoolWriteOnlyProperty = value1;
-		}
+/******     STATIC REFERENCES TYPE     *****************
+********************************************************/
+public static class ExampleInheritedMemberStaticClass
+{
+	public static bool MethodThatReferencesBasePropertyNotYetHidden()
+	{
+		var baseInstance = new ExampleInheritedMemberBaseClass();
+		return baseInstance.PublicPropertyOnBaseThatWillBeHidden;
+	}
 
-		public static void MethodThatReferencesOverrideVirtualProperties()
-		{
-			var inheritedInstance = new ExampleInheritedMemberSubClass();
-			var value1 = inheritedInstance.PublicVirtualBoolProperty || inheritedInstance.PublicVirtualBoolReadOnlyProperty;
-			inheritedInstance.PublicVirtualBoolWriteOnlyProperty = value1;
-		}
+	public static bool MethodThatReferencesSubclassPropertyThatHidesBaseClassProperty()
+	{
+		var subclassInstance = new ExampleInheritedMemberSubClass();
+		return subclassInstance.PublicPropertyOnBaseThatWillBeHidden;
+	}
 
-		public static bool MethodThatReferencesTheInheritedPublicPropertyWithNoSetter()
-		{
-			var instance = new ExampleInheritedMemberSubClass();
-			return instance.InheritedPublicPropertyWithNoSetter;
-		}
+	public static void MethodThatReferencesBaseVirtualProperties()
+	{
+		var baseInstance = new ExampleInheritedMemberBaseClass();
+		var value1 = baseInstance.PublicVirtualBoolProperty || baseInstance.PublicVirtualBoolReadOnlyProperty;
+		baseInstance.PublicVirtualBoolWriteOnlyProperty = value1;
+	}
 
-		public static bool MethodThatReferencesTheBasePublicPropertyWithNoSetter()
-		{
-			var instance = new ExampleInheritedMemberBaseClass();
-			return instance.InheritedPublicPropertyWithNoSetter;
-		}
+	public static void MethodThatReferencesOverrideVirtualProperties()
+	{
+		var inheritedInstance = new ExampleInheritedMemberSubClass();
+		var value1 = inheritedInstance.PublicVirtualBoolProperty || inheritedInstance.PublicVirtualBoolReadOnlyProperty;
+		inheritedInstance.PublicVirtualBoolWriteOnlyProperty = value1;
+	}
 
-		public static void MethodThatReferencesTheInheritedPublicProperty()
-		{
-			var instance = new ExampleInheritedMemberSubClass();
-			if (instance.InheritedIntProperty > 0)
-				Console.WriteLine("InheritedIntProperty (inherited) is greater than zero");
-		}
+	public static bool MethodThatReferencesTheInheritedPublicPropertyWithNoSetter()
+	{
+		var instance = new ExampleInheritedMemberSubClass();
+		return instance.InheritedPublicPropertyWithNoSetter;
+	}
 
-		public static void MethodThatReferencesTheBasePublicProperty()
-		{
-			var instance = new ExampleInheritedMemberBaseClass();
-			if (instance.InheritedIntProperty > 0)
-				Console.WriteLine("InheritedIntProperty (base) is greater than zero");
-		}
+	public static bool MethodThatReferencesTheBasePublicPropertyWithNoSetter()
+	{
+		var instance = new ExampleInheritedMemberBaseClass();
+		return instance.InheritedPublicPropertyWithNoSetter;
+	}
+
+	public static void MethodThatReferencesTheInheritedPublicProperty()
+	{
+		var instance = new ExampleInheritedMemberSubClass();
+		if (instance.InheritedIntProperty > 0)
+			Console.WriteLine("InheritedIntProperty (inherited) is greater than zero");
+	}
+
+	public static void MethodThatReferencesTheBasePublicProperty()
+	{
+		var instance = new ExampleInheritedMemberBaseClass();
+		if (instance.InheritedIntProperty > 0)
+			Console.WriteLine("InheritedIntProperty (base) is greater than zero");
 	}
 }

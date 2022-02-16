@@ -2,45 +2,57 @@
 
     <!-- SOLUTION WIDE CUSTOMIZATIONS HERE-->
     <PropertyGroup>
+        <!-- COMMON SOLUTION PROPERTIES -->
         <SolutionPropsIsImported>true</SolutionPropsIsImported>
+        <InternalMsbuildMessageImportance>normal</InternalMsbuildMessageImportance>
         <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+
+        <!-- DESCRIPTION PROPERTIES -->
         <SolutionSummary>Extension libraries for the .NET</SolutionSummary>
 
-        <DefaultTargetFrameworks>netstandard2.0;netstandard2.1;net48;netcoreapp3.1;net5.0</DefaultTargetFrameworks>
-        <InternalMsbuildMessageImportance>normal</InternalMsbuildMessageImportance>
+
+        <!-- TARGET FRAMEWORK VARIABLES -->
+        <DefaultTargetFrameworks>netstandard2.0;netstandard2.1;net48;netcoreapp3.1;net5.0;net6.0</DefaultTargetFrameworks>
         <Msbuild16TargetFrameworks>net472;net5.0</Msbuild16TargetFrameworks>
         <UseProjectReferences Condition=" '$(UseProjectReferences)' == '' ">true</UseProjectReferences>
 
 
-        <!-- General Compiler / Msbuild Settings -->
-        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <!-- LANGUAGE / COMPILER FEATURES -->
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+
+        <!-- ANALYZER AND CODE STYLE FEATURES -->
+        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
+        
         <!-- Common Package/Project Property Values -->
         <Authors>Ryan Thomas</Authors>
         <Company>Rhinobyte Software</Company>
-        <Copyright>Copyright © Ryan Thomas $([System.DateTime]::Now.ToString("yyyy"))</Copyright>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <Copyright>Copyright © Ryan Thomas. All rights reserved.</Copyright>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <IncludeSymbols>true</IncludeSymbols>
         <NeutralLanguage>en-US</NeutralLanguage>
         <PackageIcon>Icon.png</PackageIcon>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIconFullPath>$(RepoRoot)RhinobytePackageIcon.png</PackageIconFullPath>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageLicenseFullPath>$(RepoRoot)LICENSE.txt</PackageLicenseFullPath>
         <PackageOutputPath>$(RepoRoot)build\$(Configuration)\</PackageOutputPath>
         <PackageProjectUrl>https://github.com/RhinobyteSoftware/dotnet-extensions</PackageProjectUrl>
-        <!-- 
-            Enable The <PackageReadmeFile> tag once the .NET 6 SDK version is released (need at least .NET SDK RC2)
-            Needed to solve this problem: https://github.com/NuGet/Home/issues/10791#issuecomment-926218883
-        -->
-        <!-- <PackageReadmeFile>README.md</PackageReadmeFile> -->
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/RhinobyteSoftware/dotnet-extensions</RepositoryUrl>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+        <!-- Dotnet Sourcelink Package Properties -->
+        <!-- See https://github.com/dotnet/sourcelink/blob/main/docs/README.md -->
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
 
         <!-- Subproject Package Versions -->
         <DataAnnotationsPackageVersion>1.0.1</DataAnnotationsPackageVersion>
