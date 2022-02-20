@@ -25,7 +25,13 @@ for (( paramIndex=1; paramIndex<=$#; paramIndex++ )); do
 done;
 
 if [ $testProjectIndex -eq 0 ]; then
-	testProjectNames=("Rhinobyte.Extensions.DataAnnotations.Tests" "Rhinobyte.Extensions.DependencyInjection.Tests" "Rhinobyte.Extensions.Reflection.Tests" "Rhinobyte.Extensions.TestTools.Tests");
+	testProjectNames=(
+		"Rhinobyte.Extensions.DataAnnotations.Tests" 
+		"Rhinobyte.Extensions.DependencyInjection.Tests" 
+		"Rhinobyte.Extensions.Logging.Tests" 
+		"Rhinobyte.Extensions.Reflection.Tests" 
+		"Rhinobyte.Extensions.TestTools.Tests"
+	);
 	testProjectsCount=${#testProjectNames[@]};
 else
 	testProjectsCount=$testProjectIndex

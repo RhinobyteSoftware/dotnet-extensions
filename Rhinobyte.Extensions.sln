@@ -61,6 +61,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{3BB3D502-2
 		docs\todo-list.md = docs\todo-list.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.Logging", "src\Rhinobyte.Extensions.Logging\Rhinobyte.Extensions.Logging.csproj", "{136AB6AA-B866-4EF0-ABE9-DD41261798E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhinobyte.Extensions.Logging.Tests", "tests\Rhinobyte.Extensions.Logging.Tests\Rhinobyte.Extensions.Logging.Tests.csproj", "{A3CF8C00-2FE9-405E-8B2E-743DE56CF7C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +131,18 @@ Global
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}.Release|Any CPU.ActiveCfg = ReleaseTesting|Any CPU
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}.ReleaseTesting|Any CPU.ActiveCfg = ReleaseTesting|Any CPU
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4}.ReleaseTesting|Any CPU.Build.0 = ReleaseTesting|Any CPU
+		{136AB6AA-B866-4EF0-ABE9-DD41261798E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{136AB6AA-B866-4EF0-ABE9-DD41261798E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{136AB6AA-B866-4EF0-ABE9-DD41261798E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{136AB6AA-B866-4EF0-ABE9-DD41261798E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{136AB6AA-B866-4EF0-ABE9-DD41261798E3}.ReleaseTesting|Any CPU.ActiveCfg = Release|Any CPU
+		{136AB6AA-B866-4EF0-ABE9-DD41261798E3}.ReleaseTesting|Any CPU.Build.0 = Release|Any CPU
+		{A3CF8C00-2FE9-405E-8B2E-743DE56CF7C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3CF8C00-2FE9-405E-8B2E-743DE56CF7C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3CF8C00-2FE9-405E-8B2E-743DE56CF7C1}.Release|Any CPU.ActiveCfg = ReleaseTesting|Any CPU
+		{A3CF8C00-2FE9-405E-8B2E-743DE56CF7C1}.Release|Any CPU.Build.0 = ReleaseTesting|Any CPU
+		{A3CF8C00-2FE9-405E-8B2E-743DE56CF7C1}.ReleaseTesting|Any CPU.ActiveCfg = ReleaseTesting|Any CPU
+		{A3CF8C00-2FE9-405E-8B2E-743DE56CF7C1}.ReleaseTesting|Any CPU.Build.0 = ReleaseTesting|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -143,6 +159,8 @@ Global
 		{01A7860D-5999-4C55-80D8-70688758673E} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 		{E6E61601-7C9F-4A53-9450-667C976A8895} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 		{2016443A-45DB-4B47-9C5B-C5F79C05BAE4} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
+		{136AB6AA-B866-4EF0-ABE9-DD41261798E3} = {BDE5D871-F9C3-405C-9E3F-FE5DE7B26FC6}
+		{A3CF8C00-2FE9-405E-8B2E-743DE56CF7C1} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A319B09C-E5BD-4E06-94C1-6D8666961326}

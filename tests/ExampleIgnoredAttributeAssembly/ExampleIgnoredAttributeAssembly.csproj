@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Rhinobyte.Extensions.DependencyInjection\Rhinobyte.Extensions.DependencyInjection.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\Rhinobyte.Extensions.DependencyInjection\Rhinobyte.Extensions.DependencyInjection.csproj" />
     </ItemGroup>
 
 </Project>

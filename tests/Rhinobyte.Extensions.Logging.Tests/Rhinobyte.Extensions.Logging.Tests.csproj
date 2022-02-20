@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="$(RepoRoot)\src\Rhinobyte.Extensions.Logging\Rhinobyte.Extensions.Logging.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\Rhinobyte.Extensions.TestTools\Rhinobyte.Extensions.TestTools.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Rhinobyte.Extensions.DependencyInjection\Rhinobyte.Extensions.DependencyInjection.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\Rhinobyte.Extensions.DependencyInjection\Rhinobyte.Extensions.DependencyInjection.csproj" />
         <ProjectReference Include="..\ExampleIgnoredAttributeAssembly\ExampleIgnoredAttributeAssembly.csproj" />
         <ProjectReference Include="..\ExampleLibrary1\ExampleLibrary1.csproj" />
     </ItemGroup>
