@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Rhinobyte.Extensions.DataAnnotations\Rhinobyte.Extensions.DataAnnotations.csproj" />
-        <ProjectReference Include="..\..\src\Rhinobyte.Extensions.Reflection\Rhinobyte.Extensions.Reflection.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\Rhinobyte.Extensions.DataAnnotations\Rhinobyte.Extensions.DataAnnotations.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\Rhinobyte.Extensions.Reflection\Rhinobyte.Extensions.Reflection.csproj" />
     </ItemGroup>
 
 </Project>

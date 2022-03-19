@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
+        <Configurations>Debug;Release;ReleaseTesting</Configurations>
+
+        <!-- VERSION VALUES -->
+        <PackageVersion>$(LoggingPackageVersion)</PackageVersion>
+        <AssemblyVersion>$(PackageVersion).0</AssemblyVersion>
+        <FileVersion>$(PackageVersion).0</FileVersion>
+        <InformationalVersion>$(PackageVersion)</InformationalVersion>
+        <Version>$(PackageVersion)</Version>
+
+        <PackageId>Rhinobyte.Extensions.Logging</PackageId>
+        <AssemblyName>$(PackageId)</AssemblyName>
+        <RootNamespace>$(PackageId)</RootNamespace>
+        <Title>$(PackageId)</Title>
+        <PackageTags>logging queued_logging deferred_logging</PackageTags>
+
+        <ReleaseNotesTextFilePath>$(MSBuildProjectDirectory)\RELEASE-NOTES.txt</ReleaseNotesTextFilePath>
+        <Summary>Extensions for .NET logging including extensible base types for custom logging providers that need to push the log messages into a queue that can be processed separately without blocking the current thread</Summary>
+        <Description>
+            $(Summary)
+        </Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.0" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All" />
+    </ItemGroup>
+
+    <!-- Prior to netcoreapp3.1 the System.Threading.Channels package is needed -->
+    <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp3.1'))">
+        <PackageReference Include="System.Threading.Channels" Version="6.0.0" />
+    </ItemGroup>
+
+</Project>
