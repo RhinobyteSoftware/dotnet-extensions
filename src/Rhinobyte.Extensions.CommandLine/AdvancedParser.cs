@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
+using System.Globalization;
 using System.Reflection;
+using System.Text;
 
 namespace Rhinobyte.Extensions.CommandLine;
 
@@ -25,6 +27,42 @@ public class AdvancedParser<TOptions> : IAdvancedParser<TOptions>
 	}
 
 	/// <summary>
+	/// Constructs a pair of aliases in the format "--property-name", "/PropertyName"
+	/// </summary>
+	public string[] CreateAliasesForPropertyName(string propertyName, CultureInfo? cultureInfo = null)
+	{
+		if (string.IsNullOrWhiteSpace(propertyName))
+			throw new ArgumentException($"{nameof(propertyName)} cannot be null or whitespace");
+
+		var doubleDashAliasBuilder = new StringBuilder("--");
+		var isFirstCharacter = true;
+		var wasPreviousUppercase = false;
+		for (var characterIndex = 0; characterIndex < propertyName.Length; ++characterIndex)
+		{
+			var currentChar = propertyName[characterIndex];
+			var isUppercase = char.IsUpper(currentChar);
+			if (isUppercase)
+				currentChar = char.ToLower(currentChar, cultureInfo ?? CultureInfo.CurrentCulture);
+
+			if (isFirstCharacter)
+			{
+				isFirstCharacter = false;
+				wasPreviousUppercase = isUppercase;
+				_ = doubleDashAliasBuilder.Append(currentChar);
+				continue;
+			}
+
+			if (isUppercase && !wasPreviousUppercase)
+				_ = doubleDashAliasBuilder.Append('-');
+
+			wasPreviousUppercase = isUppercase;
+			_ = doubleDashAliasBuilder.Append(currentChar);
+		}
+
+		return new string[] { doubleDashAliasBuilder.ToString(), $"/{propertyName}" };
+	}
+
+	/// <summary>
 	/// Create a symbol for the property using reflection to discover the option configuration attribute, if present.
 	/// </summary>
 	protected Symbol? CreateSymbolForProperty(Type optionsType, PropertyInfo propertyInfo)
@@ -43,7 +81,7 @@ public class AdvancedParser<TOptions> : IAdvancedParser<TOptions>
 				throw new InvalidOperationException($"{optionsType.Name} has settable property {propertyInfo.Name} that is missing a {nameof(OptionAttribute)} decorator. If the property should be ignored it can be decorated as [BinderIgnored].");
 		}
 
-		var aliases = cliAttribute?.Aliases ?? new string[] { $"/{propertyInfo.Name}" };
+		var aliases = cliAttribute?.Aliases ?? CreateAliasesForPropertyName(propertyInfo.Name);
 		return new Option(aliases, argumentType: propertyInfo.PropertyType, arity: cliAttribute?.ArgumentArity ?? default, description: cliAttribute?.Description);
 	}
 

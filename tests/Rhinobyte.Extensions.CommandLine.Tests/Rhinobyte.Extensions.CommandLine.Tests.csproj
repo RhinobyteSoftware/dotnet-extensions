@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="$(RepoRoot)\src\Rhinobyte.Extensions.CommandLine\Rhinobyte.Extensions.CommandLine.csproj" />
+        <ProjectReference Include="$(RepoRoot)\src\Rhinobyte.Extensions.TestTools\Rhinobyte.Extensions.TestTools.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
+    </ItemGroup>
+</Project>

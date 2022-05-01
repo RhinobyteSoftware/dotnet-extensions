@@ -73,12 +73,10 @@ public class ComplexModelBinder<TOptions> : BinderBase<TOptions>
 			propertyInfo.SetValue(boundOptions, propertyValue);
 		}
 
-		if (bindingContext.ParseResult.Errors.Count > 0)
+		if (bindingContext.ParseResult.Errors.Count > 0 && _parserOptions.ThrowOnOptionsParserErrors)
 		{
 			var combinedErrors = $"{Environment.NewLine}{string.Join(Environment.NewLine, bindingContext.ParseResult.Errors)}";
-
-			if (_parserOptions.ThrowOnOptionsParserErrors)
-				throw new ParseOptionsException($"The command line options parse result contains errors:{combinedErrors}");
+			throw new ParseOptionsException($"The command line options parse result contains errors:{combinedErrors}");
 		}
 
 		if (missingOptions.Count > 0)
