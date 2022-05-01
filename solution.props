@@ -55,13 +55,16 @@
 
 
         <!-- Subproject Package Versions -->
+        <CommandLinePackageVersion>1.0.0-beta.1</CommandLinePackageVersion>
+        <CommandLinePackagePackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DataAnnotationsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</CommandLinePackagePackage_ConsumerDependencyVersion>
+
         <DataAnnotationsPackageVersion>1.0.1</DataAnnotationsPackageVersion>
         <DataAnnotationsPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DataAnnotationsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DataAnnotationsPackage_ConsumerDependencyVersion>
 
         <DependencyInjectionPackageVersion>1.0.0</DependencyInjectionPackageVersion>
         <DependencyInjectionPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(DependencyInjectionPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</DependencyInjectionPackage_ConsumerDependencyVersion>
 
-        <LoggingPackageVersion>1.0.0-rc.1</LoggingPackageVersion>
+        <LoggingPackageVersion>1.0.0-beta.1</LoggingPackageVersion>
         <LoggingPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(LoggingPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</LoggingPackage_ConsumerDependencyVersion>
 
         <ReflectionPackageVersion>1.0.2</ReflectionPackageVersion>
