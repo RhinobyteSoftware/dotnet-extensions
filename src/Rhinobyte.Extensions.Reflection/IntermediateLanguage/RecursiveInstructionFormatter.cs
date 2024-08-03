@@ -1,19 +1,25 @@
-﻿using Rhinobyte.Extensions.Reflection.IntermediateLanguage;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace Rhinobyte.Extensions.Reflection.Tests.Setup;
+namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage;
 
-// TODO: Next Major Release
-// Export this as part of the the Rhinobyte.Extensions.Reflection library's public api so others can use it if they want
+/// <summary>
+/// Instruction formatter that recursively crawls through the instructions of a method body to describe the instructions and their child instructions.
+/// </summary>
 public class RecursiveInstructionFormatter : IInstructionFormatter
 {
+	/// <summary>
+	/// The default string used for indentation of the formatted instruction output.
+	/// </summary>
 	public const string DefaultIndentationString = "\t";
 
+	/// <summary>
+	/// Construct a new <see cref="RecursiveInstructionFormatter"/> with the provided settings.
+	/// </summary>
 	public RecursiveInstructionFormatter(
 		bool catchParseChildExceptions = true,
 		string? childLinePrefix = "- ",
@@ -31,14 +37,29 @@ public class RecursiveInstructionFormatter : IInstructionFormatter
 	}
 
 
+	/// <summary>
+	/// When true the attempts to parse child method instructions will catch any thrown exceptions, append a message to the output, and continue parsing the remaining instructions.
+	/// </summary>
 	public bool CatchParseChildExceptions { get; }
 
+	/// <summary>
+	/// The string prefix to use for child method instructions.
+	/// </summary>
 	public string? ChildLinePrefix { get; }
 
+	/// <summary>
+	/// The lookup of indentation strings to use for each traversal depth.
+	/// </summary>
 	public IReadOnlyDictionary<int, string> IndentationStringLookup { get; }
 
+	/// <summary>
+	/// The maximum depth to traverse when describing child instructions.
+	/// </summary>
 	public int MaxTraversalDepth { get; }
 
+	/// <summary>
+	/// When true the full type name will be printed for child method instructions.
+	/// </summary>
 	public bool PrintFullChildTypeName { get; }
 
 
@@ -110,7 +131,7 @@ public class RecursiveInstructionFormatter : IInstructionFormatter
 				continue;
 			}
 
-			visitedMembers.Add(childMethodToCrawl);
+			_ = visitedMembers.Add(childMethodToCrawl);
 
 			try
 			{
@@ -124,8 +145,11 @@ public class RecursiveInstructionFormatter : IInstructionFormatter
 			catch (Exception exc) when (formatter.CatchParseChildExceptions)
 #pragma warning restore CA1031 // Do not catch general exception types
 			{
+#if NET6_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+				var exceptionMessage = exc.Message.Replace(Environment.NewLine, $"{Environment.NewLine}{nextIndentationString}", StringComparison.Ordinal);
+#else
 				var exceptionMessage = exc.Message.Replace(Environment.NewLine, $"{Environment.NewLine}{nextIndentationString}");
-
+#endif
 				_ = stringBuilder
 					.Append(nextIndentationString)
 					.Append("... exception thrown attempting to parse child method ...")
@@ -137,6 +161,9 @@ public class RecursiveInstructionFormatter : IInstructionFormatter
 		}
 	}
 
+	/// <summary>
+	/// Return a formatted string describing the provided <paramref name="instruction"/>.
+	/// </summary>
 	public string DescribeInstruction(InstructionBase instruction)
 	{
 		_ = instruction ?? throw new ArgumentNullException(nameof(instruction));
@@ -151,6 +178,9 @@ public class RecursiveInstructionFormatter : IInstructionFormatter
 		return stringBuilder.ToString();
 	}
 
+	/// <summary>
+	/// Return a formatted string describing the provided <paramref name="instructionsToDescribe"/>.
+	/// </summary>
 	public string DescribeInstructions(IEnumerable<InstructionBase> instructionsToDescribe)
 	{
 		_ = instructionsToDescribe ?? throw new ArgumentNullException(nameof(instructionsToDescribe));
@@ -176,6 +206,9 @@ public class RecursiveInstructionFormatter : IInstructionFormatter
 		return stringBuilder.ToString();
 	}
 
+	/// <summary>
+	/// If the instruction is a <see cref="MethodReferenceInstruction"/> that references a method, return the referenced method to crawl
+	/// </summary>
 	public static MethodBase? GetMemberToCrawl(InstructionBase instruction)
 	{
 		switch (instruction)
