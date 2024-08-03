@@ -5,6 +5,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
+        <PackageReference Include="System.ComponentModel.Annotations" />
     </ItemGroup>
 </Project>

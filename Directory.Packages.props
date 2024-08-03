@@ -1,0 +1,30 @@
+<!--
+  IMPORTANT: This file should be named Directory.Packages.props with exact case for msbuild to automatically find it
+  when running on linux or other platforms that use a case sensitive file system
+-->
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+        <PackageVersion Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.0" />
+        <PackageVersion Include="Microsoft.Net.Test.SDK" Version="17.10.0" />
+        <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+        <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.10.48" />
+        <PackageVersion Include="Moq" Version="4.18.4" />
+        <PackageVersion Include="MSTest.TestAdapter" Version="3.5.0" />
+        <PackageVersion Include="MSTest.TestFramework" Version="3.5.0" />
+        <PackageVersion Include="ReportGenerator" Version="5.3.8" />
+        <PackageVersion Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />
+        <PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
+        <!-- Should only be included conditionally when building against TFM before netcoreapp3.1 -->
+        <PackageVersion Include="System.Threading.Channels" Version="8.0.0" />
+        <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    </ItemGroup>
+</Project>

@@ -4,6 +4,16 @@
 -->
 <Project>
 
+    <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="Microsoft.Net.Test.SDK" />
+        <PackageReference Include="Moq" />
+        <PackageReference Include="MSTest.TestAdapter" />
+        <PackageReference Include="MSTest.TestFramework" />
+        <PackageReference Include="ReportGenerator" />
+        <PackageReference Include="coverlet.collector" />
+    </ItemGroup>
+
     <Import Project="..\solution.targets" Condition="'$(SolutionTargetsIsImported)' == ''" />
 
 </Project>

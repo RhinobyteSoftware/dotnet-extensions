@@ -74,7 +74,6 @@
         <TestToolsPackage_ConsumerDependencyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(TestToolsPackageVersion)', '(\d+\.\d+)\..+', '$1.0'))</TestToolsPackage_ConsumerDependencyVersion>
 
         <!-- External Dependency Versions-->
-        <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
     </PropertyGroup>
 
     <Import Condition="Exists('$(RepoRoot)\development.local.props')" Project="$(RepoRoot)\development.local.props"/>
@@ -90,7 +89,7 @@
 
     <!-- SOLUTION WIDE CODE ANALYZER PACKAGES -->
     <ItemGroup>
-        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.9.60">
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>

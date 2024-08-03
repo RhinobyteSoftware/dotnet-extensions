@@ -9,8 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{2EA9106B
 		.gitignore = .gitignore
 		development.local.props = development.local.props
 		development.local.targets = development.local.targets
+		Directory.Packages.props = Directory.Packages.props
 		global.json = global.json
 		LICENSE.txt = LICENSE.txt
+		nuget.config = nuget.config
 		README.md = README.md
 		solution.props = solution.props
 		solution.targets = solution.targets
@@ -67,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.Loggin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.CommandLine", "src\Rhinobyte.Extensions.CommandLine\Rhinobyte.Extensions.CommandLine.csproj", "{6A9F637D-7032-404B-8A44-86A0D57AF727}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhinobyte.Extensions.CommandLine.Tests", "tests\Rhinobyte.Extensions.CommandLine.Tests\Rhinobyte.Extensions.CommandLine.Tests.csproj", "{713F0EFA-1B5E-471E-BCAB-B1B599B6241B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.CommandLine.Tests", "tests\Rhinobyte.Extensions.CommandLine.Tests\Rhinobyte.Extensions.CommandLine.Tests.csproj", "{713F0EFA-1B5E-471E-BCAB-B1B599B6241B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

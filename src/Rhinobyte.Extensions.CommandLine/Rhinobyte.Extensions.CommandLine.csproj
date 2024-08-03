@@ -25,13 +25,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All" />
-        <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+          </PackageReference>
+        <PackageReference Include="System.CommandLine" />
     </ItemGroup>
 
     <!-- Prior to netcoreapp3.1 the System.Threading.Channels package is needed -->
     <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp3.1'))">
-        <PackageReference Include="System.Threading.Channels" Version="6.0.0" />
+        <PackageReference Include="System.Threading.Channels" />
     </ItemGroup>
 
 </Project>
