@@ -1,3 +1,7 @@
+<!--
+  IMPORTANT: This file should be named Directory.Build.targets with exact case for msbuild to automatically find it
+  when running on linux or other platforms that use a case sensitive file system
+-->
 <Project>
 
     <Import Project="..\solution.targets" Condition="'$(SolutionTargetsIsImported)' == ''" />

@@ -1,4 +1,8 @@
-# Reference: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+# References: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+
+# IMPORTANT:
+# This file must be named .EditorConfig with exact case for msbuild to automatically find it
+# when running on linux or other platforms that use a case sensitive file system
 
 # top-most .editorconfig file
 root = true
