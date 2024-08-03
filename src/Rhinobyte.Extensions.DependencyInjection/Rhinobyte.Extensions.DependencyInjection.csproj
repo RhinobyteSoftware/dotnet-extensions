@@ -41,7 +41,7 @@ The IServiceCollection extension methods provide support for registering auto-di
         </When>
         <Otherwise>
             <ItemGroup>
-                <PackageReference Include="Rhinobyte.Extensions.Reflection" Version="$(ReflectionPackage_ConsumerDependencyVersion)" />
+                <PackageReference Include="Rhinobyte.Extensions.Reflection" VersionOverride="$(ReflectionPackage_ConsumerDependencyVersion)" />
             </ItemGroup>
         </Otherwise>
     </Choose>
