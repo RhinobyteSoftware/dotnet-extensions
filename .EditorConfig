@@ -91,6 +91,9 @@ dotnet_diagnostic.CA1068.severity       = suggestion
 dotnet_diagnostic.CA1303.severity       = warning
 dotnet_code_quality.CA1303.excluded_type_names_with_derived_types = System.Exception
 
+# Rule (CA1513) - Use ObjectDisposedException.ThrowIf Helper
+dotnet_diagnostic.CA1513.severity       = suggestion
+
 # Rule (CA1707) - Identifiers should not contain underscores
 dotnet_diagnostic.CA1707.severity       = suggestion # Reason: Primary constructor parameters
 

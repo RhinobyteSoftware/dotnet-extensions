@@ -33,6 +33,7 @@ The IServiceCollection extension methods provide support for registering auto-di
           </PackageReference>
     </ItemGroup>
 
+    <!--
     <Choose>
         <When Condition=" '$(Configuration)' == 'Debug' AND '$(UseProjectReferences)' == 'true'">
             <ItemGroup>
@@ -41,9 +42,13 @@ The IServiceCollection extension methods provide support for registering auto-di
         </When>
         <Otherwise>
             <ItemGroup>
-                <PackageReference Include="Rhinobyte.Extensions.Reflection" VersionOverride="$(ReflectionPackage_ConsumerDependencyVersion)" />
+                <PackageReference Include="Rhinobyte.Extensions.Reflection" VersionOverride="$(ReflectionPackageVersion)" />
             </ItemGroup>
         </Otherwise>
     </Choose>
+    -->
+    <ItemGroup>
+        <ProjectReference Include="../Rhinobyte.Extensions.Reflection/Rhinobyte.Extensions.Reflection.csproj" />
+    </ItemGroup>
 
 </Project>

@@ -371,13 +371,22 @@ public class WaitUtilityTests
 	public async Task WaitUntilAsync_throws_TaskCancellationException_when_cancelled3()
 	{
 		using var cancellationTokenSource = new CancellationTokenSource();
+
 #pragma warning disable IDE0039 // Use local function
+#if NET8_0_OR_GREATER
+		Func<CancellationToken, Task<object?>> waitCondition = async (cancellationToken) =>
+		{
+			await cancellationTokenSource.CancelAsync();
+			return null;
+		};
+#else
 		Func<CancellationToken, Task<object?>> waitCondition = (cancellationToken) =>
-#pragma warning restore IDE0039 // Use local function
 		{
 			cancellationTokenSource.Cancel();
 			return Task.FromResult<object?>(null);
 		};
+#endif
+#pragma warning restore IDE0039 // Use local function
 
 		var waitUtility = new WaitUtility();
 
@@ -401,12 +410,22 @@ public class WaitUtilityTests
 	public async Task WaitUntilAsync_throws_TaskCancellationException_when_cancelled4()
 	{
 #pragma warning disable IDE0039 // Use local function
+#if NET8_0_OR_GREATER
+		Func<CancellationTokenSource, CancellationToken, Task<object?>> waitCondition4 = async (tokenSourceState, cancellationToken) =>
+		{
+			await tokenSourceState.CancelAsync();
+			return null;
+		};
+#else
 		Func<CancellationTokenSource, CancellationToken, Task<object?>> waitCondition4 = (tokenSourceState, cancellationToken) =>
-#pragma warning restore IDE0039 // Use local function
 		{
 			tokenSourceState.Cancel();
 			return Task.FromResult<object?>(null);
 		};
+#endif
+#pragma warning restore IDE0039 // Use local function
+
+
 
 		var waitUtility = new WaitUtility();
 		using var cancellationTokenSource = new CancellationTokenSource();

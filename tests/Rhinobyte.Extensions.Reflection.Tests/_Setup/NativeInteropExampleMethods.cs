@@ -4,7 +4,11 @@ using System.Runtime.InteropServices;
 
 namespace Rhinobyte.Extensions.Reflection.Tests.Setup;
 
+#if NET8_0_OR_GREATER
+internal static partial class NativeInteropExampleMethods
+#else
 internal static class NativeInteropExampleMethods
+#endif
 {
 	/// <summary>
 	/// Process access flags used in conjunction with the StandardAccessFlags for process access.
@@ -95,6 +99,8 @@ internal static class NativeInteropExampleMethods
 		| ProcessAccessFlags.VirtualMemoryOperation
 		| ProcessAccessFlags.VirtualMemoryRead;
 
+
+#pragma warning disable SYSLIB1054 // Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time - Reason: Want to test the method body IL parser against both a [DllImport] and a newer source generated [LibraryImport] method when targetting .NET 8
 	/// <summary>
 	/// Platform invoke call into kernel32.dll IsWow64Process.
 	/// </summary>
@@ -105,10 +111,17 @@ internal static class NativeInteropExampleMethods
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	[return: MarshalAs(UnmanagedType.Bool)]
 	internal static extern bool IsWow64Process([In] SafeProcessHandle processHandle, [Out, MarshalAs(UnmanagedType.Bool)] out bool isWow64Process);
+#pragma warning restore SYSLIB1054 // Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time
 
+#if NET8_0_OR_GREATER
+	[LibraryImport("kernel32.dll", SetLastError = true)]
+	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+	public static partial SafeProcessHandle OpenProcess(ProcessAccessFlags desiredAccess, [MarshalAs(UnmanagedType.Bool)] bool inheritHandle, int processId);
+#else
 	[DllImport("kernel32.dll", SetLastError = true)]
 	[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 	public static extern SafeProcessHandle OpenProcess([In] ProcessAccessFlags desiredAccess, [In] bool inheritHandle, [In] int processId);
+#endif
 
 
 	public static bool MethodThatUsesNativeInteropCall(int processId)
