@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{2EA9106B-DA90-4935-85B8-4FE7CCA53A45}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
+		.EditorConfig = .EditorConfig
 		.gitignore = .gitignore
 		development.local.props = development.local.props
 		development.local.targets = development.local.targets
@@ -18,15 +18,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{2EA9106B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BDE5D871-F9C3-405C-9E3F-FE5DE7B26FC6}"
 	ProjectSection(SolutionItems) = preProject
-		src\directory.build.props = src\directory.build.props
-		src\directory.build.targets = src\directory.build.targets
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{40E9ED1D-0F68-494D-A657-B75A62645AD8}"
 	ProjectSection(SolutionItems) = preProject
-		tests\.editorconfig = tests\.editorconfig
-		tests\directory.build.props = tests\directory.build.props
-		tests\directory.build.targets = tests\directory.build.targets
+		tests\.EditorConfig = tests\.EditorConfig
+		tests\Directory.Build.props = tests\Directory.Build.props
+		tests\Directory.Build.targets = tests\Directory.Build.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "devops", "devops", "{A72ED641-E520-4E40-920F-A8C005663859}"

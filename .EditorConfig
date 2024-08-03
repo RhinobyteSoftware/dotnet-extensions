@@ -4,7 +4,7 @@
 # This file must be named .EditorConfig with exact case for msbuild to automatically find it
 # when running on linux or other platforms that use a case sensitive file system
 
-# top-most .editorconfig file
+# top-most .EditorConfig file
 root = true
 
 
@@ -41,8 +41,8 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
-# .editorconfig files
-[*.editorconfig]
+# .EditorConfig files
+[*.EditorConfig]
 
 dotnet_diagnostic.EC101.severity    = error
 # Rule (EC104)  - Language rules must specify severity  - Reason: No longer required as of VS 2019 v16.9+ but editor config analyzer incorrectly flags it
