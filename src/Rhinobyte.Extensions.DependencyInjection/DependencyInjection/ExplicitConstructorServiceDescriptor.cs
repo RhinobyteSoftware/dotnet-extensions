@@ -69,7 +69,7 @@ public static class ExplicitConstructorServiceDescriptor
 
 		var descriptorType = typeof(ExplicitConstructorServiceDescriptor<>).MakeGenericType(implementationType);
 		var descriptorConstructor = descriptorType.GetConstructors(BindingFlags.Public | BindingFlags.Instance)[0];
-		var descriptorInstance = (ServiceDescriptor)descriptorConstructor.Invoke(new object[] { serviceType, explicitConstructorToUse, serviceLifetime });
+		var descriptorInstance = (ServiceDescriptor)descriptorConstructor.Invoke([serviceType, explicitConstructorToUse, serviceLifetime]);
 		return descriptorInstance;
 	}
 

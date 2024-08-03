@@ -63,7 +63,7 @@ public class TypeExtensionTests
 		genericTypeArguments[1].GetDeclaringMember().Should().BeNull();
 
 		methodInfo = typeof(ClassWithGenericMethod).GetMethod(nameof(ClassWithGenericMethod.MethodWithGenericResult2), BindingFlags.Public | BindingFlags.Instance);
-		methodInfo!.MakeGenericMethod(new Type[] { typeof(object), typeof(object) });
+		methodInfo!.MakeGenericMethod([typeof(object), typeof(object)]);
 		methodInfo!.ReturnType.GetDeclaringMember().Should().Be(null);
 		genericTypeArguments = methodInfo!.ReturnType.GetGenericArguments();
 		genericTypeArguments.Should().NotBeNull();
@@ -107,7 +107,11 @@ public class TypeExtensionTests
 		typeof(SomethingOptions).IsCompilerGenerated().Should().BeFalse();
 
 		var reflectionLibraryTypes = typeof(Rhinobyte.Extensions.Reflection.MethodBaseExtensions).Assembly.GetTypes();
-		var compilerGeneratedType = reflectionLibraryTypes.FirstOrDefault(type => type.Name.StartsWith("<"));
+#if NETSTANDARD2_0 || NET48
+		var compilerGeneratedType = reflectionLibraryTypes.FirstOrDefault(type => type.Name.StartsWith("<", StringComparison.Ordinal));
+#else
+		var compilerGeneratedType = reflectionLibraryTypes.FirstOrDefault(type => type.Name.StartsWith('<'));
+#endif
 		compilerGeneratedType.Should().NotBeNull();
 		compilerGeneratedType!.IsCompilerGenerated().Should().BeTrue();
 	}

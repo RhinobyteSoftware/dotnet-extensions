@@ -223,12 +223,17 @@ public class ExampleMethods
 		return value1 + value2 + (int)Math.Floor(value3);
 	}
 
+
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable CA1510 // Use throw helper
 	public static int NullParameterCheck_Type1(string parameter)
 	{
 		if (parameter is null) throw new ArgumentNullException(nameof(parameter));
 
 		return 5;
 	}
+#pragma warning restore CA1510 // Use throw helper
+#pragma warning restore IDE0046 // Convert to conditional expression
 
 	public static int NullParameterCheck_Type2(string parameter)
 	{

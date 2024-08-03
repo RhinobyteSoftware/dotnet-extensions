@@ -16,5 +16,5 @@ public class DefaultInstructionFormatter : IInstructionFormatter
 
 	/// <inheritdoc/>
 	public virtual string DescribeInstructions(IEnumerable<InstructionBase> instructionsToDescribe)
-		=> string.Join(Environment.NewLine, instructionsToDescribe.Select(instruction => DescribeInstruction(instruction)));
+		=> string.Join(Environment.NewLine, instructionsToDescribe.Select(DescribeInstruction));
 }

@@ -359,8 +359,7 @@ public static class TypeExtensions
 			}
 		}
 
-		if (declaringMember is null)
-			declaringMember = memberType.GetDeclaringMember();
+		declaringMember ??= memberType.GetDeclaringMember();
 
 		for (var nextDeclaringMember = declaringMember; nextDeclaringMember != null; nextDeclaringMember = nextDeclaringMember.DeclaringType)
 		{

@@ -60,7 +60,7 @@ public sealed class InnerLogMessageQueue<TMessageEntry, TOptions> : ILogMessageQ
 	internal InnerLogMessageQueue(
 		TOptions optionsValue)
 	{
-		if (optionsValue is null) throw new ArgumentNullException(nameof(optionsValue));
+		_ = optionsValue ?? throw new ArgumentNullException(nameof(optionsValue));
 
 		_maxQueueSize = optionsValue.MaxQueueSize ?? 0;
 		_queueFullBehavior = optionsValue.QueueFullBehavior;

@@ -18,12 +18,12 @@ public class ValidatorUnitTests
 	private const string DateTimeRangeMaximum = "1999-12-31 23:59:59";
 	private const string DateTimeRangeMinimum = "1900-01-01";
 
-	public static readonly Type[] DateTimeValidationAttributeTypes = new Type[] {
-			typeof(DateTimeRangeAttribute),
-			typeof(SqlServerDateAttribute),
-			typeof(SqlServerDateTimeAttribute),
-			typeof(SqlServerSmallDateTimeAttribute)
-		};
+	public static readonly Type[] DateTimeValidationAttributeTypes = [
+		typeof(DateTimeRangeAttribute),
+		typeof(SqlServerDateAttribute),
+		typeof(SqlServerDateTimeAttribute),
+		typeof(SqlServerSmallDateTimeAttribute)
+	];
 
 	[DataTestMethod]
 	[DynamicData(nameof(TestData_ValidationAttribute_TypesNames), dynamicDataSourceType: DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(FormatDynamicDataTestName))]
@@ -321,7 +321,7 @@ public class ValidatorUnitTests
 
 		var expectedErrorMessage = string.Format(CultureInfo.CurrentCulture, "The field {0} must be between {1} and {2}.", memberName, minimum, maximum);
 		validationFailure.ErrorMessage.Should().Be(expectedErrorMessage);
-		validationFailure.MemberNames.Should().BeEquivalentTo(new string[] { memberName });
+		validationFailure.MemberNames.Should().BeEquivalentTo([memberName]);
 	}
 
 	private static void VerifyValidationThrowsInvalidCastException(object modelToValidate)

@@ -11,26 +11,17 @@ namespace Rhinobyte.Extensions.CommandLine;
 /// Custom binder implementation for the System.CommandLine parser so we can support binding complex models with attributes decorated and/or default behavior fallbacks based on member names
 /// </summary>
 /// <typeparam name="TOptions"></typeparam>
-public class ComplexModelBinder<TOptions> : BinderBase<TOptions>
+/// <remarks>
+/// Construct a new binder instance
+/// </remarks>
+/// <param name="_parserOptions">The options for configurable behaviors</param>
+/// <param name="_symbolLookup">The dictionary used to lookup the parser symbol for a <see cref="PropertyInfo"/> from the <typeparamref name="TOptions"/> type</param>
+/// <exception cref="ArgumentNullException">Thrown if either of the required <paramref name="_parserOptions"/> or <paramref name="_symbolLookup"/> are null</exception>
+public class ComplexModelBinder<TOptions>(
+	AdvancedParserOptions _parserOptions,
+	IReadOnlyDictionary<PropertyInfo, Symbol> _symbolLookup) : BinderBase<TOptions>
 	where TOptions : new()
 {
-	private readonly AdvancedParserOptions _parserOptions;
-	private readonly IReadOnlyDictionary<PropertyInfo, Symbol> _symbolLookup;
-
-	/// <summary>
-	/// Construct a new binder instance
-	/// </summary>
-	/// <param name="parserOptions">The options for configurable behaviors</param>
-	/// <param name="symbolLookup">The dictionary used to lookup the parser symbol for a <see cref="PropertyInfo"/> from the <typeparamref name="TOptions"/> type</param>
-	/// <exception cref="ArgumentNullException">Thrown if either of the required <paramref name="parserOptions"/> or <paramref name="symbolLookup"/> are null</exception>
-	public ComplexModelBinder(
-		AdvancedParserOptions parserOptions,
-		IReadOnlyDictionary<PropertyInfo, Symbol> symbolLookup)
-	{
-		_parserOptions = parserOptions ?? throw new ArgumentNullException(nameof(parserOptions));
-		_symbolLookup = symbolLookup ?? throw new ArgumentNullException(nameof(symbolLookup));
-	}
-
 	/// <summary>
 	/// Method to expose protected <see cref="GetBoundValue(BindingContext)"/> implementation publicly on the binder
 	/// </summary>

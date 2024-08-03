@@ -42,7 +42,7 @@ public class RecursiveInstructionFormatter : IInstructionFormatter
 	public bool PrintFullChildTypeName { get; }
 
 
-	private static IReadOnlyDictionary<int, string> BuildIndentationStringLookup(string indentationString, int traversalDepth)
+	private static Dictionary<int, string> BuildIndentationStringLookup(string indentationString, int traversalDepth)
 	{
 		var indentationStringLookup = new Dictionary<int, string>
 		{

@@ -74,10 +74,10 @@ public class AdvancedParserTests
 	public class TestOptions
 	{
 		[Required]
-		[Option(Aliases = new string[] { "--int-one", "/intone" }, Description = "[Required] Integer option one")]
+		[Option(Aliases = ["--int-one", "/intone"], Description = "[Required] Integer option one")]
 		public int IntegerOptionOne { get; set; }
 
-		[Option(Aliases = new string[] { "--int-two" }, Description = "[Optional] Integer option two")]
+		[Option(Aliases = ["--int-two"], Description = "[Optional] Integer option two")]
 		public int IntegerOptionTwo { get; set; }
 
 		public bool IsEnabled { get; set; }
@@ -85,10 +85,10 @@ public class AdvancedParserTests
 		public bool? NullableBoolOption { get; set; }
 
 		[Required]
-		[Option(Aliases = new string[] { "--string-option-one", "-s", "/stringoptionone" }, Description = "[Required] String option one")]
+		[Option(Aliases = ["--string-option-one", "-s", "/stringoptionone"], Description = "[Required] String option one")]
 		public string StringOptionOne { get; set; } = string.Empty;
 
-		[Option(Aliases = new string[] { "--string-option-two", "-t", "/stringoptiontwo" }, Description = "[Optional] String option two")]
+		[Option(Aliases = ["--string-option-two", "-t", "/stringoptiontwo"], Description = "[Optional] String option two")]
 		public string StringOptionTwo { get; set; } = string.Empty;
 
 

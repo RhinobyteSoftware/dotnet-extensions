@@ -44,7 +44,7 @@ public class ApartmentStateTestMethodAttribute : TestMethodAttribute
 	/// This constructor overload can be used by subclasses of <see cref="TestClassAttribute"/> to wrap other test method attributes.
 	/// <para>For example: <see cref="ApartmentStateTestClassAttribute"/></para>
 	/// </remarks>
-	public ApartmentStateTestMethodAttribute(ApartmentState testApartmentState, TestMethodAttribute testMethodAttribute)
+	public ApartmentStateTestMethodAttribute(ApartmentState testApartmentState, TestMethodAttribute? testMethodAttribute)
 		: this(testMethodAttribute?.DisplayName, testApartmentState)
 	{
 		TestMethodAttribute = testMethodAttribute;
@@ -87,7 +87,7 @@ public class ApartmentStateTestMethodAttribute : TestMethodAttribute
 		thread.Start();
 		thread.Join();
 #pragma warning disable CA1508 // Avoid dead conditional code  -
-		return result ?? Array.Empty<TestResult>();
+		return result ?? [];
 #pragma warning restore CA1508 // Avoid dead conditional code
 	}
 #pragma warning restore CA1062 // Validate arguments of public methods
@@ -97,6 +97,6 @@ public class ApartmentStateTestMethodAttribute : TestMethodAttribute
 		if (TestMethodAttribute != null)
 			return TestMethodAttribute.Execute(testMethod);
 
-		return new[] { testMethod.Invoke(null) };
+		return [testMethod.Invoke(null)];
 	}
 }

@@ -285,26 +285,26 @@ public class WaitUtilityTests
 	}
 
 	[TestMethod]
-	public void WaitUntilAsync_throws_ArgumentNullException_for_a_null_condition_argument()
+	public async Task WaitUntilAsync_throws_ArgumentNullException_for_a_null_condition_argument()
 	{
-		Awaiting(() => new WaitUtility().WaitUntilAsync<string>(condition: null!))
+		await Awaiting(() => new WaitUtility().WaitUntilAsync<string>(condition: null!))
 			.Should()
-			.Throw<ArgumentNullException>()
+			.ThrowAsync<ArgumentNullException>()
 			.WithMessage("Value cannot be null.*condition*");
 
-		Awaiting(() => new WaitUtility().WaitUntilAsync<string>(asyncCondition: null!))
+		await Awaiting(() => new WaitUtility().WaitUntilAsync<string>(asyncCondition: null!))
 			.Should()
-			.Throw<ArgumentNullException>()
+			.ThrowAsync<ArgumentNullException>()
 			.WithMessage("Value cannot be null.*asyncCondition*");
 
-		Awaiting(() => new WaitUtility().WaitUntilAsync<int, string>(condition: null!, conditionState: 5))
+		await Awaiting(() => new WaitUtility().WaitUntilAsync<int, string>(condition: null!, conditionState: 5))
 			.Should()
-			.Throw<ArgumentNullException>()
+			.ThrowAsync<ArgumentNullException>()
 			.WithMessage("Value cannot be null.*condition*");
 
-		Awaiting(() => new WaitUtility().WaitUntilAsync<int, string>(asyncCondition: null!, conditionState: 5))
+		await Awaiting(() => new WaitUtility().WaitUntilAsync<int, string>(asyncCondition: null!, conditionState: 5))
 			.Should()
-			.Throw<ArgumentNullException>()
+			.ThrowAsync<ArgumentNullException>()
 			.WithMessage("Value cannot be null.*asyncCondition*");
 	}
 
@@ -427,7 +427,7 @@ public class WaitUtilityTests
 	}
 
 	[TestMethod]
-	public void WaitUntilAsync_throws_TimeoutException_when_interval_is_exceeded1()
+	public async Task WaitUntilAsync_throws_TimeoutException_when_interval_is_exceeded1()
 	{
 		var waitUtility = new WaitUtility();
 
@@ -438,23 +438,23 @@ public class WaitUtilityTests
 			return incrementedValue > 4;
 		}
 
-		Awaiting(() => waitUtility.WaitUntilAsync<bool>(waitCondition, initialDelay: 0, pollingInterval: 200, timeoutInterval: 400, waitId: "Some.Wait.Id", cancellationToken: CancellationTokenForTest))
+		await Awaiting(() => waitUtility.WaitUntilAsync<bool>(waitCondition, initialDelay: 0, pollingInterval: 200, timeoutInterval: 400, waitId: "Some.Wait.Id", cancellationToken: CancellationTokenForTest))
 			.Should()
-			.Throw<TimeoutException>()
+			.ThrowAsync<TimeoutException>()
 			.WithMessage("The timeout threshold was reached before the*condition was met");
 	}
 
 	[TestMethod]
-	public void WaitUntilAsync_throws_TimeoutException_when_interval_is_exceeded2()
+	public async Task WaitUntilAsync_throws_TimeoutException_when_interval_is_exceeded2()
 	{
-		Awaiting(() => new WaitUtility().WaitUntilAsync<WaitIntegerState, bool>(StaticBoolWaitCondition, new WaitIntegerState(), initialDelay: 0, pollingInterval: 200, timeoutInterval: 400, waitId: "Some.Wait.Id", cancellationToken: CancellationTokenForTest))
+		await Awaiting(() => new WaitUtility().WaitUntilAsync<WaitIntegerState, bool>(StaticBoolWaitCondition, new WaitIntegerState(), initialDelay: 0, pollingInterval: 200, timeoutInterval: 400, waitId: "Some.Wait.Id", cancellationToken: CancellationTokenForTest))
 			.Should()
-			.Throw<TimeoutException>()
+			.ThrowAsync<TimeoutException>()
 			.WithMessage("The timeout threshold was reached before the*condition was met");
 	}
 
 	[TestMethod]
-	public void WaitUntilAsync_throws_TimeoutException_when_interval_is_exceeded3()
+	public async Task WaitUntilAsync_throws_TimeoutException_when_interval_is_exceeded3()
 	{
 		var waitUtility = new WaitUtility();
 
@@ -465,18 +465,18 @@ public class WaitUtilityTests
 			return Task.FromResult(incrementedValue > 4);
 		}
 
-		Awaiting(() => waitUtility.WaitUntilAsync<bool>(waitConditionAsync, initialDelay: 0, pollingInterval: 200, timeoutInterval: 400, waitId: "Some.Wait.Id", cancellationToken: CancellationTokenForTest))
+		await Awaiting(() => waitUtility.WaitUntilAsync<bool>(waitConditionAsync, initialDelay: 0, pollingInterval: 200, timeoutInterval: 400, waitId: "Some.Wait.Id", cancellationToken: CancellationTokenForTest))
 			.Should()
-			.Throw<TimeoutException>()
+			.ThrowAsync<TimeoutException>()
 			.WithMessage("The timeout threshold was reached before the*condition was met");
 	}
 
 	[TestMethod]
-	public void WaitUntilAsync_throws_TimeoutException_when_interval_is_exceeded4()
+	public async Task WaitUntilAsync_throws_TimeoutException_when_interval_is_exceeded4()
 	{
-		Awaiting(() => new WaitUtility().WaitUntilAsync<WaitIntegerState, bool>(StaticBoolWaitConditionAsync, new WaitIntegerState(), initialDelay: 0, pollingInterval: 200, timeoutInterval: 400, waitId: "Some.Wait.Id", cancellationToken: CancellationTokenForTest))
+		await Awaiting(() => new WaitUtility().WaitUntilAsync<WaitIntegerState, bool>(StaticBoolWaitConditionAsync, new WaitIntegerState(), initialDelay: 0, pollingInterval: 200, timeoutInterval: 400, waitId: "Some.Wait.Id", cancellationToken: CancellationTokenForTest))
 			.Should()
-			.Throw<TimeoutException>()
+			.ThrowAsync<TimeoutException>()
 			.WithMessage("The timeout threshold was reached before the*condition was met");
 	}
 

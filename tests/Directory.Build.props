@@ -8,7 +8,7 @@
 
     <PropertyGroup>
         <Configurations>Debug;ReleaseTesting</Configurations>
-        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
         <IsPackable>false</IsPackable>
         <IsTestProject Condition=" '$(IsTestProject)' == '' AND $(MSBuildProjectName.EndsWith('Tests'))">true</IsTestProject>

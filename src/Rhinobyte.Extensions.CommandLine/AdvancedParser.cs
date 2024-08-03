@@ -12,20 +12,13 @@ namespace Rhinobyte.Extensions.CommandLine;
 /// <summary>
 /// Implementation of the <see cref="IAdvancedParser{TOptions}"/> build on top of the <see cref="System.CommandLine.Parsing.Parser"/> behaviors
 /// </summary>
-public class AdvancedParser<TOptions> : IAdvancedParser<TOptions>
+/// <remarks>
+/// Construct a new instance of the advanced parser
+/// </remarks>
+public class AdvancedParser<TOptions>(
+	AdvancedParserOptions _parserOptions) : IAdvancedParser<TOptions>
 	where TOptions : new()
 {
-	private readonly AdvancedParserOptions _parserOptions;
-
-	/// <summary>
-	/// Construct a new instance of the advanced parser
-	/// </summary>
-	public AdvancedParser(
-		AdvancedParserOptions parserOptions)
-	{
-		_parserOptions = parserOptions ?? throw new ArgumentNullException(nameof(parserOptions));
-	}
-
 	/// <summary>
 	/// Constructs a pair of aliases in the format "--property-name", "/PropertyName"
 	/// </summary>
@@ -59,7 +52,7 @@ public class AdvancedParser<TOptions> : IAdvancedParser<TOptions>
 			_ = doubleDashAliasBuilder.Append(currentChar);
 		}
 
-		return new string[] { doubleDashAliasBuilder.ToString(), $"/{propertyName}" };
+		return [doubleDashAliasBuilder.ToString(), $"/{propertyName}"];
 	}
 
 	/// <summary>

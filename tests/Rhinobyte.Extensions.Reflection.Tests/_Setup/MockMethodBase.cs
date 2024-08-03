@@ -43,15 +43,15 @@ public class MockMethodBase : MethodBase
 	public override Type ReflectedType => _reflectedType!;
 
 
-	public override object[] GetCustomAttributes(bool inherit) => Array.Empty<object>();
-	public override object[] GetCustomAttributes(Type attributeType, bool inherit) => Array.Empty<object>();
+	public override object[] GetCustomAttributes(bool inherit) => [];
+	public override object[] GetCustomAttributes(Type attributeType, bool inherit) => [];
 
-	public override Type[] GetGenericArguments() => Array.Empty<Type>();
+	public override Type[] GetGenericArguments() => [];
 
 	public override MethodBody? GetMethodBody() => _methodBody;
 
 	public override MethodImplAttributes GetMethodImplementationFlags() => MethodImplAttributes.Runtime;
-	public override ParameterInfo[] GetParameters() => Array.Empty<ParameterInfo>();
+	public override ParameterInfo[] GetParameters() => [];
 	public override object? Invoke(object? obj, BindingFlags invokeAttr, Binder? binder, object?[]? parameters, CultureInfo? culture) => throw new NotImplementedException();
 	public override bool IsDefined(Type attributeType, bool inherit) => false;
 

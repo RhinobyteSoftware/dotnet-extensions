@@ -40,8 +40,7 @@ public class WaitConfiguration
 	/// <param name="waitConfigurationItems">The wait configuration category/item pairs to use for this configuration</param>
 	public static WaitConfiguration FromDictionary(IDictionary<string, WaitConfigurationItem> waitConfigurationItems)
 	{
-		if (waitConfigurationItems is null)
-			throw new ArgumentNullException(nameof(waitConfigurationItems));
+		_ = waitConfigurationItems ?? throw new ArgumentNullException(nameof(waitConfigurationItems));
 
 		if (waitConfigurationItems.Count < 1)
 			throw new ArgumentException($"{nameof(waitConfigurationItems)} cannot be an empty dictionary");
@@ -100,8 +99,7 @@ public class WaitConfiguration
 			if (!_waitConfigurations.TryGetValue(keyPrefix, out var waitConfigurationItem))
 				continue;
 
-			if (waitConfigurationCompositeItem is null)
-				waitConfigurationCompositeItem = new WaitConfigurationCompositeItem();
+			waitConfigurationCompositeItem ??= new WaitConfigurationCompositeItem();
 
 			if (waitConfigurationCompositeItem.AssignMissingValues(waitConfigurationItem, keyPrefix))
 				break; // Break if all values are set on the composite

@@ -10,11 +10,11 @@ namespace Rhinobyte.Extensions.Reflection.AssemblyScanning;
 /// </summary>
 public class AssemblyScanner : IAssemblyScanner
 {
-	private readonly HashSet<AssemblyInclude> _assembliesToScan = new HashSet<AssemblyInclude>();
+	private readonly HashSet<AssemblyInclude> _assembliesToScan = [];
 	private IncludeExcludeConflictResolutionStrategy _currentIncludeExcludeConflictResolutionStrategy;
 	private AssemblyScanResult? _currentScanResult;
-	private readonly HashSet<Type> _excludedTypes = new HashSet<Type>();
-	private readonly HashSet<Type> _includedTypes = new HashSet<Type>();
+	private readonly HashSet<Type> _excludedTypes = [];
+	private readonly HashSet<Type> _includedTypes = [];
 	private readonly HashSet<IScannedAssemblyFilter> _scannedAssemblyFilters;
 	private readonly HashSet<IScannedTypeFilter> _scannedTypeFilters;
 
@@ -23,8 +23,8 @@ public class AssemblyScanner : IAssemblyScanner
 	/// </summary>
 	protected AssemblyScanner()
 	{
-		_scannedAssemblyFilters = new HashSet<IScannedAssemblyFilter>();
-		_scannedTypeFilters = new HashSet<IScannedTypeFilter>();
+		_scannedAssemblyFilters = [];
+		_scannedTypeFilters = [];
 	}
 
 	/// <summary>

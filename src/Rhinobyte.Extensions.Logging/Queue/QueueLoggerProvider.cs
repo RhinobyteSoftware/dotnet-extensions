@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Rhinobyte.Extensions.Logging.Common;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
-using System.Linq;
 
 namespace Rhinobyte.Extensions.Logging.Queue;
 
@@ -26,7 +26,7 @@ public abstract class QueueLoggerProvider<TMessageEntry, TMessageFormatter, TOpt
 	private readonly ConcurrentDictionary<string, QueueLogger<TMessageEntry>> _loggers;
 	private readonly IOptionsMonitor<TOptions> _optionsMonitor;
 	private readonly ILogMessageQueue<TMessageEntry, TOptions> _messageQueue;
-	private readonly IDisposable _optionsReloadToken;
+	private readonly IDisposable? _optionsReloadToken;
 	/// Ok to default to NullScopeProvider, the LoggerFactory will automatically set this to the LoggerFactoryScopeProvider because we implement ISupportExternalScope
 	private IExternalScopeProvider _scopeProvider = NullScopeProvider.Instance;
 
@@ -45,7 +45,8 @@ public abstract class QueueLoggerProvider<TMessageEntry, TMessageFormatter, TOpt
 		IOptionsMonitor<TOptions> optionsMonitor,
 		ILogMessageQueue<TMessageEntry, TOptions> messageQueue)
 	{
-		if (optionsMonitor is null) throw new ArgumentNullException(nameof(optionsMonitor));
+		_ = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
+
 		if (optionsMonitor.CurrentValue is null) throw new ArgumentException($"{nameof(optionsMonitor)}.{nameof(optionsMonitor.CurrentValue)} is null");
 		_optionsMonitor = optionsMonitor;
 
@@ -138,15 +139,19 @@ public abstract class QueueLoggerProvider<TMessageEntry, TMessageFormatter, TOpt
 	private void SetFormatters(string defaultFormatterName, IEnumerable<TMessageFormatter> logMessageFormatters)
 	{
 		if (string.IsNullOrWhiteSpace(defaultFormatterName)) throw new ArgumentException($"{nameof(defaultFormatterName)} cannot be null or whitespace.", nameof(defaultFormatterName));
-		if (logMessageFormatters is null) throw new ArgumentNullException(nameof(logMessageFormatters));
-		if (!logMessageFormatters.Any()) throw new ArgumentException($"{nameof(logMessageFormatters)} must have at least one item", nameof(logMessageFormatters));
+
+		_ = logMessageFormatters ?? throw new ArgumentNullException(nameof(logMessageFormatters));
+
+		var logMessageFormattersCollection = logMessageFormatters.AsReadOnlyCollectionOrToList();
+		if (logMessageFormattersCollection.Count < 1) throw new ArgumentException($"{nameof(logMessageFormatters)} must have at least one item", nameof(logMessageFormatters));
 
 		var formattersDictionary = new ConcurrentDictionary<string, TMessageFormatter>(StringComparer.OrdinalIgnoreCase);
-		foreach (var formatter in logMessageFormatters)
+		foreach (var formatter in logMessageFormattersCollection)
 			_ = formattersDictionary.TryAdd(formatter.Name, formatter);
 
 		if (!formattersDictionary.ContainsKey(defaultFormatterName))
 			throw new ArgumentException($"{nameof(logMessageFormatters)} must contain a formatter for the supplied default formatter name: {defaultFormatterName}");
+
 		_formatters = formattersDictionary;
 	}
 

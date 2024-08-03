@@ -63,7 +63,12 @@ public class InterfaceImplementationsConvention : ServiceRegistrationConventionB
 
 		var implementationTypes = new List<Type>();
 		var defaultConventionImplementationTypes = new List<Type>();
+
+#if NETSTANDARD2_0 || NET48
 		var defaultConventionClassName = discoveredType.Name?.StartsWith("I", StringComparison.Ordinal) == true
+#else
+		var defaultConventionClassName = discoveredType.Name?.StartsWith('I') == true
+#endif
 			? discoveredType.Name.Substring(1)
 			: null;
 

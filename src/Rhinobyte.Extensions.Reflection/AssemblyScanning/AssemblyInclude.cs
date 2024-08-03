@@ -35,17 +35,17 @@ public struct AssemblyInclude : IEquatable<AssemblyInclude>
 	public Assembly AssemblyToInclude { get; }
 
 	/// <inheritdoc/>
-	public override bool Equals(object? obj)
+	public override readonly bool Equals(object? obj)
 		=> obj is AssemblyInclude otherAssemblyInclude && otherAssemblyInclude.AssemblyToInclude == this.AssemblyToInclude;
 
 	/// <summary>
 	/// Determine if the <paramref name="other"/> <see cref="AssemblyInclude"/> is equivalent to this instance
 	/// </summary>
-	public bool Equals(AssemblyInclude other) =>
+	public readonly bool Equals(AssemblyInclude other) =>
 		other.AssemblyToInclude == this.AssemblyToInclude;
 
 	/// <inheritdoc/>
-	public override int GetHashCode()
+	public override readonly int GetHashCode()
 		=> AssemblyToInclude.GetHashCode();
 
 	/// <summary>
