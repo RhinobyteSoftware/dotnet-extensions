@@ -13,7 +13,7 @@ namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage;
 /// strongly typed <see cref="InstructionBase"/> objects that represent the method's IL instructions.
 /// </para>
 /// </summary>
-internal class MethodBodyParser
+internal sealed class MethodBodyParser
 {
 	private int _bytePosition;
 	private readonly Type[]? _declaringTypeGenericArguments;

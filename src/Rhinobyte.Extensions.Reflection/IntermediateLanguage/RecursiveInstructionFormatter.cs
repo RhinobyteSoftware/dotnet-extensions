@@ -236,7 +236,7 @@ public class RecursiveInstructionFormatter : IInstructionFormatter
 		}
 	}
 
-	private class NodeToCrawl
+	private sealed class NodeToCrawl
 	{
 		public NodeToCrawl(
 			InstructionBase instruction,
