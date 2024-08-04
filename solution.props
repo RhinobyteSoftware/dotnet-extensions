@@ -58,6 +58,7 @@
         <CommandLinePackageVersion>8.0.0-preview.1</CommandLinePackageVersion>
         <DataAnnotationsPackageVersion>8.0.0-preview.1</DataAnnotationsPackageVersion>
         <DependencyInjectionPackageVersion>8.0.0-preview.1</DependencyInjectionPackageVersion>
+        <JsonExtensionsPackageVersion>8.0.0-preview.1</JsonExtensionsPackageVersion>
         <LoggingPackageVersion>8.0.0-preview.1</LoggingPackageVersion>
         <ReflectionPackageVersion>8.0.0-preview.1</ReflectionPackageVersion>
         <TestToolsPackageVersion>8.0.0-preview.1</TestToolsPackageVersion>

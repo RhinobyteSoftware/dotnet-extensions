@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <Configurations>Debug;Release;ReleaseTesting</Configurations>
+
+        <!-- VERSION VALUES -->
+        <AssemblyVersion>$(JsonExtensionsPackageVersion).0</AssemblyVersion>
+        <FileVersion>$(JsonExtensionsPackageVersion).0</FileVersion>
+        <InformationalVersion>$(JsonExtensionsPackageVersion)</InformationalVersion>
+        <PackageVersion>$(JsonExtensionsPackageVersion)</PackageVersion>
+        <Version>$(JsonExtensionsPackageVersion)</Version>
+
+        <PackageId>Rhinobyte.Extensions.Json</PackageId>
+        <AssemblyName>$(PackageId)</AssemblyName>
+        <RootNamespace>$(PackageId)</RootNamespace>
+        <Title>$(PackageId)</Title>
+        <PackageTags>serialization JSON polymorphism</PackageTags>
+
+        <ReleaseNotesTextFilePath>$(MSBuildProjectDirectory)\RELEASE-NOTES.txt</ReleaseNotesTextFilePath>
+        <Summary>Extensions to the .NET System.Text.Json library serialization and deserialization features</Summary>
+        <Description>
+            $(Summary)
+
+            Common Types/Extensions
+            The Rhinobyte.Extensions.Reflection.MethodBaseExtensions.ParseInstructions extension method can be used to get a strongly typed collection of parsed IL instructions from the method body instance
+        </Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>

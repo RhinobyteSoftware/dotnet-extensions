@@ -18,6 +18,12 @@ This library contains types to extend the behavior provided by the `System.Compo
 
 This library contains assembly scanning and convention based registration extensions for the out-of-the-box .NET dependency injection libraries.
 
+### [Rhinobyte.Extensions.Json](/src/Rhinobyte.Extensions.Json/README.md)
+
+[![NuGet version (Rhinobyte.Extensions.Json)](https://img.shields.io/nuget/v/Rhinobyte.Extensions.Json.svg?style=flat)](https://www.nuget.org/packages/Rhinobyte.Extensions.Json/)
+
+This library contains extensions to the `System.Text.Json` base class library functionality.
+
 ### [Rhinobyte.Extensions.Reflection](/src/Rhinobyte.Extensions.Reflection/README.md)
 
 [![NuGet version (Rhinobyte.Extensions.Reflection)](https://img.shields.io/nuget/v/Rhinobyte.Extensions.Reflection.svg?style=flat)](https://www.nuget.org/packages/Rhinobyte.Extensions.Reflection/)

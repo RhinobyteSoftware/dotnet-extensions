@@ -1,0 +1,2 @@
+﻿v8.0.0-preview.1
+- Initial release of Rhinobyte.Extensions.Json package. Contains the AssumeUtcDateTimeOffsetConverter. Also contains the PolymorphicFallbackTypeResolver and JsonPolymorphicDeserializationFallbackAttribute when targetting .NET8.0 or greater.
