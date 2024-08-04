@@ -20,7 +20,7 @@ public static class DynamicTypeBuilder
 		var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(dynamicAssemblyName, AssemblyBuilderAccess.Run);
 		var moduleBuilder = assemblyBuilder.DefineDynamicModule("JumpTableDemo");
 		var typeBuilder = moduleBuilder.DefineType("JumpTableDemoType", TypeAttributes.Public);
-		var methodBuilder = typeBuilder.DefineMethod("JumpTableMethod", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(int) });
+		var methodBuilder = typeBuilder.DefineMethod("JumpTableMethod", MethodAttributes.Public | MethodAttributes.Static, typeof(string), [typeof(int)]);
 		var ilGenerator = methodBuilder.GetILGenerator();
 
 		var defaultCaseLabel = ilGenerator.DefineLabel();
@@ -78,7 +78,7 @@ public static class DynamicTypeBuilder
 		var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(dynamicAssemblyName, AssemblyBuilderAccess.Run);
 		var moduleBuilder = assemblyBuilder.DefineDynamicModule("InlineSignatureDemo");
 		var typeBuilder = moduleBuilder.DefineType("InlineSignatureDemoType", TypeAttributes.Public);
-		var methodBuilder = typeBuilder.DefineMethod("InlineSignatureMethod", MethodAttributes.Public | MethodAttributes.Static, typeof(string), new Type[] { typeof(int) });
+		var methodBuilder = typeBuilder.DefineMethod("InlineSignatureMethod", MethodAttributes.Public | MethodAttributes.Static, typeof(string), [typeof(int)]);
 		var ilGenerator = methodBuilder.GetILGenerator();
 
 		var endOfMethodLabel = ilGenerator.DefineLabel();

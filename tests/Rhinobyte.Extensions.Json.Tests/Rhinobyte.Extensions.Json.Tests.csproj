@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoFixture" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="$(RepoRoot)\src\Rhinobyte.Extensions.Json\Rhinobyte.Extensions.Json.csproj" />
+    </ItemGroup>
+
+</Project>

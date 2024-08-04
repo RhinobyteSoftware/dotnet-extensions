@@ -31,17 +31,6 @@ public class ParseOptionsException : InvalidOperationException
 		: base(message, innerException)
 	{
 	}
-
-	/// <summary>
-	/// Pass through implementation of the seralization constructor for <see cref="System.Runtime.Serialization.ISerializable"/> support
-	/// </summary>
-	protected ParseOptionsException(
-		System.Runtime.Serialization.SerializationInfo serializationInfo,
-		System.Runtime.Serialization.StreamingContext streamingContext)
-		: base(serializationInfo, streamingContext)
-	{
-
-	}
 }
 
 

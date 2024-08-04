@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace Rhinobyte.Extensions.DependencyInjection;
 
@@ -24,11 +23,6 @@ public class ConstructorSelectionFailedException : InvalidOperationException
 	/// <inheritdoc/>
 	public ConstructorSelectionFailedException(string? message, Exception? innerException)
 		: base(message, innerException)
-	{
-	}
-
-	/// <inheritdoc/>
-	protected ConstructorSelectionFailedException(SerializationInfo info, StreamingContext context) : base(info, context)
 	{
 	}
 }

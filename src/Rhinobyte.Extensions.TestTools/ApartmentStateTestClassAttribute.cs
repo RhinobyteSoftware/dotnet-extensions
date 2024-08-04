@@ -38,7 +38,7 @@ public class ApartmentStateTestClassAttribute : TestClassAttribute
 	/// <see cref="TestApartmentState" />.
 	/// </summary>
 	/// <param name="testMethodAttribute">The <see cref="TestMethodAttribute"/> to wrap if it is not already an instance of <see cref="ApartmentStateTestMethodAttribute"/></param>
-	public override TestMethodAttribute GetTestMethodAttribute(TestMethodAttribute testMethodAttribute)
+	public override TestMethodAttribute GetTestMethodAttribute(TestMethodAttribute? testMethodAttribute)
 	{
 		if (testMethodAttribute is ApartmentStateTestMethodAttribute)
 			return testMethodAttribute;

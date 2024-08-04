@@ -230,4 +230,3 @@ Dependencies
 # Project Specific
 /development.local.props
 /development.local.targets
-/nuget.config

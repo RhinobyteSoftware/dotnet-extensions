@@ -18,7 +18,7 @@ public class QueueLoggerBackgroundTaskProcessor<TMessageEntry, TOptions> : ILogM
 {
 	private int? _batchSize;
 	private CancellationTokenSource? _cancellationTokenSource;
-	private readonly List<TMessageEntry> _currentBatch = new List<TMessageEntry>();
+	private readonly List<TMessageEntry> _currentBatch = [];
 	private bool _isDisposed;
 	private readonly IAsyncLogMessageProcessor<TMessageEntry, TOptions> _logMessageProcessor;
 	private int? _loopDelayInterval;
@@ -35,7 +35,8 @@ public class QueueLoggerBackgroundTaskProcessor<TMessageEntry, TOptions> : ILogM
 	{
 		_logMessageProcessor = logMessageProcessor ?? throw new ArgumentNullException(nameof(logMessageProcessor));
 
-		if (options is null) throw new ArgumentNullException(nameof(options));
+		_ = options ?? throw new ArgumentNullException(nameof(options));
+
 		if (options.Value is null) throw new ArgumentException($"{nameof(options)}.{nameof(options.Value)} is null");
 
 		_messageQueue = new InnerLogMessageQueue<TMessageEntry, TOptions>(options.Value);

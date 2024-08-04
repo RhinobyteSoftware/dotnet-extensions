@@ -116,7 +116,7 @@ public class AssemblyScannerTests
 		var assemblyScanner = AssemblyScanner.CreateDefault()
 			.AddExampleLibrary1();
 
-		assemblyScanner.ExcludeTypes(new[] { typeof(ISomethingOptions), typeof(SomethingOptions) });
+		assemblyScanner.ExcludeTypes([typeof(ISomethingOptions), typeof(SomethingOptions)]);
 		assemblyScanner.ExplicitTypeExcludes.Should().Contain(typeof(ISomethingOptions));
 		assemblyScanner.ExplicitTypeExcludes.Should().Contain(typeof(SomethingOptions));
 
@@ -133,7 +133,7 @@ public class AssemblyScannerTests
 	{
 		var assemblyScanner = AssemblyScanner.CreateDefault();
 
-		assemblyScanner.IncludeTypes(new[] { typeof(ISomethingOptions), typeof(SomethingOptions) });
+		assemblyScanner.IncludeTypes([typeof(ISomethingOptions), typeof(SomethingOptions)]);
 		assemblyScanner.ExplicitTypeIncludes.Should().Contain(typeof(ISomethingOptions));
 		assemblyScanner.ExplicitTypeIncludes.Should().Contain(typeof(SomethingOptions));
 
@@ -234,7 +234,7 @@ public class AssemblyScannerTests
 			.ScanAssemblies();
 
 		scanResult.ScannedAssemblies.Should().Contain(new AssemblyInclude(reflectionExtensionsAssembly));
-		scanResult.AllDiscoveredTypes.Any(type => compilerGeneratedTypes.Contains(type)).Should().BeFalse();
+		scanResult.AllDiscoveredTypes.Any(compilerGeneratedTypes.Contains).Should().BeFalse();
 	}
 
 	[TestMethod]

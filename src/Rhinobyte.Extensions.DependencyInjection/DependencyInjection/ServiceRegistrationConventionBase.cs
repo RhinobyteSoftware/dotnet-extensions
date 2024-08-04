@@ -174,9 +174,8 @@ public abstract class ServiceRegistrationConventionBase : IServiceRegistrationCo
 		_ = serviceDescriptor ?? throw new ArgumentNullException(nameof(serviceDescriptor));
 		_ = serviceRegistrationCache ?? throw new ArgumentNullException(nameof(serviceRegistrationCache));
 
-		var implementationType = serviceDescriptor.TryGetImplementationType();
-		if (implementationType is null)
-			throw new ArgumentException($"{nameof(ServiceDescriptorExtensions.TryGetImplementationType)} returned null");
+		var implementationType = serviceDescriptor.TryGetImplementationType()
+			?? throw new ArgumentException($"{nameof(ServiceDescriptorExtensions.TryGetImplementationType)} returned null");
 
 		var isTryAdd = overwriteBehavior == ServiceRegistrationOverwriteBehavior.TryAdd;
 		var byServiceType = isTryAdd || skipDuplicates

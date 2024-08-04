@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -18,8 +19,10 @@ public class ServiceDescriptorExtensionsTests
 		ServiceDescriptorExtensions.TryGetImplementationType(null!).Should().Be(null);
 
 		var serviceDescriptor = ServiceDescriptor.Scoped<ISomethingOptions, SomethingOptions>();
-		var implementationTypeField = typeof(ServiceDescriptor).GetField("<ImplementationType>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
-		implementationTypeField!.SetValue(serviceDescriptor, null);
+		var implementationTypeField = typeof(ServiceDescriptor).GetField("_implementationType", BindingFlags.NonPublic | BindingFlags.Instance);
+		_ = implementationTypeField ?? throw new InvalidOperationException("Failed to find the _implementationType field on the ServiceDescriptor type using reflection");
+
+		implementationTypeField.SetValue(serviceDescriptor, null);
 
 		serviceDescriptor.TryGetImplementationType().Should().BeNull();
 	}

@@ -125,12 +125,12 @@ public class MethodBaseExtensionsUnitTests
 	[TestMethod]
 	public void ContainsReferencesToAll_throw_ArgmentNullException_for_the_required_parameters()
 	{
-		Invoking(() => MethodBaseExtensions.ContainsReferencesToAll(null!, memberReferencesToLookFor: Array.Empty<MemberInfo>()))
+		Invoking(() => MethodBaseExtensions.ContainsReferencesToAll(null!, memberReferencesToLookFor: []))
 			.Should()
 			.Throw<ArgumentNullException>()
 			.WithMessage("Value cannot be null*methodBase*");
 
-		Invoking(() => MethodBaseExtensions.ContainsReferencesToAll(null!, memberReferencesMatchInfoToLookFor: Array.Empty<IMemberReferenceMatchInfo>()))
+		Invoking(() => MethodBaseExtensions.ContainsReferencesToAll(null!, memberReferencesMatchInfoToLookFor: []))
 			.Should()
 			.Throw<ArgumentNullException>()
 			.WithMessage("Value cannot be null*methodBase*");
@@ -341,12 +341,12 @@ public class MethodBaseExtensionsUnitTests
 	[TestMethod]
 	public void ContainsReferenceToAny_throw_ArgmentNullException_for_the_required_parameters()
 	{
-		Invoking(() => MethodBaseExtensions.ContainsReferenceToAny(null!, memberReferencesToLookFor: Array.Empty<MemberInfo>()))
+		Invoking(() => MethodBaseExtensions.ContainsReferenceToAny(null!, memberReferencesToLookFor: []))
 			.Should()
 			.Throw<ArgumentNullException>()
 			.WithMessage("Value cannot be null*methodBase*");
 
-		Invoking(() => MethodBaseExtensions.ContainsReferenceToAny(null!, memberReferencesMatchInfoToLookFor: Array.Empty<IMemberReferenceMatchInfo>()))
+		Invoking(() => MethodBaseExtensions.ContainsReferenceToAny(null!, memberReferencesMatchInfoToLookFor: []))
 			.Should()
 			.Throw<ArgumentNullException>()
 			.WithMessage("Value cannot be null*methodBase*");
@@ -401,7 +401,7 @@ public class MethodBaseExtensionsUnitTests
 		var asyncMethodToCheck = typeof(AsyncContainsReferenceTestClass).GetMethod(nameof(AsyncContainsReferenceTestClass.DoSomethingAsync));
 		var description = asyncMethodToCheck!.DescribeInstructions(new RecursiveInstructionFormatter(maxTraversalDepth: 3));
 
-		description.Should().ContainAll(new[] { "START OF METHOD", "MIDDLE OF METHOD", "END OF METHOD" });
+		description.Should().ContainAll(["START OF METHOD", "MIDDLE OF METHOD", "END OF METHOD"]);
 	}
 
 	[TestMethod]
@@ -601,7 +601,7 @@ where TSomethingElse : System.Enum");
 		var methodToTest1 = typeof(ExampleMethods).GetMethod(nameof(ExampleMethods.AddLocalVariables_For_5_And_15), BindingFlags.Public | BindingFlags.Static);
 		methodToTest1.Should().NotBeNull();
 
-		methodToTest1!.HasMatchingParameterTypes(new[] { typeof(string) }).Should().BeFalse();
+		methodToTest1!.HasMatchingParameterTypes([typeof(string)]).Should().BeFalse();
 
 		var methodToTest2 = typeof(ExampleMethods)
 			.GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -610,11 +610,11 @@ where TSomethingElse : System.Enum");
 		methodToTest2.Should().NotBeNull();
 
 
-		methodToTest2.HasMatchingParameterTypes(new[] { typeof(int), typeof(int) }).Should().BeFalse();
-		methodToTest2.HasMatchingParameterTypes(new[] { typeof(int), typeof(int), typeof(int) }).Should().BeFalse();
-		methodToTest2.HasMatchingParameterTypes(new[] { typeof(int), typeof(float), typeof(int) }).Should().BeFalse();
+		methodToTest2.HasMatchingParameterTypes([typeof(int), typeof(int)]).Should().BeFalse();
+		methodToTest2.HasMatchingParameterTypes([typeof(int), typeof(int), typeof(int)]).Should().BeFalse();
+		methodToTest2.HasMatchingParameterTypes([typeof(int), typeof(float), typeof(int)]).Should().BeFalse();
 
-		methodToTest2.HasMatchingParameterTypes(new[] { typeof(int), typeof(int), typeof(float) }).Should().BeTrue();
+		methodToTest2.HasMatchingParameterTypes([typeof(int), typeof(int), typeof(float)]).Should().BeTrue();
 	}
 
 	[TestMethod]
@@ -675,7 +675,7 @@ where TSomethingElse : System.Enum");
 			.Throw<ArgumentNullException>()
 			.WithMessage("Value cannot be null.*methodBase*");
 
-		Invoking(() => MethodBaseExtensions.HasMatchingParameterNamesAndTypes(null!, methodParametersToCompareTo: Array.Empty<ParameterInfo>()))
+		Invoking(() => MethodBaseExtensions.HasMatchingParameterNamesAndTypes(null!, methodParametersToCompareTo: []))
 			.Should()
 			.Throw<ArgumentNullException>()
 			.WithMessage("Value cannot be null.*methodBase*");
@@ -694,7 +694,7 @@ where TSomethingElse : System.Enum");
 	[TestMethod]
 	public void HasNoParameterTypes_throws_ArgumentNullException_for_null_arguments()
 	{
-		Invoking(() => MethodBaseExtensions.HasMatchingParameterTypes(null!, Array.Empty<Type>()))
+		Invoking(() => MethodBaseExtensions.HasMatchingParameterTypes(null!, []))
 			.Should()
 			.Throw<ArgumentNullException>()
 			.WithMessage("Value cannot be null*methodBase*");

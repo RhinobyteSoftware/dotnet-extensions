@@ -5,12 +5,14 @@ VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{2EA9106B-DA90-4935-85B8-4FE7CCA53A45}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
+		.EditorConfig = .EditorConfig
 		.gitignore = .gitignore
 		development.local.props = development.local.props
 		development.local.targets = development.local.targets
+		Directory.Packages.props = Directory.Packages.props
 		global.json = global.json
 		LICENSE.txt = LICENSE.txt
+		nuget.config = nuget.config
 		README.md = README.md
 		solution.props = solution.props
 		solution.targets = solution.targets
@@ -18,15 +20,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_root", "_root", "{2EA9106B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BDE5D871-F9C3-405C-9E3F-FE5DE7B26FC6}"
 	ProjectSection(SolutionItems) = preProject
-		src\directory.build.props = src\directory.build.props
-		src\directory.build.targets = src\directory.build.targets
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{40E9ED1D-0F68-494D-A657-B75A62645AD8}"
 	ProjectSection(SolutionItems) = preProject
-		tests\.editorconfig = tests\.editorconfig
-		tests\directory.build.props = tests\directory.build.props
-		tests\directory.build.targets = tests\directory.build.targets
+		tests\.EditorConfig = tests\.EditorConfig
+		tests\Directory.Build.props = tests\Directory.Build.props
+		tests\Directory.Build.targets = tests\Directory.Build.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "devops", "devops", "{A72ED641-E520-4E40-920F-A8C005663859}"
@@ -67,7 +69,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.Loggin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.CommandLine", "src\Rhinobyte.Extensions.CommandLine\Rhinobyte.Extensions.CommandLine.csproj", "{6A9F637D-7032-404B-8A44-86A0D57AF727}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhinobyte.Extensions.CommandLine.Tests", "tests\Rhinobyte.Extensions.CommandLine.Tests\Rhinobyte.Extensions.CommandLine.Tests.csproj", "{713F0EFA-1B5E-471E-BCAB-B1B599B6241B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhinobyte.Extensions.CommandLine.Tests", "tests\Rhinobyte.Extensions.CommandLine.Tests\Rhinobyte.Extensions.CommandLine.Tests.csproj", "{713F0EFA-1B5E-471E-BCAB-B1B599B6241B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhinobyte.Extensions.Json", "src\Rhinobyte.Extensions.Json\Rhinobyte.Extensions.Json.csproj", "{F7A01A52-A674-4136-AA06-5F16D6265EE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhinobyte.Extensions.Json.Tests", "Tests\Rhinobyte.Extensions.Json.Tests\Rhinobyte.Extensions.Json.Tests.csproj", "{DBB44965-F3CC-4768-BAB5-BEFD9539E2CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -159,6 +165,18 @@ Global
 		{713F0EFA-1B5E-471E-BCAB-B1B599B6241B}.Release|Any CPU.Build.0 = ReleaseTesting|Any CPU
 		{713F0EFA-1B5E-471E-BCAB-B1B599B6241B}.ReleaseTesting|Any CPU.ActiveCfg = ReleaseTesting|Any CPU
 		{713F0EFA-1B5E-471E-BCAB-B1B599B6241B}.ReleaseTesting|Any CPU.Build.0 = ReleaseTesting|Any CPU
+		{F7A01A52-A674-4136-AA06-5F16D6265EE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7A01A52-A674-4136-AA06-5F16D6265EE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7A01A52-A674-4136-AA06-5F16D6265EE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7A01A52-A674-4136-AA06-5F16D6265EE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7A01A52-A674-4136-AA06-5F16D6265EE6}.ReleaseTesting|Any CPU.ActiveCfg = Release|Any CPU
+		{F7A01A52-A674-4136-AA06-5F16D6265EE6}.ReleaseTesting|Any CPU.Build.0 = Release|Any CPU
+		{DBB44965-F3CC-4768-BAB5-BEFD9539E2CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBB44965-F3CC-4768-BAB5-BEFD9539E2CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBB44965-F3CC-4768-BAB5-BEFD9539E2CB}.Release|Any CPU.ActiveCfg = ReleaseTesting|Any CPU
+		{DBB44965-F3CC-4768-BAB5-BEFD9539E2CB}.Release|Any CPU.Build.0 = ReleaseTesting|Any CPU
+		{DBB44965-F3CC-4768-BAB5-BEFD9539E2CB}.ReleaseTesting|Any CPU.ActiveCfg = ReleaseTesting|Any CPU
+		{DBB44965-F3CC-4768-BAB5-BEFD9539E2CB}.ReleaseTesting|Any CPU.Build.0 = ReleaseTesting|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,6 +197,8 @@ Global
 		{A3CF8C00-2FE9-405E-8B2E-743DE56CF7C1} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 		{6A9F637D-7032-404B-8A44-86A0D57AF727} = {BDE5D871-F9C3-405C-9E3F-FE5DE7B26FC6}
 		{713F0EFA-1B5E-471E-BCAB-B1B599B6241B} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
+		{F7A01A52-A674-4136-AA06-5F16D6265EE6} = {BDE5D871-F9C3-405C-9E3F-FE5DE7B26FC6}
+		{DBB44965-F3CC-4768-BAB5-BEFD9539E2CB} = {40E9ED1D-0F68-494D-A657-B75A62645AD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A319B09C-E5BD-4E06-94C1-6D8666961326}

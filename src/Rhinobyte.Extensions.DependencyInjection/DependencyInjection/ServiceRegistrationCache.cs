@@ -10,8 +10,8 @@ namespace Rhinobyte.Extensions.DependencyInjection;
 /// </summary>
 public class ServiceRegistrationCache : IServiceCollection
 {
-	private readonly Dictionary<Type, List<ServiceDescriptor>> _lookupByImplementationType = new Dictionary<Type, List<ServiceDescriptor>>();
-	private readonly Dictionary<Type, List<ServiceDescriptor>> _lookupByServiceType = new Dictionary<Type, List<ServiceDescriptor>>();
+	private readonly Dictionary<Type, List<ServiceDescriptor>> _lookupByImplementationType = [];
+	private readonly Dictionary<Type, List<ServiceDescriptor>> _lookupByServiceType = [];
 	private readonly IServiceCollection _serviceCollection;
 
 	/// <summary>
@@ -54,7 +54,7 @@ public class ServiceRegistrationCache : IServiceCollection
 
 		if (!_lookupByServiceType.TryGetValue(serviceDescriptor.ServiceType, out var byServiceTypeList))
 		{
-			byServiceTypeList = new List<ServiceDescriptor>();
+			byServiceTypeList = [];
 			_lookupByServiceType.Add(serviceDescriptor.ServiceType, byServiceTypeList);
 		}
 
@@ -63,7 +63,7 @@ public class ServiceRegistrationCache : IServiceCollection
 
 		if (!_lookupByImplementationType.TryGetValue(implementationType, out var byImplementationTypeList))
 		{
-			byImplementationTypeList = new List<ServiceDescriptor>();
+			byImplementationTypeList = [];
 			_lookupByImplementationType.Add(implementationType, byImplementationTypeList);
 		}
 

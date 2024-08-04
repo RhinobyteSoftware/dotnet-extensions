@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection.Emit;
+﻿using System.Reflection.Emit;
 
 namespace Rhinobyte.Extensions.Reflection.IntermediateLanguage;
 
@@ -23,7 +22,7 @@ public sealed class SignatureInstruction : InstructionBase
 	{
 		// Need to return a clone of the array so that consumers of this library cannot change its contents
 		return _signatureBlob is null
-			? Array.Empty<byte>()
+			? []
 			: (byte[])_signatureBlob.Clone();
 	}
 

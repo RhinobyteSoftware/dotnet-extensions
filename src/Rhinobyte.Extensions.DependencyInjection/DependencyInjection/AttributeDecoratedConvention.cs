@@ -53,9 +53,8 @@ public class AttributeDecoratedConvention : ServiceRegistrationConventionBase
 		if (registrationAttribute is null)
 			return null;
 
-		var implementationType = registrationAttribute.ImplementationType;
-		if (implementationType is null)
-			throw new InvalidOperationException($"{discoveredType.FullName} is decorated with a {nameof(RegisterForDependencyInjectionAttribute)} that has a null value for {nameof(RegisterForDependencyInjectionAttribute.ImplementationType)}");
+		var implementationType = registrationAttribute.ImplementationType
+			?? throw new InvalidOperationException($"{discoveredType.FullName} is decorated with a {nameof(RegisterForDependencyInjectionAttribute)} that has a null value for {nameof(RegisterForDependencyInjectionAttribute.ImplementationType)}");
 
 		if (!discoveredType.IsAssignableFrom(implementationType) || !implementationType.IsClass || implementationType.IsAbstract)
 			throw new InvalidOperationException($"{discoveredType.FullName} is decorated with a {nameof(RegisterForDependencyInjectionAttribute)} with an invalid implementationType of {implementationType.FullName}");

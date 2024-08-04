@@ -35,8 +35,8 @@ public class UnknownMemberReferenceInstructionTests
 
 		public override Type? ReflectedType => null;
 
-		public override object[] GetCustomAttributes(bool inherit) => Array.Empty<object>();
-		public override object[] GetCustomAttributes(Type attributeType, bool inherit) => Array.Empty<object>();
+		public override object[] GetCustomAttributes(bool inherit) => [];
+		public override object[] GetCustomAttributes(Type attributeType, bool inherit) => [];
 		public override bool IsDefined(Type attributeType, bool inherit) => false;
 	}
 }

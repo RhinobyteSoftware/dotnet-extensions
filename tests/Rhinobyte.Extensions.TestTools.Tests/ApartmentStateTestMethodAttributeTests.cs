@@ -247,7 +247,7 @@ public class ApartmentStateTestMethodAttributeTests
 			if (ShouldReturnNullArrayResult)
 				return null!;
 
-			return new[] { testMethod.Invoke(null) };
+			return [testMethod.Invoke(null)];
 		}
 	}
 }

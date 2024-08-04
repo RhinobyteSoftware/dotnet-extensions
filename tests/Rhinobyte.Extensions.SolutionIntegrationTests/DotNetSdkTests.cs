@@ -37,8 +37,8 @@ public class DotNetSdkTests
 
 		var globalJsonFileContent = await File.ReadAllTextAsync(globalJsonPath, CancellationTokenForTest);
 		var globalJsonConfiguration = JsonConvert.DeserializeObject<GlobalJsonConfiguration>(globalJsonFileContent);
-		if (globalJsonConfiguration == null)
-			throw new AssertFailedException("Failed to deserialize global.json file contents");
+
+		_ = globalJsonConfiguration ?? throw new AssertFailedException("Failed to deserialize global.json file contents");
 
 		var ourDotnetSdkVersion = globalJsonConfiguration.Sdk?.Version;
 		if (string.IsNullOrWhiteSpace(ourDotnetSdkVersion))

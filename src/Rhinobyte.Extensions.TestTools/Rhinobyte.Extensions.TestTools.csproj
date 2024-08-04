@@ -22,10 +22,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All" />
-        <!-- Setting minimum version to 2.1.0 because MSTest has some public api differences between 2.0.0 like the TestMethodAttribute.DisplayName property -->
-        <!-- Bad MSTest maintainers, no cookie -->
-        <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+          </PackageReference>
+
+        <!-- Target minimum possible major version that has all the signatures we need for our test tool extensions -->
+        <PackageReference Include="MSTest.TestFramework" VersionOverride="3.0.0" />
     </ItemGroup>
 
 </Project>

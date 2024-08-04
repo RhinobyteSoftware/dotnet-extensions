@@ -401,7 +401,7 @@ public static class StringComparisonHelper
 	/// character for consistent comparisons.
 	/// </summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-	[return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("stringToNormalize")]
+	[return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(stringToNormalize))]
 #endif
 	public static string? RemoveAllCarriageReturns(this string? stringToNormalize)
 	{

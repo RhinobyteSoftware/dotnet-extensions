@@ -299,7 +299,7 @@ public class ExplicitConstructorServiceDescriptorTests
 
 		using (var baselineServiceProvider = serviceCollection.BuildServiceProvider())
 		{
-			Invoking(() => baselineServiceProvider.GetRequiredService<IExplicitConstructorTestService>())
+			Invoking(baselineServiceProvider.GetRequiredService<IExplicitConstructorTestService>)
 				.Should()
 				.Throw<InvalidOperationException>()
 				.WithMessage("Unable to activate type *. The following constructors are ambiguous:*");

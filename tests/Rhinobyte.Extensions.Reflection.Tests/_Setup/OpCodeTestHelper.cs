@@ -46,7 +46,7 @@ public static class OpCodeTestHelper
 			(2 << 22) |
 			(0 << 28);
 
-		var newOpCodeThatDoesntExistYet = (OpCode)opCodeConstructor.Invoke(new object[] { 0xfe1f, flags });
+		var newOpCodeThatDoesntExistYet = (OpCode)opCodeConstructor.Invoke([0xfe1f, flags]);
 		newOpCodeThatDoesntExistYet.Value.Should().Be(unchecked((short)0xfe1f));
 		return newOpCodeThatDoesntExistYet;
 	}

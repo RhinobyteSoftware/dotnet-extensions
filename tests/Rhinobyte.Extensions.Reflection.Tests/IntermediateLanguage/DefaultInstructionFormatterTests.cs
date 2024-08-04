@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhinobyte.Extensions.Reflection.IntermediateLanguage;
 using Rhinobyte.Extensions.Reflection.Tests.Setup;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -31,10 +30,10 @@ public class DefaultInstructionFormatterTests
 		fakeInstruction = new ParameterReferenceInstruction(0, 0, OpCodes.Ldarg_1, 0, null!);
 		defaultInstructionFormatter.DescribeInstruction(fakeInstruction).Should().Be(fakeInstruction.ToString());
 
-		var switchInstruction = new SwitchInstruction(0, 0, OpCodes.Switch, Array.Empty<int>());
+		var switchInstruction = new SwitchInstruction(0, 0, OpCodes.Switch, []);
 		defaultInstructionFormatter.DescribeInstruction(switchInstruction).Should().Be(switchInstruction.ToString());
 
-		switchInstruction = new SwitchInstruction(0, 0, OpCodes.Switch, new int[] { switchInstruction.Size + 4 })
+		switchInstruction = new SwitchInstruction(0, 0, OpCodes.Switch, [switchInstruction.Size + 4])
 		{
 			TargetInstructions = new List<InstructionBase>() { fakeInstruction }
 		};
@@ -80,10 +79,10 @@ public class DefaultInstructionFormatterTests
 		fakeInstructions.Add(new SimpleInstruction(fakeInstructions.Count, offset, fakeOpCode));
 		offset += fakeInstructions.Last().Size;
 
-		fakeInstructions.Add(new SignatureInstruction(fakeInstructions.Count, offset, OpCodeTestHelper.OpcodeLookupByOperandType[OperandType.InlineSig].First(), Array.Empty<byte>()));
+		fakeInstructions.Add(new SignatureInstruction(fakeInstructions.Count, offset, OpCodeTestHelper.OpcodeLookupByOperandType[OperandType.InlineSig].First(), []));
 		offset += fakeInstructions.Last().Size;
 
-		fakeInstructions.Add(new SwitchInstruction(fakeInstructions.Count, offset, OpCodeTestHelper.OpcodeLookupByOperandType[OperandType.InlineSwitch].First(), Array.Empty<int>()));
+		fakeInstructions.Add(new SwitchInstruction(fakeInstructions.Count, offset, OpCodeTestHelper.OpcodeLookupByOperandType[OperandType.InlineSwitch].First(), []));
 		offset += fakeInstructions.Last().Size;
 
 		fakeInstructions.Add(new UnknownMemberReferenceInstruction(fakeInstructions.Count, offset, OpCodeTestHelper.OpcodeLookupByOperandType[OperandType.InlineTok].First(), null));

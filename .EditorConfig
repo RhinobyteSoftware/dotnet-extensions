@@ -1,6 +1,10 @@
-# Reference: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+# References: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
 
-# top-most .editorconfig file
+# IMPORTANT:
+# This file must be named .EditorConfig with exact case for msbuild to automatically find it
+# when running on linux or other platforms that use a case sensitive file system
+
+# top-most .EditorConfig file
 root = true
 
 
@@ -37,8 +41,8 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
-# .editorconfig files
-[*.editorconfig]
+# .EditorConfig files
+[*.EditorConfig]
 
 dotnet_diagnostic.EC101.severity    = error
 # Rule (EC104)  - Language rules must specify severity  - Reason: No longer required as of VS 2019 v16.9+ but editor config analyzer incorrectly flags it
@@ -86,6 +90,12 @@ dotnet_diagnostic.CA1068.severity       = suggestion
 # Rule: (CA1303) Do not pass literals as localized parameters. Retrieve the string(s) from a resource table instead
 dotnet_diagnostic.CA1303.severity       = warning
 dotnet_code_quality.CA1303.excluded_type_names_with_derived_types = System.Exception
+
+# Rule (CA1513) - Use ObjectDisposedException.ThrowIf Helper
+dotnet_diagnostic.CA1513.severity       = suggestion
+
+# Rule (CA1707) - Identifiers should not contain underscores
+dotnet_diagnostic.CA1707.severity       = suggestion # Reason: Primary constructor parameters
 
 # Rule: (CA1810) Initialize reference type static fields inline. (Initialize all static fields when those fields are declared and remove the explicit static constructor.)  Reason: Static initialization is weird.  It is safer to do it in a static constructor.
 #dotnet_diagnostic.CA1810.severity    = none
@@ -158,6 +168,9 @@ dotnet_diagnostic.IDE0002.severity                      = suggestion
 
 # Rule (IDE0003)    -  Name Can Be Simplified (this keyword)      - Reason: Sometimes useful/preferred for clarity
 dotnet_diagnostic.IDE0003.severity                      = suggestion
+
+dotnet_sort_system_directives_first		= false
+dotnet_separate_import_directive_groups	= false
 
 # this keyword style rules
 dotnet_style_qualification_for_field                    = false
@@ -240,6 +253,35 @@ dotnet_diagnostic.IDE0090.severity                          = refactoring
 
 # Rule (IDE0130)    - Namespace does not match folder structure     - Reason: Not required and analyzer is broken
 dotnet_diagnostic.IDE0130.severity                      = refactoring
+
+# Rule (IDE0290)    - Use primary constructor
+# Reason: Warning only as switching to collection expressions can change the behavior/semantics depending on the member type
+dotnet_diagnostic.IDE0290.severity                     = suggestion # Reason: Will gradually convert to these
+
+# Rule (IDE0300)    - Use collection expression for array
+# Reason: Warning only as switching to collection expressions can change the behavior/semantics depending on the member type
+dotnet_diagnostic.IDE0300.severity                     = warning
+
+# Rule (IDE0301)    - Use collection expression for Array.Empty
+# Reason: Warning only as switching to collection expressions can change the behavior/semantics depending on the member type. 
+# Make sure the member type being assigned to is readonly (e.g. IEnumeable or IReadOnlyCollection) or else switch to this will change the behavior to instantiating a mutable instance
+dotnet_diagnostic.IDE0301.severity                     = warning
+
+# Rule (IDE0302)    - Use collection expression for stackalloc
+# Reason: Prefer explicit use of the stackalloc keyword as it is an advanced feature and developers should be explicitly aware of when it is being used
+dotnet_diagnostic.IDE0302.severity                     = none
+
+# Rule (IDE0303)    - Use collection expression for Create() methods e.g. ImmutableArray.Create()
+# Reason: Warning only as switching to collection expressions can change the behavior/semantics depending on the member type. Use when you know what you're doing.
+dotnet_diagnostic.IDE0303.severity                     = warning
+
+# Rule (IDE0304)    - Use collection expression for CreateBuilder() methods e.g. ImmutableArray.Builder.ToImmutable()
+# Reason: Warning only as switching to collection expressions can change the behavior/semantics depending on the member type. Use when you know what you're doing.
+dotnet_diagnostic.IDE0304.severity                     = warning
+
+# Rule (IDE0305)    - Use collection expression for fluent style collection builder calls
+# Reason: Suggestion only as sometimes the fluent style calls may be preferable for readability
+dotnet_diagnostic.IDE0305.severity                     = suggestion
 
 # File Scoped Namespaces    -   Much Better Than Block Scoped. Reduced Nesting.
 csharp_style_namespace_declarations     = file_scoped:error

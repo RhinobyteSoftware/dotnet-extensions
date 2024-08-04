@@ -9,34 +9,25 @@ namespace Rhinobyte.Extensions.Logging.Queue;
 /// Queue logger abstract base class used to format and enqueue log message entries for deferred processing
 /// </summary>
 /// <typeparam name="TMessageEntry">The type of message entry that will be enqueued by this logger</typeparam>
-public class QueueLogger<TMessageEntry> : ILogger
+/// <remarks>
+/// Construct a queue logger instance.
+/// </remarks>
+public class QueueLogger<TMessageEntry>(
+	string _categoryName,
+	ILogMessageFormatter<TMessageEntry> logMessageFormatter,
+	ILogMessageQueue<TMessageEntry> _messageQueue,
+	IExternalScopeProvider scopeProvider) : ILogger
 {
-	private readonly string _categoryName;
-	private readonly ILogMessageQueue<TMessageEntry> _messageQueue;
-
 	[ThreadStatic]
 	private static StringWriter? _threadStaticStringWriter;
 
-	/// <summary>
-	/// Construct a queue logger instance.
-	/// </summary>
-	public QueueLogger(
-		string categoryName,
-		ILogMessageFormatter<TMessageEntry> logMessageFormatter,
-		ILogMessageQueue<TMessageEntry> messageQueue,
-		IExternalScopeProvider scopeProvider)
-	{
-		_categoryName = categoryName ?? throw new ArgumentNullException(nameof(categoryName));
-		LogMessageFormatter = logMessageFormatter ?? throw new ArgumentNullException(nameof(logMessageFormatter));
-		_messageQueue = messageQueue ?? throw new ArgumentNullException(nameof(messageQueue));
-		ScopeProvider = scopeProvider; // Null scope provider allowed
-	}
-
-	internal ILogMessageFormatter<TMessageEntry> LogMessageFormatter { get; set; }
-	internal IExternalScopeProvider ScopeProvider { get; set; }
+	internal ILogMessageFormatter<TMessageEntry> LogMessageFormatter { get; set; } = logMessageFormatter ?? throw new ArgumentNullException(nameof(logMessageFormatter));
+	internal IExternalScopeProvider ScopeProvider { get; set; } = scopeProvider; // Null scope provider allowed
 
 	/// <inheritdoc/>
-	public IDisposable BeginScope<TState>(TState state) => ScopeProvider?.Push(state) ?? NullScope.Instance;
+	public IDisposable? BeginScope<TState>(TState state)
+		where TState : notnull
+		=> ScopeProvider?.Push(state) ?? NullScope.Instance;
 
 	/// <inheritdoc/>
 	public bool IsEnabled(LogLevel logLevel) => logLevel != LogLevel.None;
